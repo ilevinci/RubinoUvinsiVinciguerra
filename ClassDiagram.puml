@@ -1,0 +1,97 @@
+@startuml BBP
+
+abstract class BikePath {
+    - score : int
+}
+
+class PublicBikePath {
+
+}
+
+class PrivateBikePath {
+
+}
+
+class Street {
+    - name : String
+}
+
+class SuitableStreet {
+
+}
+
+class Zona30 {
+
+}
+
+class ZTL {
+
+}
+
+class ResidentialZone {
+
+}
+
+class BikeLane {
+
+}
+
+class RuralRoad {
+
+}
+
+class FBisRoad {
+
+}
+
+class GreenWays {
+
+}
+
+class Obstacle {
+    - type : ObstaceType
+}
+
+class RegisteredUser {
+
+}
+
+class CyclingRecord {
+
+}
+
+enum ObstacleType {
+    POTHOLE
+}
+
+enum Status {
+    OPTIMAL
+    MEDIUM 
+    SUFFICIENT
+    REQUIRES_MAINETANCE
+    BLOCKED
+}
+
+
+
+
+
+
+SuitableStreet --|> Street
+Zona30 --|> SuitableStreet
+ZTL --|> SuitableStreet
+GreenWays --|> SuitableStreet
+ResidentialZone --|> SuitableStreet
+BikeLane --|> SuitableStreet
+RuralRoad --|> SuitableStreet
+FBisRoad --|> SuitableStreet
+SuitableStreet "1..*"--*"1" BikePath
+
+PublicBikePath --|> BikePath
+PrivateBikePath --|> BikePath
+
+BikePath o-- Status
+BikePath o-- Obstacle
+
+RegisteredUser o-- CyclingRecord
+@enduml
