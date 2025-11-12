@@ -25,16 +25,108 @@
 \maketitle
 \newpage
 \tableofcontents
+\newpage
 
 %Definition of the outline of the document
 \section{INTRODUCTION}
 \subsection{Purpose}
-\subsection{Scope}
-\subsection{Definitions, Acronyms, Abbreviations}
-\subsection{Revision History}
-\subsection{Reference Documents}
-\subsection{Document Structure}
+The increasing global focus and effort on sustainable mobility and the rising popularity of cycling both as a sport and as a way to navigate around cities have risen new challenges in the everyday life of millions of people. Even if governments are beginning to address the need for new infrastructure for cyclists, the transition is complex and slow and the current infrastructure is often insufficient and outdated. Cyclists often find themselves having to face the danger of unexpected obstacles on their route and of worn-out paths which require maintenance to ensure both safety and navigational efficiency for their daily commutes and training sessions. 
+In order for this transition to happen, local institutions require a structured and scalable mechanism to systematically collect, consolidate and share data about the conditions of paths. This data has to come from the direct experience of a vast and distributed community of cyclists by offering them a platform that is useful and appealing for them, regardless of whether they cycle to train or to commute. \\
+The purpose of Best Bike Paths (BPP) is to provide a comprehensive software platform that is useful for both cyclists and local institutions as it offers an integrated environment where bikers can track their sessions, signal criticalities of paths they have ridden along to other bikers and to local institutions and consult and contribute to the creation and maintenance of a reliable inventory of bike paths.
 
+\subsubsection{Goals}
+\begin{itemize}
+    \item G1: Bikers share a path that they have ridden along with other bikers. 
+    \item G2: Bikers give other bikers information about the status and the presence of obstacles on paths that they have ridden along. 
+    \item G3: Bikers are able to track and record their cycling trips to maintain a log of their activity that contains relevant information about their performance. 
+    \item G4: Bikers are presented with a set of paths, comprehensive of information about the path's status and navigational efficiency, between a specified origin and destination. 
+    \item G5: Local institutions are constantly informed about the status of paths and about whether they require maintenance.
+\end{itemize}
+\newpage
+
+\subsection{Scope}
+The core function of the Best Bike Paths system is to provide a comprehensive, community-driven platform to all types of cyclists. 
+The system acts as an intermediary, processing heterogeneous data inputs from various sources and synthesizing this information to generate reliable output for all users. The users who interact with the platform include Registered Users (cyclists who provide data by tracking their trips), Unregistered Users (cyclists or planners who only browse and search for paths) and External Services (such as meteorological data providers). \\
+The system offers its users a dual mode of use which addresses two different kinds of needs: tracking cycling sessions and both adding and accessing directly acquired information about the status of bike paths. The availability of these modes of use depends on the category the user belongs to. \\
+The first mode of use is reserved to registered users and it serves as a way to keep a private log of their training sessions and to obtain and store personal performance metrics for each session, together with meteorological information retrieved from external sources, when it is available. The second mode is for both registered and external users and it allows them to access an active inventory of paths which can be visualized on a map and which contain information about their status and their effectiveness. These two modes are completely independent and only have one point of contact: registered users who have tracked a cycling session can decide to publish only the geographical tracking of the path they have ridden along and two types of information about it: an indication of its status and a specification of whether relevant obstacles are present along the way. \\
+Data submission by registered users is allowed in only two distinct modes: \textbf{manual mode}, where users manually input the names of the street that compose the path and their status and \textbf{automated mode}, where the system automatically acquires data from the user's mobile device's  GPS, accelerometer and gyroscope to reconstruct the path and to detect significant movements that might be indicative of the presence of obstacles. For both reliability and quality control, when automated mode is used, the user must confirm the elaborated data to make it publishable. \\
+The system facilitates transparency by allowing any user, registered or not, to benefit from the collective information to search and visualize the best route between an origin and a destination. Routes are visualized based on a calculated score, reflecting both the path status and its effectiveness for reaching the final destination from the given origin.
+
+
+\subsubsection{World Phenomena}
+\begin{itemize}
+    \item WP1: Bikers ride along paths. 
+    \item WP2: The bike’s speed changes over time. 
+    \item WP3: Bikers track their training sessions with a mobile device that is equipped with the following sensors: GPS, accelerometer and gyroscope. 
+    \item WP4: Every path has an origin and a destination. 
+    \item WP5: Every path is made of one or more streets. 
+    \item WP6: Every path may have obstacles.
+    \item WP7: Bikers have a subjective opinion and evaluation of the path’s conditions based on their direct experience.
+    \item WP8: Bikers consider each other reliable when it comes to recommending paths.
+    \item WP9: GPSs, accelerometers and gyroscopes can perform inaccurate readings.
+    \item WP10: The bikers’ coordinates change as they move along a path.
+    \item WP11: Meteorological conditions are strictly linked to a specific location and time.
+    \item WP12: Bikers actively observe and collect information regarding the path as they travel along it. 
+\end{itemize}
+
+
+\subsubsection{Shared Phenomena}
+\begin{itemize}
+    \item SP1: A registered user starts or stops tracking a session on the application.
+    \item SP2: Raw sensor data provided by the GPS, accelerometer and gyroscope is actively transmitted and received by the system during the tracking of a session.
+    \item SP3: The system provides all the paths that have been published.
+    \item SP4: The system provides the total distance for each published path.
+    \item SP5: The system provides performance metrics only to the user who is the owner of the path.
+    \item SP6: The system may provide meteorological information only to the user who is the owner of the path.
+    \item SP7: The system shows the score for each published path.
+    \item SP8: Bikers are provided with a selection of published paths that connect their specified origin and destination, if such published paths exist in the system.
+    \item SP9: Users grant the system access to meteorological data from external sources on their device.
+    \item SP10: The system allows insertion of publishable paths from the user only in two modes: manual mode and automated mode.
+    \item SP11: In manual mode, the user manually inputs the following path data: crossed streets names, status and obstacles, starting point and ending point into the system.
+    \item SP12: In automated mode, the user confirms or corrects the information that has been automatically acquired by the system.
+    \item SP13: A publishable path is a path that has been manually inserted or automatically registered and then confirmed by the owner of the path.
+    \item SP14: The system shows bike paths between an origin and a destination specified by the user ordered by their score, if they exist.
+\end{itemize}
+\newpage
+
+\subsection{Definitions, Acronyms, Abbreviations}
+\subsubsection{Definitions}
+
+\subsubsection{Acronyms}
+\begin{itemize}
+    \item \textbf{BPP}: Best Bike Paths
+\end{itemize}
+
+\subsubsection{Abbreviations}
+\begin{itemize}
+    \item \textbf{G}: Goal
+    \item \textbf{WP}: World Phenomena
+    \item \textbf{SP}: Shared Phenomena
+\end{itemize}
+
+
+\subsection{Revision History}
+
+
+
+\subsection{Reference Documents}
+The assignment for this document and all the information included refer to the following
+documentation:
+\begin{itemize}
+    \item The specification for the 2025/26 Requirement Engineering and Design Project for the Software Engineering II course.
+    \item The slides on the WeBeep page of the Software Engineering II course.
+\end{itemize}
+
+
+\subsection{Document Structure}
+\begin{enumerate}
+    \item \textbf{Introduction}: a brief description of the project that follows from the analysis of the specification provided, it highlights the goals of the product and its scope.
+    \item \textbf{Overall Description}: a more detailed description of the product that comprehends also real world scenarios and analyses the system from a technical point of view.
+    \item \textbf{Specific Requirements}: a detailed list of all the requirements needed in order to satisfy the goals, and their relationship with domain assumptions
+    \item \textbf{Formal analysis using Alloy}: a formal description of a portion of real world phenomena analyzed through Alloy in order to highlight inconsistencies between assumptions and phenomena previously modelized.
+    \item \textbf{Effort spent}: the time spent by each member of the group to contribute to the realization of this document.
+    \item \textbf{References}: reference to documents or tools used for writing this document.
+\end{enumerate}
 
 
 
