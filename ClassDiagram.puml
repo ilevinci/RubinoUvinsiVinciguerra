@@ -1,97 +1,103 @@
 @startuml BBP
 
-abstract class BikePath {
-    - score : int
-}
-
-class PublicBikePath {
-
-}
-
-class PrivateBikePath {
-
-}
 
 class Street {
-    - name : String
+    - name : String 
+    - status : Status 
 }
 
-class SuitableStreet {
-
+class BikePath {
+    - published : boolean
+    - score : int
+    - publicationDate : Date
+    - startingPoint : Coordinates
+    - endingPoint : Coordinates
 }
 
-class Zona30 {
+/'The published attribute declare the Path as 
+"public", i.e. visible to other user aside from
+the owner'/
 
-}
-
-class ZTL {
-
-}
-
-class ResidentialZone {
-
-}
-
-class BikeLane {
-
-}
-
-class RuralRoad {
-
-}
-
-class FBisRoad {
-
-}
-
-class GreenWays {
-
+class Coordinates {
+    - latitude : int
+    - longitude : int 
 }
 
 class Obstacle {
-    - type : ObstaceType
+    - obstacle : ObstacleType
+    - coordinates : Coordinates
+}
+
+enum ObstacleType {
+
 }
 
 class RegisteredUser {
 
 }
 
-class CyclingRecord {
+class Record {
+    - totalDistance : float
+    - averageSpeed : int
+    - maxSpeed : int
+    - elevationGain : int
+    - movingTime : Time
+    - cadence : int
+}
+
+class User {
 
 }
 
-enum ObstacleType {
-    POTHOLE
+class Time {
+    - hour : int
+    - minute : int
+    - second : int
+}
+
+class MeteoData {
+ - averageWindSpeed : int
+ - averageTemperature : int
+ - weaterConditions : Collection<WeatherCondition>
+}
+
+enum WeatherCondition {
+
 }
 
 enum Status {
-    OPTIMAL
-    MEDIUM 
-    SUFFICIENT
-    REQUIRES_MAINETANCE
-    BLOCKED
+
 }
 
+class Date {
+    - day : int
+    - month : int
+    - year : int
+    - time : Time
+}
+
+MeteoData "0...1" --* "1" Record
+Obstacle "0...*" --* "1...*"  Street
+/'
+If an Obstacle is in a crossroad than it
+belongs to more roads. An obstacle cannot exist
+if it has not a road.
+'/
+
+RegisteredUser --|> User
 
 
+Record "0...*" --* "1" RegisteredUser
+BikePath "1" --o "0...*" Record
 
 
+Street "1...*" --o "1" BikePath
 
-SuitableStreet --|> Street
-Zona30 --|> SuitableStreet
-ZTL --|> SuitableStreet
-GreenWays --|> SuitableStreet
-ResidentialZone --|> SuitableStreet
-BikeLane --|> SuitableStreet
-RuralRoad --|> SuitableStreet
-FBisRoad --|> SuitableStreet
-SuitableStreet "1..*"--*"1" BikePath
+RegisteredUser --  BikePath 
+/'RegisteredUser crea 0...* Bikepath e un BikePath è creato
+da 1 RegisteredUser'/
 
-PublicBikePath --|> BikePath
-PrivateBikePath --|> BikePath
-
-BikePath o-- Status
-BikePath o-- Obstacle
-
-RegisteredUser o-- CyclingRecord
+User -- BikePath 
+/'User visualizza 0...n BikePath e ogni BikePath è visualizzato
+da 1(autore)...* User'/
 @enduml
