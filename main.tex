@@ -32,7 +32,7 @@
 \subsection{Purpose}
 The increasing global focus and effort on sustainable mobility and the rising popularity of cycling both as a sport and as a way to navigate around cities have risen new challenges in the everyday life of millions of people. Even if governments are beginning to address the need for new infrastructure for cyclists, the transition is complex and slow and the current infrastructure is often insufficient and outdated. Cyclists often find themselves having to face the danger of unexpected obstacles on their route and of worn-out paths which require maintenance to ensure both safety and navigational efficiency for their daily commutes and training sessions. 
 In order for this transition to happen, local institutions require a structured and scalable mechanism to systematically collect, consolidate and share data about the conditions of paths. This data has to come from the direct experience of a vast and distributed community of cyclists by offering them a platform that is useful and appealing for them, regardless of whether they cycle to train or to commute. \\
-The purpose of Best Bike Paths (BPP) is to provide a comprehensive software platform that is useful for both cyclists and local institutions as it offers an integrated environment where bikers can track their sessions, signal criticalities of paths they have ridden along to other bikers and to local institutions and consult and contribute to the creation and maintenance of a reliable inventory of bike paths.
+The purpose of Best Bike Paths (BPP) is to provide a comprehensive software platform that is useful for cyclists as it offers an integrated environment where they can track their session and signal criticalities of paths by therefore contributing to the creation and maintenance of a reliable inventory of bike paths, that also local institutions can benefit from.
 
 \subsubsection{Goals}
 \begin{itemize}
@@ -40,17 +40,15 @@ The purpose of Best Bike Paths (BPP) is to provide a comprehensive software plat
     \item G2: Bikers give other bikers information about the status and the presence of obstacles on paths that they have ridden along. 
     \item G3: Bikers are able to track and record their cycling trips to maintain a log of their activity that contains relevant information about their performance. 
     \item G4: Bikers are presented with a set of paths, comprehensive of information about the path's status and navigational efficiency, between a specified origin and destination. 
-    \item G5: Local institutions are constantly informed about the status of paths and about whether they require maintenance.
 \end{itemize}
 \newpage
 
 \subsection{Scope}
-The core function of the Best Bike Paths system is to provide a comprehensive, community-driven platform to all types of cyclists. 
-The system acts as an intermediary, processing heterogeneous data inputs from various sources and synthesizing this information to generate reliable output for all users. The users who interact with the platform include Registered Users (cyclists who provide data by tracking their trips), Unregistered Users (cyclists or planners who only browse and search for paths) and External Services (such as meteorological data providers). \\
+The core function of the BPP system is to provide a comprehensive, community-driven platform to all types of cyclists. 
+The system acts as an intermediary, processing heterogeneous data inputs from various sources, including external providers, and synthesizing this information to generate reliable output for all users. The users who can interact with the platform are: registered users who provide data by tracking their trips and unregistered users who can only browse and search for paths. \\
 The system offers its users a dual mode of use which addresses two different kinds of needs: tracking cycling sessions and both adding and accessing directly acquired information about the status of bike paths. The availability of these modes of use depends on the category the user belongs to. \\
-The first mode of use is reserved to registered users and it serves as a way to keep a private log of their training sessions and to obtain and store personal performance metrics for each session, together with meteorological information retrieved from external sources, when it is available. The second mode is for both registered and external users and it allows them to access an active inventory of paths which can be visualized on a map and which contain information about their status and their effectiveness. These two modes are completely independent and only have one point of contact: registered users who have tracked a cycling session can decide to publish only the geographical tracking of the path they have ridden along and two types of information about it: an indication of its status and a specification of whether relevant obstacles are present along the way. \\
-Data submission by registered users is allowed in only two distinct modes: \textbf{manual mode}, where users manually input the names of the street that compose the path and their status and \textbf{automated mode}, where the system automatically acquires data from the user's mobile device's  GPS, accelerometer and gyroscope to reconstruct the path and to detect significant movements that might be indicative of the presence of obstacles. For both reliability and quality control, when automated mode is used, the user must confirm the elaborated data to make it publishable. \\
-The system facilitates transparency by allowing any user, registered or not, to benefit from the collective information to search and visualize the best route between an origin and a destination. Routes are visualized based on a calculated score, reflecting both the path status and its effectiveness for reaching the final destination from the given origin.
+The first mode of use is reserved to registered users and it serves as a way to keep a private log of their training sessions and to obtain and store personal performance metrics for each session, together with meteorological information retrieved from external sources, when it is available. \\ The second mode is for both registered and external users and it allows them to access an active inventory of paths which can be visualized on a map and which contain information about their status and their effectiveness. \\ These two modes are completely independent and only have one point of contact: registered users who have tracked a cycling session can decide to publish only the geographical tracking of the path they have ridden along and two types of information about it: an indication of its status and a specification of whether relevant obstacles are present along the way. \\
+Data publication by registered users is allowed in only two distinct modes: \textbf{manual mode}, where users manually input the names of the street that compose the path and their status and \textbf{automated mode}, where the system automatically acquires data from the user's mobile device's  GPS, accelerometer and gyroscope to reconstruct the path and to detect significant movements that might be indicative of the presence of obstacles. For both reliability and quality control, when automated mode is used, the user must confirm the elaborated data to make it publishable. \\
 
 
 \subsubsection{World Phenomena}
@@ -60,13 +58,14 @@ The system facilitates transparency by allowing any user, registered or not, to 
     \item WP3: Bikers track their training sessions with a mobile device that is equipped with the following sensors: GPS, accelerometer and gyroscope. 
     \item WP4: Every path has an origin and a destination. 
     \item WP5: Every path is made of one or more streets. 
-    \item WP6: Every path may have obstacles.
-    \item WP7: Bikers have a subjective opinion and evaluation of the path’s conditions based on their direct experience.
-    \item WP8: Bikers consider each other reliable when it comes to recommending paths.
-    \item WP9: GPSs, accelerometers and gyroscopes can perform inaccurate readings.
-    \item WP10: The bikers’ coordinates change as they move along a path.
-    \item WP11: Meteorological conditions are strictly linked to a specific location and time.
-    \item WP12: Bikers actively observe and collect information regarding the path as they travel along it. 
+    \item WP6: Given the set of streets that compose it, a path is a way of crossing all and only those streets.
+    \item WP7: Every path may have obstacles.
+    \item WP8: Bikers have a subjective opinion and evaluation of the path’s conditions based on their direct experience.
+    \item WP9: Bikers consider each other reliable when it comes to recommending paths.
+    \item WP10: GPSs, accelerometers and gyroscopes can perform inaccurate readings.
+    \item WP11: The bikers’ coordinates change as they move along a path.
+    \item WP12: Meteorological conditions are strictly linked to a specific location and time.
+    \item WP13: Bikers actively observe and collect information regarding the path as they travel along it. 
 \end{itemize}
 
 
@@ -87,14 +86,20 @@ The system facilitates transparency by allowing any user, registered or not, to 
     \item SP13: A publishable path is a path that has been manually inserted or automatically registered and then confirmed by the owner of the path.
     \item SP14: The system shows bike paths between an origin and a destination specified by the user ordered by their score, if they exist.
 \end{itemize}
-\newpage
 
 \subsection{Definitions, Acronyms, Abbreviations}
 \subsubsection{Definitions}
+\begin{itemize}
+    \item \textbf{Global Positioning System}: a satellite-based navigation system owned by the U.S. government that uses a constellation of orbiting satellites, ground control stations, and receivers to provide precise positioning, navigation, and timing information.
+    \item \textbf{Accelerometer}: a sensor that measures linear acceleration (changes in velocity over time) along one or more axes.
+    \item \textbf{Gyroscope}: a sensor that measures angular velocity. It detects how fast an object is rotating around a specific axis, which is essential for determining a device's current orientation in space.
+    \item \textbf{Meteorological Service Provider}: is a formal entity that is responsible for the collection, processing, analysis, forecasting, and dissemination of meteorological and related environmental information and services.
+\end{itemize}
 
 \subsubsection{Acronyms}
 \begin{itemize}
     \item \textbf{BPP}: Best Bike Paths
+    \item \textbf{GPS}: Global Positioning System
 \end{itemize}
 
 \subsubsection{Abbreviations}
@@ -102,6 +107,8 @@ The system facilitates transparency by allowing any user, registered or not, to 
     \item \textbf{G}: Goal
     \item \textbf{WP}: World Phenomena
     \item \textbf{SP}: Shared Phenomena
+    \item \textbf{MSP}: Meteorological Service Provider
+
 \end{itemize}
 
 
@@ -127,13 +134,37 @@ documentation:
     \item \textbf{Effort spent}: the time spent by each member of the group to contribute to the realization of this document.
     \item \textbf{References}: reference to documents or tools used for writing this document.
 \end{enumerate}
-
-
+\newpage
 
 \section{OVERALL DESCRIPTION}
 
 \subsection{Product Perspective}
 \subsubsection{Scenarios}
+
+\textbf{Registered user tracks a training session in automated mode} \\
+Registered user RU wants to track a training session and add it to their personal archive. RU enters the BPP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects automated mode. At this point, if the system has not been authorized before, it asks RU to grant it access to the mobile device's GPS, accelerometer and gyroscope. Once the system is able to retrieve this data, it signals RU that it is ready to record the session. RU can now start cycling and BPP will take care of elaborating the incoming flow of data to detect when the activity has started and when it is over and to generate an informative record of the session. Once either the system detects that the activity is over or RU signals it is, the system displays an overview of the navigated path and forces RU to confirm or discard status and obstacle information that it has automatically computed before letting RU save the session. Once the user has checked all the information, the record of the activity, enriched with human readable performance metrics and meteorological information (if it is available), is automatically saved and accessible to RU.
+
+\vspace{0.5cm}
+\noindent
+\textbf{Registered user visualizes a previous training session} \\
+Registered User RU wants to visualize a previous training session. RU enters the BPP platform with their personal email and password and, once they are logged in, they open the menu and access the "View my rides" function. The system then visualizes the log of sessions that RU has recorded and allows them to change the visualization order based on the available data (e.g. chronological order, ordered by the length of the sessions etc.). RU finds the session they wanted to visualize and opens it; the system reacts by displaying the path they have ridden along on the map and the associated performance metrics and meteorological data (if present).
+
+\vspace{0.5cm}
+\noindent
+\textbf{Registered user manually inserts a path} \\
+Registered user RU has cycled along a path and wants to upload it on BPP to make it available to other bikers. RU enters the BPP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects manual mode. The system now allows RU to insert the name of the streets that they have crossed one by one and, at each insertion, it visualizes the street on a map and waits for the user to confirm the address or to correct it. Once RU confirms, the system allows them to select the exact segment of the street that they have ridden along directly on the map and it then shows the result of the selection and waits again for RU's confirmation. Once the street or a segment of it has been correctly selected and confirmed, BPP allows RU to insert information about its status. The reconstruction of the path ends when RU signals they are done. BPP takes care of checking whether the inserted streets actually compose a path and of asking RU to start over with the reconstruction in case they do not. Once the path is validated, RU is shown an overview of it and is given the option to either save the path or discard it. 
+
+\vspace{0.5cm}
+\noindent
+\textbf{Registered user publishes a path} \\
+Registered user RU wants to publish a path to make it available to other users. RU enters the BPP platform with their personal email and password and, once they are logged in, they only have two ways of publishing information: they can either publish an already existent path that is saved on their personal archive or they can create a new one through manual or automated mode and then publish it. In either case, the system will only publish the geographical track of the path, its publication date, RU's username and the status of each street and the obstacles that might appear along it. BPP will also assign it a score that it computes by only using this particular data.
+
+\vspace{0.5cm}
+\noindent
+\textbf{User visualizes a path}\\
+User U wants to find a path that goes from point A to point B. U enters the BPP platform with or without logging in. U then accesses the "Find a path" function from the menu and the system asks them to insert the addresses of their origin and their destination. After each single insertion, BPP visualizes the point on a map and asks U for confirmation or correction. Once both the origin and the destination have been confirmed by U, the system tries to retrieve the existent paths that connect those points. If no suitable path exists, BPP reports an error to U and terminates this workflow; otherwise the system visualizes the best paths, according to their scores, on a map. The number of paths that are shown on the map at the same time is initially set to a default amount that can be modified by U, as far as it does not exceed a fixed upper bound. This upper limit is set by the system in order to achieve a reasonable trade-off between richness and completeness of the information and clearness and neatness of the visualization. U can now select one of the available paths and visualize its details.
+
+
 \subsubsection{Domain Class Diagrams}
 \subsubsection{State Diagrams}
 
