@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
+\usepackage{tabularx}
+\usepackage{float}
 
 % Title definition
 \title{
@@ -169,6 +171,13 @@ User U wants to find a path that goes from point A to point B. U enters the BPP 
 \subsubsection{State Diagrams}
 
 \subsection{Product Functions}
+\begin{enumerate}
+    \item \textbf{Sign Up and Login}: when a user enters the BPP platform, they must be given the choice to login with their personal credentials if they already have an account. If they are not registered yet, they can either sign up or access the platform in guest mode. If the user decides to sign up, BPP collects and verifies the user's email address and asks to create a valid password.
+    \item \textbf{Path registration in automated mode}: this functionality is reserved for registered users who have successfully logged in. This mode is used to track the cycling session of the user and it must begin by asking the user to authorize BPP to access data collected by their mobile device's sensors. After receiving the necessary authorizations, the user must confirm that they want to use automated mode and only at this point the automatic retrieval and elaboration of data coming from the mobile device's GPS, gyroscope and accelerometer can begin. At the end of a session, the system should be able to successfully reconstruct the biker's path to determine when they have started or stopped cycling and when they have run into an obstacle by elaborating the retrieved data.
+    \item \textbf{Path registration in manual mode}: this functionality is reserved for registered users who have successfully logged in.
+    \item \textbf{Private session visualization}: this functionality is reserved for registered users who have successfully logged in.
+    \item \textbf{Path research}
+\end{enumerate}
 
 \subsection{User Characteristics}
 BPP's target users can generally be placed in one of the following user groups: 
@@ -237,7 +246,203 @@ The intended user groups include cyclists with a wide range of physical and sens
 
 \subsection{Functional Requirements}
 \subsubsection{Use Case Diagrams}
+\includegraphics[width=1.1\textwidth]{images/UseCaseDiagram.drawio.png}
+
 \subsubsection{Use Cases}
+\textbf{[UC1] User Registration}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{User Registration} \\
+        \hline
+        \textbf{Actors} & Registered User or Guest User \\
+        \hline
+        \textbf{Entry Condition} & User opens the BBP platform \\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The user presses ``Sign up''. 
+        \vspace{0.2cm}
+        \newline
+        (b) The system requires the user to fill out a form with their personal data.  
+        \vspace{0.2cm}
+        \newline
+        (c) The system checks that the new user's data has not already been registered previously \\
+        \hline
+        \textbf{Exit Condition} & The user has successfully registered to the platform \\
+        \hline
+        \textbf{Exception} & (c) User is already registered on the platform \\
+        \hline
+    \end{tabularx}
+    \caption{User Registration}
+\end{table}
+
+\textbf{[UC2] User Login}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{User Login} \\
+        \hline
+        \textbf{Actors} & Registered User \\
+        \hline
+        \textbf{Entry Condition} & Registered User presses "Sing In" \\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The Registered User inserts their nickname or email. 
+        \vspace{0.2cm}
+        \newline
+        (b) The Registered User inserts their password 
+        \vspace{0.2cm}
+        \newline
+        (c) The system checks the data is correct \\
+        \hline
+        \textbf{Exit Condition} & The user has successfully logged in to the platform \\
+        \hline
+        \textbf{Exception} & (c) Data isn't correct \\
+        \hline
+    \end{tabularx}
+    \caption{User Login}
+\end{table}
+
+\textbf{[UC3] Track a training session in Automated Mode}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{Track a training session in Automated Mode} \\
+        \hline
+        \textbf{Actors} & Registered User and Weather Provider\\
+        \hline
+        \textbf{Entry Condition} & Registered User presses "Track new ride" to start a new ride\\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The Registered User presses "Start" to begin the tracking.
+        \vspace{0.2cm}
+        \newline
+        (b) The system detect the User's position from their mobile device's GPS
+        \vspace{0.2cm}
+        \newline
+        (c)  The system acquires weather data from the external provider.
+        \vspace{0.2cm}
+        \newline
+        (d)  The system starts to keep track of the User's movement.
+        \\
+        \hline
+        \textbf{Exit Condition} & The user presses "Stop" or "Terminate" \\
+        \hline
+    \end{tabularx}
+    \caption{Track a training session in Automated Mode}
+\end{table}
+
+\textbf{[UC4] Insert data of the bike path in Manual Mode}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{Insert data of the bike path in Manual Mode} \\
+        \hline
+        \textbf{Actors} & Registered User \\
+        \hline
+        \textbf{Entry Condition} & Registered User presses "Insert new ride" to register a new bike path traveled\\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The Registered User insert manually all names of the streets travelled
+        \vspace{0.2cm}
+        \newline
+        (b) The Registered User insert the status for each street inserted.
+        \vspace{0.2cm}
+        \newline
+        (c) The system shows a preview of all data inserted.
+        \\
+        \hline
+        \textbf{Exit Condition} & The user presses "Confirm" \\
+        \hline
+    \end{tabularx}
+    \caption{Insert data of the bike path in Manual Mode}
+\end{table}
+
+\textbf{[UC5] Visualize the personal session log}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{Visualize the personal session log} \\
+        \hline
+        \textbf{Actors} & Registered User\\
+        \hline
+        \textbf{Entry Condition} & The User select "My recorded trips"\\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The system shows the session log
+        \\
+        \hline
+        \textbf{Exit Condition} & The user closes the log page \\
+        \hline
+    \end{tabularx}
+    \caption{Visualize the personal session log}
+\end{table}
+
+\textbf{[UC6] Search for a bike path}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{Search for a bike path} \\
+        \hline
+        \textbf{Actors} & Registered User or Guest User\\
+        \hline
+        \textbf{Entry Condition} & The User presses "Search" to find a path\\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The system detect the User's position from their mobile device's GPS
+        \vspace{0.2cm}
+        \newline
+        (b) The User chooses if they wants to use their actual position or another one.
+        \vspace{0.2cm}
+        \newline
+        (c) The User chooses their destination.
+        \vspace{0.2cm}
+        \newline
+        (d) The User visualizes the inventory path they have similar origin and destination 
+        \vspace{0.2cm}
+        \newline
+        (e) The User chooses their favorite path.
+        \\
+        \hline
+        \textbf{Exit Condition} & The user presses "Confirm" or "Exit"\\
+        \hline
+    \end{tabularx}
+    \caption{Search for a bike path}
+\end{table}
+
+\textbf{[UC7] Publication of a path}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{Publication of a path} \\
+        \hline
+        \textbf{Actors} & Registered User\\
+        \hline
+        \textbf{Entry Condition} & The User presses "Public" to make a path available on the public path inventory\\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The system shows the preview of the all collected or inserted data
+        \vspace{0.2cm}
+        \newline
+        (b) The system ask to the Registered User the confirmation of the all data.
+        \\
+        \hline
+        \textbf{Exit Condition} & The user presses "Confirm" or "Exit"\\
+        \hline 
+        \textbf{Exception} & (b) Data isn't correct \\
+        \hline
+    \end{tabularx}
+    \caption{Publication of a path}
+\end{table}
+
+
 \subsubsection{Sequence Diagrams}
 \subsubsection{Requirement Mapping}
 
