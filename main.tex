@@ -1,6 +1,7 @@
 \documentclass{article}
 \usepackage{graphicx} % Required for inserting images
 \usepackage{tabularx}
+\usepackage{xltabular}
 \usepackage{float}
 
 % Title definition
@@ -34,7 +35,7 @@
 \subsection{Purpose}
 The increasing global focus and effort on sustainable mobility and the rising popularity of cycling both as a sport and as a way to navigate around cities have risen new challenges in the everyday life of millions of people. Even if governments are beginning to address the need for new infrastructure for cyclists, the transition is complex and slow and the current infrastructure is often insufficient and outdated. Cyclists often find themselves having to face the danger of unexpected obstacles on their route and of worn-out paths which require maintenance to ensure both safety and navigational efficiency for their daily commutes and training sessions. 
 In order for this transition to happen, local institutions require a structured and scalable mechanism to systematically collect, consolidate and share data about the conditions of paths. This data has to come from the direct experience of a vast and distributed community of cyclists by offering them a platform that is useful and appealing for them, regardless of whether they cycle to train or to commute. \\
-The purpose of Best Bike Paths (BPP) is to provide a comprehensive software platform that is useful for cyclists as it offers an integrated environment where they can track their session and signal criticalities of paths by therefore contributing to the creation and maintenance of a reliable inventory of bike paths, that also local institutions can benefit from.
+The purpose of Best Bike Paths (BBP) is to provide a comprehensive software platform that is useful for cyclists as it offers an integrated environment where they can track their session and signal criticalities of paths by therefore contributing to the creation and maintenance of a reliable inventory of bike paths, that also local institutions can benefit from.
 
 \subsubsection{Goals}
 \begin{itemize}
@@ -46,7 +47,7 @@ The purpose of Best Bike Paths (BPP) is to provide a comprehensive software plat
 \newpage
 
 \subsection{Scope}
-The core function of the BPP system is to provide a comprehensive, community-driven platform to all types of cyclists. 
+The core function of the BBP system is to provide a comprehensive, community-driven platform to all types of cyclists. 
 The system acts as an intermediary, processing heterogeneous data inputs from various sources, including external providers, and synthesizing this information to generate reliable output for all users. The users who can interact with the platform are: registered users who provide data by tracking their trips and unregistered users who can only browse and search for paths. \\
 The system offers its users a dual mode of use which addresses two different kinds of needs: tracking cycling sessions and both adding and accessing directly acquired information about the status of bike paths. The availability of these modes of use depends on the category the user belongs to. \\
 The first mode of use is reserved to registered users and it serves as a way to keep a private log of their training sessions and to obtain and store personal performance metrics for each session, together with meteorological information retrieved from external sources, when it is available. \\ The second mode is for both registered and external users and it allows them to access an active inventory of paths which can be visualized on a map and which contain information about their status and their effectiveness. \\ These two modes are completely independent and only have one point of contact: registered users who have tracked a cycling session can decide to publish only the geographical tracking of the path they have ridden along and two types of information about it: an indication of its status and a specification of whether relevant obstacles are present along the way. \\
@@ -68,6 +69,7 @@ Data publication by registered users is allowed in only two distinct modes: \tex
     \item WP11: The bikers’ coordinates change as they move along a path.
     \item WP12: Meteorological conditions are strictly linked to a specific location and time.
     \item WP13: Bikers actively observe and collect information regarding the path as they travel along it. 
+    \item WP14: In the lifetime of a street, new obstacles can appear and old ones can be removed along it.
 \end{itemize}
 
 
@@ -95,13 +97,17 @@ Data publication by registered users is allowed in only two distinct modes: \tex
     \item \textbf{Global Positioning System}: a satellite-based navigation system owned by the U.S. government that uses a constellation of orbiting satellites, ground control stations, and receivers to provide precise positioning, navigation, and timing information.
     \item \textbf{Accelerometer}: a sensor that measures linear acceleration (changes in velocity over time) along one or more axes.
     \item \textbf{Gyroscope}: a sensor that measures angular velocity. It detects how fast an object is rotating around a specific axis, which is essential for determining a device's current orientation in space.
-    \item \textbf{Meteorological Service Provider}: is a formal entity that is responsible for the collection, processing, analysis, forecasting, and dissemination of meteorological and related environmental information and services.
+    \item \textbf{Meteorological Service Provider}: a formal entity that is responsible for the collection, processing, analysis, forecasting, and dissemination of meteorological and related environmental information and services.
+    \item \textbf{Map Service Provider}: a formal entity that provides geospatial infrastructure, data, and rendering capabilities to software applications. It manages the acquisition, storage, and processing of raw Geographic Information Systems (GIS) data such as satellite imagery, vector topology, and traffic signals, allowing client applications to request processed map assets and perform spatial calculations on demand, without maintaining a proprietary geospatial backend.
 \end{itemize}
 
 \subsubsection{Acronyms}
 \begin{itemize}
-    \item \textbf{BPP}: Best Bike Paths
+    \item \textbf{BBP}: Best Bike Paths
     \item \textbf{GPS}: Global Positioning System
+    \item \textbf{GDPR}: General Data Protection Regulation
+    \item \textbf{API}: Application Programming Interface
+    \item \textbf{OS}: Operating System
 \end{itemize}
 
 \subsubsection{Abbreviations}
@@ -110,6 +116,7 @@ Data publication by registered users is allowed in only two distinct modes: \tex
     \item \textbf{WP}: World Phenomena
     \item \textbf{SP}: Shared Phenomena
     \item \textbf{MSP}: Meteorological Service Provider
+    \item \textbf{RU}: Registered User
 
 \end{itemize}
 
@@ -144,49 +151,82 @@ documentation:
 \subsubsection{Scenarios}
 
 \textbf{Registered user tracks a training session in automated mode} \\
-Registered user RU wants to track a training session and add it to their personal archive. RU enters the BPP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects automated mode. At this point, if the system has not been authorized before, it asks RU to grant it access to the mobile device's GPS, accelerometer and gyroscope. Once the system is able to retrieve this data, it signals RU that it is ready to record the session. RU can now start cycling and BPP will take care of elaborating the incoming flow of data to detect when the activity has started and when it is over and to generate an informative record of the session. Once either the system detects that the activity is over or RU signals it is, the system displays an overview of the navigated path and forces RU to confirm or discard status and obstacle information that it has automatically computed before letting RU save the session. Once the user has checked all the information, the record of the activity, enriched with human readable performance metrics and meteorological information (if it is available), is automatically saved and accessible to RU.
+Registered user RU wants to track a training session and add it to their personal archive. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects automated mode. At this point, if the system has not been authorized before, it asks RU to grant it access to the mobile device's GPS, accelerometer and gyroscope. Once the system is able to retrieve this data, it signals RU that it is ready to record the session. RU can now start cycling and BBP will take care of elaborating the incoming flow of data to detect when the activity has started and when it is over and to generate an informative record of the session. Once either the system detects that the activity is over or RU signals it is, the system displays an overview of the navigated path and forces RU to confirm or discard status and obstacle information that it has automatically computed before letting RU save the session. Once the user has checked all the information, the record of the activity, enriched with human readable performance metrics and meteorological information (if it is available), is automatically saved and accessible to RU.
 
 \vspace{0.5cm}
 \noindent
 \textbf{Registered user visualizes a previous training session} \\
-Registered User RU wants to visualize a previous training session. RU enters the BPP platform with their personal email and password and, once they are logged in, they open the menu and access the "View my rides" function. The system then visualizes the log of sessions that RU has recorded and allows them to change the visualization order based on the available data (e.g. chronological order, ordered by the length of the sessions etc.). RU finds the session they wanted to visualize and opens it; the system reacts by displaying the path they have ridden along on the map and the associated performance metrics and meteorological data (if present).
+Registered User RU wants to visualize a previous training session. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "View my rides" function. The system then visualizes the log of sessions that RU has recorded and allows them to change the visualization order based on the available data (e.g. chronological order, ordered by the length of the sessions etc.). RU finds the session they wanted to visualize and opens it; the system reacts by displaying the path they have ridden along on the map and the associated performance metrics and meteorological data (if present).
 
 \vspace{0.5cm}
 \noindent
 \textbf{Registered user manually inserts a path} \\
-Registered user RU has cycled along a path and wants to upload it on BPP to make it available to other bikers. RU enters the BPP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects manual mode. The system now allows RU to insert the name of the streets that they have crossed one by one and, at each insertion, it visualizes the street on a map and waits for the user to confirm the address or to correct it. Once RU confirms, the system allows them to select the exact segment of the street that they have ridden along directly on the map and it then shows the result of the selection and waits again for RU's confirmation. Once the street or a segment of it has been correctly selected and confirmed, BPP allows RU to insert information about its status. The reconstruction of the path ends when RU signals they are done. BPP takes care of checking whether the inserted streets actually compose a path and of asking RU to start over with the reconstruction in case they do not. Once the path is validated, RU is shown an overview of it and is given the option to either save the path or discard it. 
+Registered user RU has cycled along a path and wants to upload it on BBP to make it available to other bikers. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects manual mode. The system now allows RU to insert the name of the streets that they have crossed one by one and, at each insertion, it visualizes the street on a map and waits for the user to confirm the address or to correct it. Once RU confirms, the system allows them to select the exact segment of the street that they have ridden along directly on the map and it then shows the result of the selection and waits again for RU's confirmation. Once the street or a segment of it has been correctly selected and confirmed, BBP allows RU to insert information about its status. The reconstruction of the path ends when RU signals they are done. BBP takes care of checking whether the inserted streets actually compose a path and of asking RU to start over with the reconstruction in case they do not. Once the path is validated, RU is shown an overview of it and is given the option to either save the path or discard it. 
 
 \vspace{0.5cm}
 \noindent
 \textbf{Registered user publishes a path} \\
-Registered user RU wants to publish a path to make it available to other users. RU enters the BPP platform with their personal email and password and, once they are logged in, they only have two ways of publishing information: they can either publish an already existent path that is saved on their personal archive or they can create a new one through manual or automated mode and then publish it. In either case, the system will only publish the geographical track of the path, its publication date, RU's username and the status of each street and the obstacles that might appear along it. BPP will also assign it a score that it computes by only using this particular data.
+Registered user RU wants to publish a path to make it available to other users. RU enters the BBP platform with their personal email and password and, once they are logged in, they only have two ways of publishing information: they can either publish an already existent path that is saved on their personal archive or they can create a new one through manual or automated mode and then publish it. In either case, the system will only publish the geographical track of the path, its publication date, RU's username and the status of each street and the obstacles that might appear along it. BBP will also assign it a score that it computes by only using this particular data.
 
 \vspace{0.5cm}
 \noindent
 \textbf{User visualizes a path}\\
-User U wants to find a path that goes from point A to point B. U enters the BPP platform with or without logging in. U then accesses the "Find a path" function from the menu and the system asks them to insert the addresses of their origin and their destination. After each single insertion, BPP visualizes the point on a map and asks U for confirmation or correction. Once both the origin and the destination have been confirmed by U, the system tries to retrieve the existent paths that connect those points. If no suitable path exists, BPP reports an error to U and terminates this workflow; otherwise the system visualizes the best paths, according to their scores, on a map. The number of paths that are shown on the map at the same time is initially set to a default amount that can be modified by U, as far as it does not exceed a fixed upper bound. This upper limit is set by the system in order to achieve a reasonable trade-off between richness and completeness of the information and clearness and neatness of the visualization. U can now select one of the available paths and visualize its details.
+User U wants to find a path that goes from point A to point B. U enters the BBP platform with or without logging in. U then accesses the "Find a path" function from the menu and the system asks them to insert the addresses of their origin and their destination. After each single insertion, BBP visualizes the point on a map and asks U for confirmation or correction. Once both the origin and the destination have been confirmed by U, the system tries to retrieve the existent paths that connect those points. If no suitable path exists, BBP reports an error to U and terminates this workflow; otherwise the system visualizes the best paths, according to their scores, on a map. The number of paths that are shown on the map at the same time is initially set to a default amount that can be modified by U, as far as it does not exceed a fixed upper bound. This upper limit is set by the system in order to achieve a reasonable trade-off between richness and completeness of the information and clearness and neatness of the visualization. U can now select one of the available paths and visualize its details.
 
 
 \subsubsection{Domain Class Diagrams}
-\subsubsection{State Diagrams}
+This domain class diagram shows how the entities that are relevant in the domain can be modeled in our system and how the relationships between them could look like. Note that the relationship with the external providers (Map Service Provider and Meteorological Service Provider) and the retrieval of data from the device's sensors (GPS, accelerometer and gyroscope) are not modeled as they are indeed external entities which are simply used as a source of data.
 
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/BBP.png}}
+
+
+\newpage
+\subsubsection{State Diagrams}
+The following state machine diagrams have the goal of capturing the behavior of the instances of the main classes that are in the domain class diagram by showing the different status in which they can exist within the system. 
+
+\vspace{0.5cm}
+\noindent
+\textbf{BikePath lifecycle}\\
+This diagram shows the lifecycle of a bike path that can be created in either manual or automated mode. Depending on the mode, the flow is different until the publication status, where the two flows collide again. 
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.5\textwidth]{images/pathLifecycle.png}}
+
+\vspace{1cm}
+
+\noindent
+\textbf{Record lifecycle}\\
+This diagram shows the lifecycle of a record, which stores the user's performance metrics and can contain meteorological information.
+
+\vspace{2cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.5\textwidth]{images/recordLifecycle.png}}
+
+\newpage
+\noindent
+\textbf{User lifecycle}\\
+This diagram shows the lifecycle of both registered and unregistered users when they enter the BBP platform. 
+
+\vspace{2cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.5\textwidth]{images/userLifecycle.png}}
+
+\newpage
 \subsection{Product Functions}
 \begin{enumerate}
-    \item \textbf{Sign Up and Login}: when a user enters the BPP platform, they must be given the choice to login with their personal credentials if they already have an account. If they are not registered yet, they can either sign up or access the platform in guest mode. If the user decides to sign up, BPP collects and verifies the user's email address and asks to create a valid password.
-    \item \textbf{Path registration in automated mode}: this functionality is reserved for registered users who have successfully logged in. This mode is used to track the cycling session of the user and it must begin by asking the user to authorize BPP to access data collected by their mobile device's sensors. After receiving the necessary authorizations, the user must confirm that they want to use automated mode and only at this point the automatic retrieval and elaboration of data coming from the mobile device's GPS, gyroscope and accelerometer can begin. At the end of a session, the system should be able to successfully reconstruct the biker's path to determine when they have started or stopped cycling and when they have run into an obstacle by elaborating the retrieved data.
-    \item \textbf{Path registration in manual mode}: this functionality is reserved for registered users who have successfully logged in.
-    \item \textbf{Private session visualization}: this functionality is reserved for registered users who have successfully logged in.
-    \item \textbf{Path research}
+    \item \textbf{Sign Up and Login}: when a user enters the BBP platform, they must be given the choice to login with their personal credentials if they already have an account. If they are not registered yet, they can either sign up or access the platform in guest mode. If the user decides to sign up, BBP collects and verifies the user's email address and asks to create a valid password.
+    \item \textbf{Path registration in automated mode and possible publication}: this functionality is reserved for registered users who have successfully logged in. This mode is used to track the cycling session of the user and it must begin by asking the user to authorize BBP to access data collected by their mobile device's sensors. After receiving the necessary authorizations, the user must confirm that they want to use automated mode and only at this point the automatic retrieval and elaboration of data coming from the mobile device's GPS, gyroscope and accelerometer can begin. At the end of a session, the system should be able to successfully reconstruct the biker's path to determine when they have started or stopped cycling and when they have run into an obstacle by elaborating the retrieved data. The same data is also used to compute specific performance metrics (total distance, average speed, maximum speed, elevation gain, moving time and cadence). Once the elaboration is over, the system saves the session in the user's private log and immediately asks them if they want to publish it or just save it. In both cases, the system starts a guided process in which the user is asked to confirm the automatically calculated status of the streets and the presence of obstacles. At the end of the confirmation process, according to what the user chose to do, the system either shows a preview and allows them to publish the path or it shows the user the path in their private log.
+    \item \textbf{Path registration and publication in manual mode}: this functionality is reserved for registered users who have successfully logged in. This mode is used to create and publish a path without relying on automatically retrieved data. To manually insert a path, the user is guided in inserting one by one the name of the streets that compose the path they have ridden along and their status. The insertion is performed by identifying the name of the street and visualizing it on a map and then asking the user to select the segment of the street that they have ridden along (in case the user does not specify anything, the segment corresponds to the whole street by default). For the insertion of the first street, in case a street with that name exists in different cities, the system shows the different option on a menu and waits for the user to select the correct one. The system keeps track of the city that has been specified and the beginning and performs a more restricted search for the following insertions. At each step, the system internally checks the validity of the user selection and, in case it detects an error (e.g. the selected street is not connected to the previous one), it asks them again for the name of the street and for the selection on the map. If the insertion goes well, the system also asks the user to rate the status of the path by choosing within a range of possible adjectives. At the end of the insertion process, the geographical accuracy of the path is checked again by BBP and, if the path is correct, a final user confirmation is needed to publish it. Note that correct paths that are not published by the user shall be discarded.
+    \item \textbf{Private session visualization}: this functionality is reserved for registered users who have successfully logged in and it allows them to access the log of the paths that they have previously registered with automated mode. If the user who is the owner of a path has published that path, their associated performance metrics remain private and they are visible only in the user's personal log. If the path has not been published, the visibility of the performance metrics is the same as the previous case, but also the geographical reconstruction of the path, its status and the presence of obstacles remain private. In case the user has ridden along the same exact path multiple times, the system stores all the different records that contain the performance metrics associated to that path and makes them visible to the owner.
+    \item \textbf{Path research}: this functionality is open to all users (registered or not) and it allows them to find existent paths between a specified origin and destination. When users access this functionality, they are asked and guided in inserting their starting and ending points. The system then takes care of browsing along all the published paths that exist and that suit the user's request and it then shows them on the map in an ordered manner, according to a calculated score. If no path exists, an error message is shown to the user. For existing paths, their score is obtained by subtracting a predefined number of points from an established maximum possible score for each obstacle (according to a measure of relevance) and for the streets' status. In case there are multiple suitable paths, the system visualizes a limited amount of them on the map. This amount can be modified by the user while staying in a predefined range. Note that paths are considered suitable for the user's query if their point of origin and destination match the user's specification with a certain degree of accuracy. This accuracy (radius expressed in meters) can be modified by the user and is set to 500 meters by default. If the user finds a path that they like, they can open it and visualize it in detail. If the wish, they can export it to a commercial maps app and receive real time navigation.
 \end{enumerate}
 
 \subsection{User Characteristics}
-BPP's target users can generally be placed in one of the following user groups: 
+BBP's target users can generally be placed in one of the following user groups: 
 \begin{itemize}
     \item \textbf{Amateur bikers}: these are more experienced bikers whose main purpose when cycling is training. 
     \item \textbf{Commuters and beginner bikers}: these users cycle mainly as a way to move around the city in their daily life (e.g. daily commute to the work place/university etc.).
     \item \textbf{Casual users}: these are users who are not interested in giving their active contribution; they just want to browse around and might want to access specific information.
 \end{itemize}
-These different categories of users use the platform for very different reasons and purposes, which means that they will likely be more interested in exploiting certain functionalities more than others. Here is a more detailed categorization of the user groups that have only been briefly defined above. Note that we will not go into details for the casual users who are not intended to be direct stakeholders for BPP.
+These different categories of users use the platform for very different reasons and purposes, which means that they will likely be more interested in exploiting certain functionalities more than others. Here is a more detailed categorization of the user groups that have only been briefly defined above. Note that we will not go into details for the casual users who are not intended to be direct stakeholders for BBP.
 
 \subsubsection{Amateur bikers}
 \textbf{Users profile}\\
@@ -200,7 +240,7 @@ The general educational level of these individuals is not relevant to the use of
 \vspace{0.5cm}
 \noindent
 \textbf{Experience with the system}\\
-These users will likely use BPP almost on a daily basis, therefore, after overcoming the initial learning curve, they are expected to be proficient in the use of the platform and to maintain that proficiency overtime. 
+These users will likely use BBP almost on a daily basis, therefore, after overcoming the initial learning curve, they are expected to be proficient in the use of the platform and to maintain that proficiency overtime. 
 
 \vspace{0.5cm}
 \noindent
@@ -220,7 +260,7 @@ The general educational level of these individuals is not relevant to the use of
 \vspace{0.5cm}
 \noindent
 \textbf{Experience with the system}\\
-These users will likely not use BPP on a daily basis which might slow down the process to become proficient.
+These users will likely not use BBP on a daily basis which might slow down the process to become proficient.
 
 \vspace{0.5cm}
 \noindent
@@ -230,23 +270,144 @@ These users do not generally have any specific technical expertise beyond the da
 \subsubsection{Note on disabilities}
 The intended user groups include cyclists with a wide range of physical and sensory capabilities. The user population is expected to include individuals with audio and visual impairments, specifically color vision deficiencies (CVD) and reduced visual acuity. Furthermore, users may possess motor control limitations, either as permanent physical conditions or as situational constraints induced by the wearing of protective gear (e.g., thick gloves) and the vibration inherent to the cycling environment. These characteristics necessitate accommodations in the subsequent requirements regarding interface contrast, tactile feedback, and audio volume levels.
 
-
-
 \subsection{Assumptions, Dependencies and Constraints}
 
+\subsection{Domain assumptions}
+\begin{itemize}
+    \item DA1: The GPS, accelerometer and gyroscope of the biker's mobile device are functioning and they are able to provide data continuously.
+    \item DA2: Bikers do not lie by providing invented information about paths they have not ridden along.
+    \item DA3: Bikers provide true personal information if they register to the platform.
+    \item DA4: Given two different paths, they are considered to have the same origin and destination if these two points in the two paths are within an acceptable distance radius from one another. 
+    \item DA5: The meteorological information is actually relevant to the time and location of the biker.
+    \item DA6: Bikers do not lie by signaling the presence of obstacles that are not there.
+    \item DA7: Information provided by different bikers is considered mergeable if it regards the same street.
+\end{itemize}
+
+\subsection{Dependencies} %Dipendenze da servizi e/o fattori esterni
+\begin{itemize}
+    \item D1: The reconstruction of a path from GPS data and every other functionality that needs a geospatial infrastructure is possible through an external Map Service Provider.
+    \item D2: Given a street, its speed limit or the average number of cars that travel along it is always a retrievable datum from the Map Service Provider.
+    \item D3: Meteorological information is retrievable from an external MSP.
+\end{itemize}
 
 
 
+\subsection{Constraints} % Vincoli dati da condizioni esterne 
+\begin{itemize}
+    \item C1: Bikers are unable to use their hands to interact with the device while they cycle.
+    \item C2: Bikers cannot safely look at their mobile device's screen while they cycle.
+    \item C3: The environment around the biker could be too loud to allow them to hear audio coming from their mobile device.
+    \item C4: Meteorological conditions might force the biker to have to put their mobile device away mid session to protect it.
+    \item C5: Bikers might not own a proper support to mount their mobile device on the bike, therefore sensors readings might be particularly noisy.
+    \item C6: Continuous GPS tracking significantly drains the mobile device battery.
+    \item C7: Mobile device capabilities (quality of sensors, OS version, processor speed etc.) vary widely across the target user base.
+\end{itemize}
+
+\subsubsection{Policy and regulation constraints}
+\begin{itemize}
+    \item P\&R1: Adherence to fundamental road safety principles requires that the platform minimizes user workload and cognitive distraction to ensure safe operation of the bicycle.
+    \item P\&R2: In compliance with GDPR, all collected data must be anonymized and protected against unauthorized access and disclosure.
+    \item P\&R3: The platform shall provide support for all official languages, units of measure, and time formats for the target markets, ensuring compliance with multilingual support laws where required.
+    \item P\&R4: The app shall adhere to all licensing terms and conditions for any embedded third-party software, including open-source libraries and commercial mapping APIs, and provide legally required copyright notices and attribution.
+\end{itemize}
+
+\newpage
 \section{SPECIFIC REQUIREMENTS}
 \subsection{External Interface Requirements}
 \subsubsection{User Interfaces}
 \subsubsection{Hardware Interfaces}
+The BBP software is designed to operate on standard smartphone devices. To execute its required functions, the application must interface with the following hardware components hosted on the user's device:
+
+\begin{itemize}
+    \item \textbf{GPS receiver}: the mobile application shall interface with the device's GPS receiver to retrieve real time geolocation data (latitude, longitude, and speed) for path reconstruction.
+    \item \textbf{Accelerometer and gyroscope}: the application shall interface with the device's on board accelerometer and gyroscope sensors to detect vertical acceleration and orientation changes indicative of road irregularities (e.g., potholes).
+    \item \textbf{Network interface}: the system shall utilize the mobile device’s wireless communication hardware (Cellular Data or Wi-Fi) to synchronize data with the central server and retrieve meteorological data from the MSP.
+\end{itemize}
+
 \subsubsection{Software Interfaces}
+The BBP system requires specific software interfaces to support data acquisition, storage, and visualization. The following subsections describe the external libraries, APIs, operating systems, and database management systems that the BBP application must interface with to function correctly:
+
+\begin{itemize}
+    \item \textbf{MSP}: the system shall interface with a third party meteorological service to retrieve weather conditions, temperature, and wind speed to enrich recorded trip data with historical or real time weather context. BPP shall provide geolocation coordinates and a timestamp; the service shall return weather metrics in a standard format (e.g. JSON).
+    \item \textbf{Map Service Provider}: The system shall interface with an external mapping provider (e.g. Google Maps API or OpenStreetMap) to geographically reconstruct and visualize paths from the GPS data. The system shall request map tiles, map matching and rendering services to display the reconstructed path and to identify markers for potholes or obstacles.
+    \item \textbf{Database Management System (DBMS)}: the system shall utilize a relational or NoSQL database system to store registered user accounts, session records, bike path inventories, and statistical data. The backend system shall communicate with the DBMS using standard query languages (e.g. SQL) to perform Create, Read, Update, Delete (CRUD) operations.
+    \item \textbf{Mobile Operating System}: the mobile application shall interface with the host Operating System (e.g. Android, iOS) to acquire sensor data (accelerometer, gyroscope) and GPS information from the hardware abstraction layer.
+\end{itemize}
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/contextDiagram.png}}
+
 \subsubsection{Communication Interfaces}
+This section specifies the communication protocols and standards required for data exchange between the BBP mobile application, the backend server, and external third-party services.
+\begin{enumerate}
+    \item \textbf{Communication Protocols}:
+    \begin{itemize}
+        \item \textbf{Client Server Interaction}: the mobile application shall communicate with the BBP backend server over the Internet using HTTPS (Hypertext Transfer Protocol Secure). This ensures that all sensitive data is encrypted during transmission.
+        \item \textbf{Transport Layer}: all application-level data exchange shall occur over TCP/IP (Transmission Control Protocol/Internet Protocol) to ensure reliable delivery of trip segments and sensor data.
+    \end{itemize}
+    \item \textbf{Data Exchange Formats}:
+    \begin{itemize}
+        \item \textbf{API Payload}: data transferred between the mobile application and the server shall be serialized using JSON (JavaScript Object Notation) to ensure lightweight and efficient parsing on mobile devices.
+        \item \textbf{External Services}: requests to the MSP shall adhere to the specific API standards provided by the vendor.
+    \end{itemize}
+    \item \textbf{Synchronization and Connectivity}
+    \begin{itemize}
+        \item \textbf{Asynchronous Transfer}: the system shall support asynchronous communication to allow trip data recording to continue locally on the device when network connectivity (Wi-Fi or Cellular) is unavailable, with synchronization occurring once connectivity is restored.
+    \end{itemize}
+\end{enumerate}
 
 \subsection{Functional Requirements}
+
+\textbf{ACCESS AND USERS MANAGEMENT}
+\begin{itemize}
+\item R1: BBP system allows users to create an account.
+\item R2: BBP system must distinguish and manage authorization for registered and not registered users.
+\end{itemize}
+
+\noindent
+\textbf{DATA ACQUISITION AND VALIDATION} 
+\begin{itemize}
+\item R3: BBP system shall enable a RU to initiate a trip tracking session.
+\item R4: BBP system shall enable a RU to pause a trip tracking session.
+\item R5: BBP system shall enable a RU to terminate a trip tracking session. 
+\item R6: BBP system shall collect data from the mobile device’s GPS, gyroscope and accelerometer.
+\item R7: BBP system shall geographically reconstruct the path that the user has ridden along from the GPS data that has been acquired in automated mode.
+\item R8: BBP system shall use the data that has been acquired in automated mode to signal the possible presence of obstacles.
+\item R9: In automated mode, BBP system shall monitor the biker’s speed to detect the start, pause and end of the activity.  
+\end{itemize}
+
+\noindent
+\textbf{DATA MANAGEMENT AND PUBLICATION}
+\begin{itemize}
+\item R10: BBP system shall retrieve meteorological information from an external provider.
+\item R11: BBP system shall receive a manual confirmation from the user before publishing data that has been acquired in automated mode.
+\item R12: BBP system shall allow the RU to correct automatically identified data before publication.
+\item R13: In manual mode, BBP system shall retrieve and validate the names and status of the streets that form the path that the RU has ridden along.
+\item R14: BBP system shall publish the data that is manually submitted.
+\item R15: BBP system shall keep a private log of tracked sessions for each RU that is only accessible from that user.
+\end{itemize}
+
+\noindent
+\textbf{INFORMATION METRICS AND PATH SCORING}
+\begin{itemize}
+\item R16: BBP system shall compute and store the following performance metrics for a completed session: total distance covered, average speed, maximum speed, elevation gain, moving time and cadence.
+\item R17: for each published path, BBP system shall calculate the path's score.
+\item R18: the score of a path is computed by subtracting from the established maximum possible score a predefined number of points that depends on the individual streets' status and the relevance of the obstacles.
+\item R19: BBP system shall display paths that match the user's request in order of score.
+\end{itemize}
+
+\noindent
+\textbf{BROWSING AND MERGING}
+\begin{itemize}
+\item R20: BBP system shall display the existing paths whose origin and destination are within a predefined radius from the ones specified by the user.
+\item R21: BBP system shall allow registered users to edit the accuracy radius within a certain range for their path queries.
+\item R22: BBP system shall allow users to view all currently published path data, including their score.
+\item R23: if multiple registered users have inserted information about the same street in different paths, BBP system shall internally merge the information and only show the result of the merge.
+\item R24: the information merge performed by BBP shall consist of a computation that uses all the existing status values for the same streets and the insertion dates of the paths those streets are associated to.
+\end{itemize}
+
 \subsubsection{Use Case Diagrams}
-\includegraphics[width=1.1\textwidth]{images/UseCaseDiagram.drawio.png}
+\includegraphics[width=1\textwidth ]{images/UseCaseDiagram.drawio.png}
 
 \subsubsection{Use Cases}
 \textbf{[UC1] User Registration}
@@ -256,7 +417,7 @@ The intended user groups include cyclists with a wide range of physical and sens
         \hline
         \textbf{Name} & \textbf{User Registration} \\
         \hline
-        \textbf{Actors} & Registered User or Guest User \\
+        \textbf{Actors} & Unregistered User \\
         \hline
         \textbf{Entry Condition} & User opens the BBP platform \\
         \hline
@@ -286,20 +447,23 @@ The intended user groups include cyclists with a wide range of physical and sens
         \hline
         \textbf{Actors} & Registered User \\
         \hline
-        \textbf{Entry Condition} & Registered User presses "Sing In" \\
+        \textbf{Entry Condition} & Registered User opens the BBP platform \\
         \hline
         \textbf{Event Flow} & 
-        (a) The Registered User inserts their nickname or email. 
+        (a) The Registered User presses "Sign In"
         \vspace{0.2cm}
         \newline
-        (b) The Registered User inserts their password 
+        (b) The Registered User inserts their nickname or email. 
         \vspace{0.2cm}
         \newline
-        (c) The system checks the data is correct \\
+        (c) The Registered User inserts their password 
+        \vspace{0.2cm}
+        \newline
+        (d) The system checks the data is correct \\
         \hline
         \textbf{Exit Condition} & The user has successfully logged in to the platform \\
         \hline
-        \textbf{Exception} & (c) Data isn't correct \\
+        \textbf{Exception} & (d) Data is not correct \\
         \hline
     \end{tabularx}
     \caption{User Login}
@@ -312,7 +476,7 @@ The intended user groups include cyclists with a wide range of physical and sens
         \hline
         \textbf{Name} & \textbf{Track a training session in Automated Mode} \\
         \hline
-        \textbf{Actors} & Registered User and Weather Provider\\
+        \textbf{Actors} & Registered User, Meteorological Service Provider and Map Service Provider\\
         \hline
         \textbf{Entry Condition} & Registered User presses "Track new ride" to start a new ride\\
         \hline
@@ -323,13 +487,19 @@ The intended user groups include cyclists with a wide range of physical and sens
         (b) The system detect the User's position from their mobile device's GPS
         \vspace{0.2cm}
         \newline
-        (c)  The system acquires weather data from the external provider.
+        (c)  The system starts to keep track of the User's movement.
         \vspace{0.2cm}
         \newline
-        (d)  The system starts to keep track of the User's movement.
+        (d) The system detects the end of the activity or the RU presses "Stop"
+        \vspace{0.2cm}
+        \newline
+        (e) The system elaborates the retrieved data and shows a preview of the path to RU and waits for their validation
+        \vspace{0.2cm}
+        \newline
+        (f) The RU checks and corrects status and obstacles data
         \\
         \hline
-        \textbf{Exit Condition} & The user presses "Stop" or "Terminate" \\
+        \textbf{Exit Condition} & The RU presses "Save" or "Discard" \\
         \hline
     \end{tabularx}
     \caption{Track a training session in Automated Mode}
@@ -342,45 +512,51 @@ The intended user groups include cyclists with a wide range of physical and sens
         \hline
         \textbf{Name} & \textbf{Insert data of the bike path in Manual Mode} \\
         \hline
-        \textbf{Actors} & Registered User \\
+        \textbf{Actors} & Registered User and Map Service Provider\\
         \hline
-        \textbf{Entry Condition} & Registered User presses "Insert new ride" to register a new bike path traveled\\
+        \textbf{Entry Condition} & Registered User presses "Insert new ride" to manually register a new bike path.\\
         \hline
         \textbf{Event Flow} & 
-        (a) The Registered User insert manually all names of the streets travelled
+        (a) The Registered User inserts the names and status of the streets that composed the path in order.
         \vspace{0.2cm}
         \newline
-        (b) The Registered User insert the status for each street inserted.
+        (b) The system checks that the streets exist and form a path, in the given order.
         \vspace{0.2cm}
         \newline
-        (c) The system shows a preview of all data inserted.
+        (c) The system shows a preview of the created path.
         \\
         \hline
-        \textbf{Exit Condition} & The user presses "Confirm" \\
+        \textbf{Exit Condition} & The user presses "Publish" or "Discard" \\
         \hline
     \end{tabularx}
     \caption{Insert data of the bike path in Manual Mode}
 \end{table}
 
-\textbf{[UC5] Visualize the personal session log}
+\textbf{[UC5] Visualize a session in the personal sessions log}
 \begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{|l|X|}
         \hline
-        \textbf{Name} & \textbf{Visualize the personal session log} \\
+        \textbf{Name} & \textbf{Visualize a session in the personal sessions log} \\
         \hline
         \textbf{Actors} & Registered User\\
         \hline
-        \textbf{Entry Condition} & The User select "My recorded trips"\\
+        \textbf{Entry Condition} & The RU selects "My recorded trips"\\
         \hline
         \textbf{Event Flow} & 
-        (a) The system shows the session log
+        (a) The system shows the sessions log
+        \vspace{0.2cm}
+        \newline
+        (b) The RU finds the session they are interested in and selects it.
+        \vspace{0.2cm}
+        \newline
+        (c) The system shows the details of the selected sessions.
         \\
         \hline
-        \textbf{Exit Condition} & The user closes the log page \\
+        \textbf{Exit Condition} & The RU presses "Exit" \\
         \hline
     \end{tabularx}
-    \caption{Visualize the personal session log}
+    \caption{Visualize a session in the personal sessions log}
 \end{table}
 
 \textbf{[UC6] Search for a bike path}
@@ -390,7 +566,7 @@ The intended user groups include cyclists with a wide range of physical and sens
         \hline
         \textbf{Name} & \textbf{Search for a bike path} \\
         \hline
-        \textbf{Actors} & Registered User or Guest User\\
+        \textbf{Actors} & Registered User or Unregistered User\\
         \hline
         \textbf{Entry Condition} & The User presses "Search" to find a path\\
         \hline
@@ -398,25 +574,47 @@ The intended user groups include cyclists with a wide range of physical and sens
         (a) The system detect the User's position from their mobile device's GPS
         \vspace{0.2cm}
         \newline
-        (b) The User chooses if they wants to use their actual position or another one.
+        (b) The User chooses if they want to use the detected position or another one.
         \vspace{0.2cm}
         \newline
         (c) The User chooses their destination.
         \vspace{0.2cm}
         \newline
-        (d) The User visualizes the inventory path they have similar origin and destination 
+        (d) The system shows a selection of published paths that match the User's desired origin and destination. 
         \vspace{0.2cm}
         \newline
-        (e) The User chooses their favorite path.
+        (e) The User chooses their desired path.
         \\
         \hline
-        \textbf{Exit Condition} & The user presses "Confirm" or "Exit"\\
+        \textbf{Exit Condition} & The user presses "View" or "Exit"\\
         \hline
     \end{tabularx}
     \caption{Search for a bike path}
 \end{table}
 
-\textbf{[UC7] Publication of a path}
+\textbf{[UC7] Visualization of a path}
+\begin{table}[H]
+    \centering
+    \begin{tabularx}{\textwidth}{|l|X|}
+        \hline
+        \textbf{Name} & \textbf{Visualization of a path} \\
+        \hline
+        \textbf{Actors} & Registered User or Unregistered User\\
+        \hline
+        \textbf{Entry Condition} & The User has performed a path search and the BBP system has provided a selection of published paths that match their query. The User has then selected a specific path and pressed "View".\\
+        \hline
+        \textbf{Event Flow} & 
+        (a) The system shows the details of the selected path.
+        \\
+        \hline
+        \textbf{Exit Condition} & The user presses "Exit"\\
+        \hline
+
+    \end{tabularx}
+    \caption{Visualization of a path}
+\end{table}
+
+\textbf{[UC8] Publication of a path}
 \begin{table}[H]
     \centering
     \begin{tabularx}{\textwidth}{|l|X|}
@@ -425,26 +623,179 @@ The intended user groups include cyclists with a wide range of physical and sens
         \hline
         \textbf{Actors} & Registered User\\
         \hline
-        \textbf{Entry Condition} & The User presses "Public" to make a path available on the public path inventory\\
+        \textbf{Entry Condition} & The RU presses "Publish" to make a path available on the public paths inventory.\\
         \hline
         \textbf{Event Flow} & 
-        (a) The system shows the preview of the all collected or inserted data
+        (a) The system shows a preview of the path and its related publishable data.
         \vspace{0.2cm}
         \newline
-        (b) The system ask to the Registered User the confirmation of the all data.
+        (b) The system waits for the Registered User's final confirmation.
         \\
         \hline
-        \textbf{Exit Condition} & The user presses "Confirm" or "Exit"\\
+        \textbf{Exit Condition} & The user presses "Confirm" or "Back"\\
         \hline 
-        \textbf{Exception} & (b) Data isn't correct \\
-        \hline
     \end{tabularx}
     \caption{Publication of a path}
 \end{table}
 
 
 \subsubsection{Sequence Diagrams}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC1sequencediagram.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC2sequencediagram.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC3sequencediagram.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC4sequencediagram.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC5sequencediagram.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC6sequencediagram.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC7sequencediagram.png}
+\end{figure}
+
+\newpage
 \subsubsection{Requirement Mapping}
+
+%G1 requirement mapping
+\begin{xltabular}{\textwidth}{|X|X|}
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G1:} Bikers share a path that they have ridden along with other bikers.
+    } \\
+    \hline
+ 
+    R1: BBP allows users to create an account \par
+    R2: BBP system must distinguish and manage authorization for registered and not registered users \par
+    R6: BBP system shall collect data from the mobile device’s GPS, gyroscope and accelerometer \par
+    R7: BBP system shall geographically reconstruct the path that the user has ridden along from the GPS data that has been acquired in automated mode. \par
+    R8: BBP system shall use the data that has been acquired in automated mode to signal the possible presence of obstacles. \par
+    R9: In automated mode, BBP system shall monitor the biker’s speed to detect the start, pause and end of the activity \par
+    R10: BBP system shall retrieve meteorological information from an external provider \par
+    R11: BBP system shall receive a manual confirmation from the user before publishing data that has been acquired in automated mode \par
+    R12: BBP system shall allow the RU to correct automatically identified data before final confirmation \par
+    R13: In manual mode, BBP system shall retrieve and validate the names and status of the streets that form the path that the RU has ridden along. \par
+    R14: BBP system shall publish the data that is manually submitted 
+    & 
+    DA1: The GPS, accelerometer and gyroscope of the biker’s mobile device are functioning and they are able to provide data continuously. \par
+    DA2: Bikers do not lie by providing invented information about paths they have not ridden along. \par
+    DA6: Bikers do not lie by signaling the presence of obstacles that are actually not there. \par
+    DA7: Information provided by different bikers is considered mergeable if it regards the same street.
+    \\
+    \hline
+    R20: BBP system shall display the existing paths whose origin and destination are within a predefined radius from the ones specified by the user. \par
+    R21: BBP system shall allow registered users to edit the accuracy radius within a certain range for their path queries.  \par
+    R22: BBP system shall allow users to view all currently published path data, including their score. \par
+    R23: if multiple registered users have inserted information about the same street in different paths, BBP system shall internally merge the information and only show the result of the merge. \par
+    R24: the information merge performed by BBP shall consist of a computation that uses all the existing status values for the same streets and the insertion dates of the paths those streets are associated to.
+    & \par
+    \\
+    \hline
+\end{xltabular}
+
+\newpage
+%G2 requirement mapping
+\begin{xltabular}{\textwidth}{|X|X|}
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G2:} Bikers give other bikers information about the status and the presence of obstacles on paths that they have ridden along.
+    } \\
+    \hline
+ 
+    R1: BBP allows users to create an account \par
+    R2: BBP system must distinguish and manage authorization for registered and not registered users \par
+    R6: BBP system shall collect data from the mobile device’s GPS, gyroscope and accelerometer \par
+    R7: BBP system shall geographically reconstruct the path that the user has ridden along from the GPS data that has been acquired in automated mode. \par
+    R8: BBP system shall use the data that has been acquired in automated mode to signal the possible presence of obstacles. \par
+    R10: BBP system shall retrieve meteorological information from an external provider \par
+    R11: BBP system shall receive a manual confirmation from the user before publishing data that has been acquired in automated mode \par
+    R12: BBP system shall permit the RU to correct automatically identified data before final confirmation 
+    & 
+    DA1: The GPS, accelerometer and gyroscope of the biker’s mobile device are functioning and they are able to provide data continuously.   \par
+    DA2: Bikers do not lie by providing invented information about paths they have not ridden along. \par
+    DA3: Bikers provide true personal information if they register to the platform. \par
+    DA6: Bikers do not lie by signaling the presence of obstacles that are actually not there. \par
+    \\
+    %\hline
+    R13: In manual mode, BBP system shall retrieve and validate the names and status of the streets that form the path that the RU has ridden along. \par
+    R14: BBP system shall publish the data that is manually submitted \par
+    R20: BBP system shall display the existing paths whose origin and destination are within a predefined radius from the ones specified by the user.  & 
+    \\
+    \hline
+\end{xltabular}
+
+\newpage
+%G3 requirement mapping
+\begin{xltabular}{\textwidth}{|X|X|}
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G3:} Bikers are able to track and record their cycling trips to maintain a log of their activity that contains relevant information about their performance.
+    } \\
+    \hline
+ 
+    R1: BBP allows users to create an account \par
+    R2: BBP system must distinguish and manage authorization for registered and not registered users \par
+    R3: BBP system shall enable a RU to initiate a trip tracking session \par
+    R4: BBP system shall enable a RU to pause a trip tracking session \par
+    R5: BBP system shall enable a RU to terminate a trip tracking session
+    R6: BBP system shall collect data from the mobile device’s GPS, gyroscope and accelerometer \par
+    R7: BBP system shall geographically reconstruct the path that the user has ridden along from the GPS data that has been acquired in automated mode. \par
+    R8: BBP system shall use the data that has been acquired in automated mode to signal the possible presence of obstacles. 
+    & 
+    DA1: The GPS, accelerometer and gyroscope of the biker’s mobile device are functioning and they are able to provide data continuously.   \par
+    DA3: Bikers provide true personal information if they register to the platform. \par
+    DA5: The meteorological information is actually relevant to the time and location of the biker. \\
+    R9: In automated mode, BBP system shall monitor the biker’s speed to detect the start, pause and end of the activity \par
+    R10: BBP system shall retrieve meteorological information from an external provider \par
+    R15: BBP system shall store and permit access to a log of tracked sessions for the RU \par
+    R16: The BBP system shall compute performance metrics for a completed trip (e.g., total distance covered, average speed, maximum speed, elevation gain, moving time and cadence) & \par
+    \\
+    \hline
+
+\end{xltabular}
+
+\newpage
+%G4 requirement mapping
+\begin{xltabular}{\textwidth}{|X|X|}
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G4:} Bikers are presented with a set of paths, comprehensive of information about the path’s status and navigational efficiency, between a specified origin and destination.
+    } \\
+    \hline
+ 
+    R17: BBP system shall calculate the path score which is based on the status of the streets that composed the path and based on bikers’ opinion too \par
+    R18: BBP system shall display similar paths ordered by their score \par
+    R19: BBP system shall display paths that match the user's request in order of score. \par
+    R20: BBP system shall display the existing paths whose origin and destination are within a predefined radius from the ones specified by the user. \par
+    R21: BBP system shall merge information about the same streets in different paths \par
+    R22: BBP must merge the published information considering the date of publication and the number of data that are equivalent
+    & 
+    DA4: Given two different paths, they are considered to have the same origin and destination if these two points in the two paths are within an acceptable distance radius from one another.   \par
+    DA7: Information provided by different bikers is considered mergeable if it regards the same street. \\
+    \hline
+
+\end{xltabular}
 
 \subsection{Performance Requirements}
 
