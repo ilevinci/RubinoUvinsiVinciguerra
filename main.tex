@@ -821,6 +821,148 @@ In this Alloy analysis, we first show some examples of the model and argue for s
 \bigskip
 \noindent The defined model is the following: 
 
+\begin{figure}
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/Model_1st_section.png}
+\end{figure}
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/Model_2nd_section.png}
+\end{figure}
+
+\newpage
+
+\noindent Let us argue some of the choices:
+\begin{itemize}
+    \item Once a 'BikePath' is created, it will remain forever public because it can be used by other users to make their own record. Delete a 'BikePath' would mean destroying the recorded session of all users that used it.
+    \item The 'Obstacle' indicates a generic type of obstacle and not a specific one. An obstacle is present in the physical universe only when it has coordinates and a street associated to it.
+    \item Since a Street exists into the system only when someone uses it to create a 'BikePath' the set of 'BikePaths' of which a road is part can only increase.
+    \item A 'MeteoData' has the meaning of exist only if associated to a Record.
+\end{itemize}
+
+\newpage
+\noindent Now let us show some scenarios where an obstacle appears on a certain street and then gets removed.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/First_Scenario_Definition.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/First_Scenario_Universe.png}
+\end{figure}
+\bigskip
+\noindent We can observe the followings: 
+The model allows that a street can be BLOCKED also when there are no obstacles. This is perfectly fine because the streets may be closed for other reasons. Also, the presence of obstacle does not necessarily mean that the street gets blocked: the obstacle may not affect the road's status to a point that makes it unusable.
+
+\newpage
+\noindent The following scenario shows a situation where an User publish a private 'BikePath'.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/Secondo_Scenario_Definition.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/Second_Scenario_Universe.png}
+\end{figure}
+\bigskip
+\noindent We can observe that the 'BikePath' is correctly updated, i.e. it gets a score. 
+
+\bigskip
+
+\noindent We can Also observe that a 'BikePath' can lose its creator. What happens will be
+explained in the fourth scenario.
+
+\bigskip
+
+\noindent Let’s see now a scenario where an User deletes its account, let’ s observe how their record changes
+\newpage
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Definition.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Universe.png}
+\end{figure}
+\noindent The Record is correctly deleted. Now we can observe that if the User create a new Account:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Universe_p2.png}
+\end{figure}
+
+\noindent The Record does not get Recovered.
+
+\bigskip
+
+\newpage
+
+\noindent The following scenario expands the situation briefly shown in the Second Scenario:
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/FourthScenario_Definition.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/Fourth_Scenario_Universe.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/FourthScenario_Universe_p2.png}
+\end{figure}
+
+\noindent We observe the following: 
+For a registered User it is obviously possible to create and Publish a 'BikePath'. If the user decide to delete the account, the public 'BikePath' remain available and only lose the reference to the user that created it.
+
+\bigskip
+
+\noindent The following scenario shows how a particular situation is allowed in the model: 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/FifthScenario_Definition.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/FifthScenario_Universe.png}
+\end{figure}
+
+\bigskip
+
+\noindent A Deleted Record can Belong to a Deleted User. 
+So far we have seen that a Deleted Record can belong to a Non-Registered User and a Registered User. We will prove that a non-deleted record cannot belong to a non-registered user in one the following assertions: 
+
+\newpage
+
+\noindent Let us now take a look to some assertions.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/FirstAssertionDefinition.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/FirstAssertionOutput.png}
+\end{figure}
+
+\bigskip
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/SecondAssertionDefinition.png}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\linewidth]{images/SecondAssertionOutput.png}
+\end{figure}
+
+\newpage
+
+
 
 \section{EFFORT SPENT}
 
