@@ -675,6 +675,11 @@ This section specifies the communication protocols and standards required for da
     \includegraphics[width=1\linewidth]{images/UC7sequencediagram.png}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{images/UC8sequencediagram.png}
+\end{figure}
+
 \newpage
 \subsubsection{Requirement Mapping}
 
@@ -798,6 +803,14 @@ This section specifies the communication protocols and standards required for da
 \end{xltabular}
 
 \subsection{Performance Requirements}
+In this section we provide an overview of the static and dynamic numerical requirements placed on the software and/or the human interaction with it that are necessary for the application to run smoothly.
+
+\begin{itemize}
+    \item \textbf{Sensor data acquisition}: the app shall be capable of sampling accelerometer and gyroscope data at a minimum frequency of 50 Hz to ensure accurate detection of road surface anomalies while the user is biking.
+    \item \textbf{Data synchronization}: the system shall be capable of synchronizing a completed trip log to the central server within 30 seconds upon establishing a stable network connection.
+    \item \textbf{Concurrent users}: the system shall support concurrent recording of trips and data transmission for a minimum number of users without degrading response times below a defined threshold.
+    \item \textbf{Path visualization}: the system shall calculate and render 
+\end{itemize}
 
 \subsection{Design Constraints}
 \subsubsection{Standards Compliance}
