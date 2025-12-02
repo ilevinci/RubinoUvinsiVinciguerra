@@ -10,6 +10,7 @@ class BikePath {
     - published : boolean
     - score : int
     - publicationDate : Date
+    - insertionDate : Date
     - startingPoint : Coordinates
     - endingPoint : Coordinates
 }
