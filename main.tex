@@ -3,7 +3,12 @@
 \usepackage{tabularx}
 \usepackage{xltabular}
 \usepackage{float}
-
+\usepackage{xcolor}
+% --- Fixes for Tab/Input Encoding Issues ---
+% \usepackage[T1]{fontenc} 
+% \usepackage{textcomp}
+\usepackage{minted} 
+% ------------------------------------------
 % Title definition
 \title{
 
@@ -22,9 +27,11 @@
 \author{A. Rubino \and E. Uvinsi \and I. Vinciguerra}
 \date{Academic Year 2025/2026}
 
+
+
 \begin{document}
 
-%Instructions to print the first page and the table of contents
+
 \maketitle
 \newpage
 \tableofcontents
@@ -34,8 +41,8 @@
 \section{INTRODUCTION}
 \subsection{Purpose}
 The increasing global focus and effort on sustainable mobility and the rising popularity of cycling both as a sport and as a way to navigate around cities have risen new challenges in the everyday life of millions of people. Even if governments are beginning to address the need for new infrastructure for cyclists, the transition is complex and slow and the current infrastructure is often insufficient and outdated. Cyclists often find themselves having to face the danger of unexpected obstacles on their route and of worn-out paths which require maintenance to ensure both safety and navigational efficiency for their daily commutes and training sessions. 
-In order for this transition to happen, local institutions require a structured and scalable mechanism to systematically collect, consolidate and share data about the conditions of paths. This data has to come from the direct experience of a vast and distributed community of cyclists by offering them a platform that is useful and appealing for them, regardless of whether they cycle to train or to commute. \\
-The purpose of Best Bike Paths (BBP) is to provide a comprehensive software platform that is useful for cyclists as it offers an integrated environment where they can track their session and signal criticalities of paths by therefore contributing to the creation and maintenance of a reliable inventory of bike paths, that also local institutions can benefit from.
+In order to address these needs, a structured and scalable mechanism to systematically collect, consolidate and share data about the conditions of paths becomes necessary. This data has to come from the direct experience of a vast and distributed community of cyclists by offering them a platform that is useful and appealing, regardless of whether they cycle to train or to commute. \\
+The purpose of Best Bike Paths (BBP) is to provide a comprehensive software platform that is useful for cyclists as it offers an integrated environment where they can track their session and signal criticalities of paths by therefore contributing to the creation and maintenance of a reliable inventory of bike paths.
 
 \subsubsection{Goals}
 \begin{itemize}
@@ -77,7 +84,7 @@ Data publication by registered users is allowed in only two distinct modes: \tex
 \begin{itemize}
     \item SP1: A registered user starts or stops tracking a session on the application.
     \item SP2: Raw sensor data provided by the GPS, accelerometer and gyroscope is actively transmitted and received by the system during the tracking of a session.
-    \item SP3: The system provides all the paths that have been published.
+    \item SP3: The system can provide all the paths that have been published.
     \item SP4: The system provides the total distance for each published path.
     \item SP5: The system provides performance metrics only to the user who is the owner of the path.
     \item SP6: The system may provide meteorological information only to the user who is the owner of the path.
@@ -151,7 +158,7 @@ documentation:
 \subsubsection{Scenarios}
 
 \textbf{Registered user tracks a training session in automated mode} \\
-Registered user RU wants to track a training session and add it to their personal archive. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects automated mode. At this point, if the system has not been authorized before, it asks RU to grant it access to the mobile device's GPS, accelerometer and gyroscope. Once the system is able to retrieve this data, it signals RU that it is ready to record the session. RU can now start cycling and BBP will take care of elaborating the incoming flow of data to detect when the activity has started and when it is over and to generate an informative record of the session. Once either the system detects that the activity is over or RU signals it is, the system displays an overview of the navigated path and forces RU to confirm or discard status and obstacle information that it has automatically computed before letting RU save the session. Once the user has checked all the information, the record of the activity, enriched with human readable performance metrics and meteorological information (if it is available), is automatically saved and accessible to RU.
+Registered user RU wants to track a training session and add it to their personal archive. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track new ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects automated mode. At this point, if the system has not been authorized before, it asks RU to grant it access to the mobile device's GPS, accelerometer and gyroscope. Once the system is able to retrieve this data, it signals RU that it is ready to record the session. RU can now start cycling and BBP will take care of elaborating the incoming flow of data to detect when the activity has started and when it is over and to generate an informative record of the session. Once either the system detects that the activity is over or RU signals it is, the system displays an overview of the navigated path and forces RU to confirm or discard status and obstacle information that it has automatically computed before letting RU save the session. Once the user has checked all the information, the record of the activity, enriched with human readable performance metrics and meteorological information (if it is available), is automatically saved and accessible to RU.
 
 \vspace{0.5cm}
 \noindent
@@ -161,7 +168,7 @@ Registered User RU wants to visualize a previous training session. RU enters the
 \vspace{0.5cm}
 \noindent
 \textbf{Registered user manually inserts a path} \\
-Registered user RU has cycled along a path and wants to upload it on BBP to make it available to other bikers. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track my ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects manual mode. The system now allows RU to insert the name of the streets that they have crossed one by one and, at each insertion, it visualizes the street on a map and waits for the user to confirm the address or to correct it. Once RU confirms, the system allows them to select the exact segment of the street that they have ridden along directly on the map and it then shows the result of the selection and waits again for RU's confirmation. Once the street or a segment of it has been correctly selected and confirmed, BBP allows RU to insert information about its status. The reconstruction of the path ends when RU signals they are done. BBP takes care of checking whether the inserted streets actually compose a path and of asking RU to start over with the reconstruction in case they do not. Once the path is validated, RU is shown an overview of it and is given the option to either save the path or discard it. 
+Registered user RU has cycled along a path and wants to upload it on BBP to make it available to other bikers. RU enters the BBP platform with their personal email and password and, once they are logged in, they open the menu and access the "Track new ride" function. The system then asks RU to specify whether they want to use manual or automated mode; RU selects manual mode. The system now allows RU to insert the name of the streets that they have crossed one by one and, at each insertion, it visualizes the street on a map and waits for the user to confirm the address or to correct it. Once RU confirms, the system allows them to select the exact segment of the street that they have ridden along directly on the map and it then shows the result of the selection and waits again for RU's confirmation. Once the street or a segment of it has been correctly selected and confirmed, BBP allows RU to insert information about its status. The reconstruction of the path ends when RU signals they are done. BBP takes care of checking whether the inserted streets actually compose a path and of asking RU to start over with the reconstruction in case they do not. Once the path is validated, RU is shown an overview of it and is given the option to either save the path or discard it. 
 
 \vspace{0.5cm}
 \noindent
@@ -230,7 +237,7 @@ These different categories of users use the platform for very different reasons 
 
 \subsubsection{Amateur bikers}
 \textbf{Users profile}\\
-Amateur bikers are experienced bikers who have a strong passion for the sport. They train multiple times per week, have a deeper knowledge and understanding of technical aspects liked to the sport (specific terminology, biomechanical aspects, brand preferences etc.) and they likely own more sophisticated equipment. These users are also more likely to be interested in actively contributing to the bikers community as they directly have to deal with the difficulty of finding proper paths that satisfy their training needs. 
+Amateur bikers are experienced bikers who have a strong passion for the sport. They train multiple times per week, have a deeper knowledge and understanding of technical aspects linked to the sport (specific terminology, biomechanical aspects, brand preferences etc.) and they usually own more sophisticated equipment. These users are also more likely to be interested in actively contributing to the bikers community as they directly have to deal with the difficulty of finding proper paths that satisfy their training needs. 
 
 \vspace{0.5cm}
 \noindent
@@ -245,7 +252,7 @@ These users will likely use BBP almost on a daily basis, therefore, after overco
 \vspace{0.5cm}
 \noindent
 \textbf{Technical expertise}\\
-Amateur bikers are used to tracking their sessions with mobile tracking devices that are frequently used in cycling such as smartwatches, heart rate monitors, cadence monitors and GPS. The consequent assumption is that these users own some kind of mobile device that has at least a built in GPS, accelerometer and gyroscope and that they know how to use it.
+Amateur bikers are used to tracking their sessions with mobile tracking devices that are frequently used in cycling such as smartwatches, heart rate monitors, cadence monitors and GPS. The consequent assumption is that these users own some kind of mobile device that has at least a built in GPS, accelerometer and gyroscope and that they know how to use it and how to place it on the bike.
 
 
 \subsubsection{Commuters and beginner bikers}
@@ -255,7 +262,7 @@ This category of users includes both beginner bikers who are new to the cycling 
 \vspace{0.5cm}
 \noindent
 \textbf{Educational level}\\
-The general educational level of these individuals is not relevant to the use of the system but we assume that they have very little domain-literacy besides what can be considered common and empirical knowledge outside of the cycling world (e.g. notions of length of a path and capability to evaluate the quality of one).
+The general educational level of these individuals is not relevant to the use of the system; we assume that they have very basic domain-literacy that mainly consists of notions that can be considered common and empirical knowledge even outside of the cycling world (e.g. notions of length of a path and capability to evaluate the quality of one).
 
 \vspace{0.5cm}
 \noindent
@@ -268,7 +275,7 @@ These users will likely not use BBP on a daily basis which might slow down the p
 These users do not generally have any specific technical expertise beyond the daily use of a mobile phone.
 
 \subsubsection{Note on disabilities}
-The intended user groups include cyclists with a wide range of physical and sensory capabilities. The user population is expected to include individuals with audio and visual impairments, specifically color vision deficiencies (CVD) and reduced visual acuity. Furthermore, users may possess motor control limitations, either as permanent physical conditions or as situational constraints induced by the wearing of protective gear (e.g., thick gloves) and the vibration inherent to the cycling environment. These characteristics necessitate accommodations in the subsequent requirements regarding interface contrast, tactile feedback, and audio volume levels.
+The intended user groups include cyclists with a wide range of physical and sensory capabilities. The user population is expected to include individuals with audio and visual impairments, specifically color vision deficiencies (CVD) and reduced visual acuity. Furthermore, users may possess motor and control limitations, either as permanent physical conditions or as situational constraints induced by the wearing of protective gear (e.g., thick gloves) and the vibration inherent to the cycling environment. These characteristics necessitate accommodations in the subsequent requirements regarding interface contrast, tactile feedback, and audio volume levels.
 
 \subsection{Assumptions, Dependencies and Constraints}
 
@@ -315,13 +322,35 @@ The intended user groups include cyclists with a wide range of physical and sens
 \section{SPECIFIC REQUIREMENTS}
 \subsection{External Interface Requirements}
 \subsubsection{User Interfaces}
+In this section we provide mockups of the application user interface. \\
+
+\noindent The initial screen allows access either via login or in guest mode. Subsequent to selecting "Login" the option to register as a new user or enter existing credentials to access the platform as a registered user will be presented; however, the mockup for this specific transition screen is omitted. \\
+
+\noindent The mockups subsequently emphasize the distinction between the feature set available in guest mode and the registered user mode. In the former, the sole available function is searching for a route within the path inventory. Conversely, the registered user mode additionally allows the user to track a new ride or review the log of previously completed rides.
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/prototipo1.jpg}}
+\newline
+
+The subsequent interfaces pertain exclusively to logged-in users' UI. A prototype illustrating the potential process for tracking a new ride in both manual and automatic modes is shown. \\
+
+For manual mode, a screen is presented featuring a form to be completed with the ride's origin and destination. Furthermore, the travelled streets must be added in sequential order, along with their respective status. Upon finalizing the entry, the user can select either to "Confirm" or "Discard" the data. \\
+
+Regarding automatic mode, a simple notification is displayed, confirming the initiation of tracking, alongside controls to "Stop" or "Terminate" the session. \\
+
+Upon session termination, the user is redirected to the preview screen. This shared preview interface is common to both manual and automatic modes and displays a summary of all automatically collected or manually inserted data, offering the distinct option to publish the path. \\
+
+In the case of an automatic session, after selecting "Publish," the system must allow the user to save the session exclusively to their private log. Publishing the path from this private log must then be enabled at a later time.
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/prototipo2.jpg}}
+Please note that the mockups are shown purely for illustrative purposes and to clarify the requested functional requirements. They are certainly not intended to be a guide that must be strictly adhered to.
+
 \subsubsection{Hardware Interfaces}
 The BBP software is designed to operate on standard smartphone devices. To execute its required functions, the application must interface with the following hardware components hosted on the user's device:
 
 \begin{itemize}
     \item \textbf{GPS receiver}: the mobile application shall interface with the device's GPS receiver to retrieve real time geolocation data (latitude, longitude, and speed) for path reconstruction.
     \item \textbf{Accelerometer and gyroscope}: the application shall interface with the device's on board accelerometer and gyroscope sensors to detect vertical acceleration and orientation changes indicative of road irregularities (e.g., potholes).
-    \item \textbf{Network interface}: the system shall utilize the mobile device’s wireless communication hardware (Cellular Data or Wi-Fi) to synchronize data with the central server and retrieve meteorological data from the MSP.
+    \item \textbf{Network interface}: the system shall utilize the mobile device’s wireless communication hardware (Cellular Data or Wi-Fi) to synchronize data with the central server and retrieve meteorological data from the external providers.
 \end{itemize}
 
 \subsubsection{Software Interfaces}
@@ -409,6 +438,7 @@ This section specifies the communication protocols and standards required for da
 \subsubsection{Use Case Diagrams}
 \includegraphics[width=1\textwidth ]{images/UseCaseDiagram.drawio.png}
 
+\newpage
 \subsubsection{Use Cases}
 \textbf{[UC1] User Registration}
 \begin{table}[H]
@@ -469,6 +499,7 @@ This section specifies the communication protocols and standards required for da
     \caption{User Login}
 \end{table}
 
+\newpage
 \textbf{[UC3] Track a training session in Automated Mode}
 \begin{table}[H]
     \centering
@@ -484,7 +515,7 @@ This section specifies the communication protocols and standards required for da
         (a) The Registered User presses "Start" to begin the tracking.
         \vspace{0.2cm}
         \newline
-        (b) The system detect the User's position from their mobile device's GPS
+        (b) The system detects the User's position from their mobile device's GPS
         \vspace{0.2cm}
         \newline
         (c)  The system starts to keep track of the User's movement.
@@ -532,6 +563,7 @@ This section specifies the communication protocols and standards required for da
     \caption{Insert data of the bike path in Manual Mode}
 \end{table}
 
+\newpage
 \textbf{[UC5] Visualize a session in the personal sessions log}
 \begin{table}[H]
     \centering
@@ -640,45 +672,23 @@ This section specifies the communication protocols and standards required for da
 
 
 \subsubsection{Sequence Diagrams}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC1sequencediagram.png}
-\end{figure}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.4\textwidth]{images/UC1sequencediagram.png}}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC2sequencediagram.png}
-\end{figure}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC2sequencediagram.png}}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC3sequencediagram.png}
-\end{figure}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC3sequencediagram.png}}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC4sequencediagram.png}
-\end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC5sequencediagram.png}
-\end{figure}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC4sequencediagram.png}}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC6sequencediagram.png}
-\end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC7sequencediagram.png}
-\end{figure}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC5sequencediagram.png}}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1\linewidth]{images/UC8sequencediagram.png}
-\end{figure}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{images/UC6sequencediagram.png}}
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/UC7sequencediagram.png}}
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC8sequencediagram.png}}
 
 \newpage
 \subsubsection{Requirement Mapping}
@@ -802,6 +812,7 @@ This section specifies the communication protocols and standards required for da
 
 \end{xltabular}
 
+\newpage
 \subsection{Performance Requirements}
 In this section we provide an overview of the static and dynamic numerical requirements placed on the software and/or the human interaction with it that are necessary for the application to run smoothly.
 
@@ -809,116 +820,367 @@ In this section we provide an overview of the static and dynamic numerical requi
     \item \textbf{Sensor data acquisition}: the app shall be capable of sampling accelerometer and gyroscope data at a minimum frequency of 50 Hz to ensure accurate detection of road surface anomalies while the user is biking.
     \item \textbf{Data synchronization}: the system shall be capable of synchronizing a completed trip log to the central server within 30 seconds upon establishing a stable network connection.
     \item \textbf{Concurrent users}: the system shall support concurrent recording of trips and data transmission for a minimum number of users without degrading response times below a defined threshold.
-    \item \textbf{Path visualization}: the system shall calculate and render 
+    \item \textbf{Path visualization}: the system shall calculate and render a bike path within 3 seconds of the request under normal network conditions (4G/LTE or Wi-Fi).
 \end{itemize}
 
 \subsection{Design Constraints}
+In this section, we go more into depth about constraints on the system design that are imposed by external standards, regulatory requirements or other limitations.
 \subsubsection{Standards Compliance}
+\begin{itemize}
+    \item \textbf{Data privacy (GDPR)}: the system shall comply with the General Data Protection Regulation (GDPR) regarding the collection, storage, and processing of personal geolocation data. Users must explicitly consent to location tracking and have the "right to be forgotten" (deletion of trip history).
+    \item \textbf{Map standards}: the system shall utilize standard geospatial data formats for the representation and exchange of path coordinates and map layers to ensure compatibility with external mapping services.
+    \item \textbf{Security protocols}: all data transmission between the mobile client and the server shall adhere to TLS 1.3 (Transport Layer Security) standards to protect user credentials and trip data.
+\end{itemize}
 \subsubsection{Hardware Limitations}
+\begin{itemize}
+    \item \textbf{Battery consumption}: the mobile application shall optimize the usage of the GPS receiver and background sensors (accelerometer/gyroscope) to not exceed 15\% of the device's battery capacity per hour of active trip recording.
+    \item \textbf{Storage constraints}: the mobile application shall use no more than 500 MB of local storage on the user's device for caching map tiles and temporary trip logs before synchronization.
+\end{itemize}
 \subsubsection{Any Other Constraint}
+\begin{itemize}
+    \item \textbf{Network intermittency}: the mobile application must be designed to function in an "offline-first" manner, caching sensor and location data locally when the user enters areas with poor cellular coverage (e.g., rural bike paths) and synchronizing once connectivity is restored.
+    \item \textbf{Device orientation}: the user shall be instructed on how to properly place the device to acquire data accurately in automated mode.
+\end{itemize}
 
 \subsection{Software System Attributes}
+In this section we specify the required quality attributes of the software product.
 \subsubsection{Reliability}
+The system shall prevent data loss in the event of an application crash or device power failure during a trip. The application must periodically auto-save trip segments locally to be able to reconstruct the path.
 \subsubsection{Availability}
+The BBP backend server (composed of the APIs and the DBMS) shall be available 99.9\% of the time during scheduled service hours to ensuring users can upload trips and query paths when needed.
 \subsubsection{Security}
+The system shall ensure that users can only modify or delete their own trip data. Publishable information must be anonymized before being aggregated into the public map view to prevent stalking or user profiling.
 \subsubsection{Maintainability}
+The backend software architecture shall be modular, separating the path calculation part from the data ingestion section to allow independent updates to the scoring algorithms without disrupting data collection.
 \subsubsection{Portability}
-
-
+The mobile application shall be developed using cross-platform technologies or native codebases that ensure full functionality on both Android and iOS operating systems.
 
 
 
 \section{FORMAL ANALYSIS USING ALLOY}
-In this Alloy analysis, we first show some examples of the model and argue for some of the choices made. We then proceed to show the system's evolution and, lastly, some assertions will be taken into account.
+In this Alloy analysis, we first show some examples of the model and argue for some of the choices made. We then proceed to show the system's evolution and finally some assertions will be taken into account.
 
-\bigskip
+\vspace{0.5cm}
+
 \noindent The defined model is the following: 
+% \begin{figure}
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/Model_1st_section.png}
+% \end{figure}
+% \begin{figure}[t]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/Model_2nd_section.png}
+% \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/Model_1st_section.png}
-\end{figure}
-\begin{figure}[t]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/Model_2nd_section.png}
-\end{figure}
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+//Enum for the Status
+abstract sig Status {}
+one sig OPTIMAL extends Status {}
+one sig MEDIUM extends Status {}
+one sig SUFFICIENT extends Status {}
+one sig REQUIRES_MAINTENANCE extends Status {}
+one sig BLOCKED extends Status {}
 
-\newpage
+//Enum for Boolean
+abstract sig Boolean {}
+one sig TRUE extends Boolean {}
+one sig FALSE extends Boolean {}
+
+sig Coordinate {} 
+ 
+/*
+* An Obstacle can be present on a crossroad --> on multiple streets at the same time
+*/
+sig Obstacle { 
+	var on: set Street,
+	var coord: lone Coordinate
+} 
+
+sig Street {
+	var partOf: set BikePath,
+	var status : one Status
+} {
+	#partOf > 0
+}
+
+
+sig BikePath{
+	var isPublic: one Boolean,
+	var score: lone Int,
+	startingPoint: one Coordinate,
+	endingPoint: one Coordinate,
+	var createdBy: lone User
+} {
+	endingPoint != startingPoint
+	isPublic = TRUE iff score != none
+}
+
+sig MeteoData {
+	
+}
+
+sig Record {
+	belongsTo: one User,
+	recordedOn: one BikePath,
+	associatedTo : lone MeteoData
+}
+
+var sig DeletedRecord in Record {}
+
+
+sig User{
+	var isRegistered : one Boolean
+} 
+
+
+//--
+
+//A meteoData is always associated to a record
+fact MeteoDataConsistency {
+	always (all m: MeteoData | #m.~associatedTo != 0)
+}
+
+fact ObstacleConsistency {
+	always (all o: Obstacle | o.on != none iff o.coord != none)
+}
+
+
+//Once a Record is deleted it cannot be restored
+fact {
+	always (all r: Record | r in DeletedRecord implies after always r in DeletedRecord)
+}
+
+//Records associated to a DeletedUser, i.e. an user that is not Registered, are also eliminated
+fact RecordConsistency {
+	always (all r: Record | r.belongsTo.isRegistered = FALSE implies r in DeletedRecord)
+}
+
+//The set of BikePaths of which a road is a part of, can only increase 
+fact {
+	always (all s: Street | s.partOf in s.partOf')
+}
+
+//Every BikePath is composed of at least one street
+fact BikePathConsistency1 {
+	always (all b: BikePath | #b.~partOf > 0)
+}
+
+//Once the creator of a BikePath deletes their account the BikePath will lose forever its creator
+fact BikePathConsistency2 {
+	always (all b: BikePath | b.createdBy = none implies always b.createdBy = none)
+	always (all b: BikePath, u: User | u.isRegistered = TRUE and u in b.createdBy and u.isRegistered' = FALSE implies b.createdBy' = none)
+}
+
+//A private BikePath cannot be present for unregistered users
+fact BikePathConsistency3 {
+    always (all b: BikePath, u: User |
+        (b.isPublic = FALSE and u in b.createdBy) implies u.isRegistered = TRUE
+    )
+}
+
+//Once a BikePath is public it remains public
+fact BikePathConsistency4 {
+	always (all b: BikePath | b.isPublic = TRUE implies after always b.isPublic = TRUE)
+}
+
+//No unRegistered User can be the creator of a BikePath
+fact BikePathConsistency5 {
+	always (no u: User | some b: BikePath | u.isRegistered = FALSE and u in b.createdBy)
+}
+
+//A BikePath, if private, can only be in a Record associated to its owner
+fact RecordConsistency {
+	always (all r: Record, b: BikePath | b.isPublic = FALSE implies b.createdBy = r.belongsTo)
+}
+
+
+
+//A street with Obstacles can never be in OPTIMAL status
+fact StreetConsistency {
+	always (all s: Street | #s.~on > 0 implies s.status != OPTIMAL)
+}
+
+//The score changes olnly when:
+//The state of a street that compose the path change
+//The path is published
+fact ScoreChange {
+	always (all s: Street, b: BikePath |
+			b in s.partOf and s.status = s.status' and b.isPublic = b.isPublic'implies b.score = b.score')
+}
+\end{minted}
+\label{lst:fs_minted}
 
 \noindent Let us argue some of the choices:
 \begin{itemize}
-    \item Once a 'BikePath' is created, it will remain forever public because it can be used by other users to make their own record. Delete a 'BikePath' would mean destroying the recorded session of all users that used it.
+    \item Once a 'BikePath' is created, it will remain forever public because it can be used by other users to make their own record. Deleting a 'BikePath' would mean destroying the recorded session of all users that used it.
     \item The 'Obstacle' indicates a generic type of obstacle and not a specific one. An obstacle is present in the physical universe only when it has coordinates and a street associated to it.
-    \item Since a Street exists into the system only when someone uses it to create a 'BikePath' the set of 'BikePaths' of which a road is part can only increase.
-    \item A 'MeteoData' has the meaning of exist only if associated to a Record.
+    \item Since a Street exists into the system only when someone uses it to create a 'BikePath', the set of 'BikePaths' of which a road is part can only increase.
+    \item A 'MeteoData' can only exist within the system if associated to a Record.
 \end{itemize}
 
-\newpage
+\vspace{1cm}
 \noindent Now let us show some scenarios where an obstacle appears on a certain street and then gets removed.
 
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+pred firstScenario {
+	some o: Obstacle, s: Street | {
+		s not in o.on and after {
+			s in o.on and after {
+				removeObstacle[o]
+			}
+		}
+	}
+}
+run firstScenario for 3 but 1 Street, 1 BikePath, 1 Obstacle, 0 Record
+\end{minted}
+\label{lst:fs_minted2}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/First_Scenario_Definition.png}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/First_Scenario_Definition.png}
+% \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/First_Scenario_Universe.png}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/First_Scenario_Universe.png}
+% \end{figure}
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/First_Scenario_Universe.png}}
+
 \bigskip
 \noindent We can observe the followings: 
-The model allows that a street can be BLOCKED also when there are no obstacles. This is perfectly fine because the streets may be closed for other reasons. Also, the presence of obstacle does not necessarily mean that the street gets blocked: the obstacle may not affect the road's status to a point that makes it unusable.
+the model allows that a street can be BLOCKED also when there are no obstacles. This is perfectly acceptable because the streets may be closed for other reasons. Also, the presence of an obstacle does not necessarily mean that the street gets blocked: the obstacle may not affect the road's status to a point that makes it unusable.
 
-\newpage
-\noindent The following scenario shows a situation where an User publish a private 'BikePath'.
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/Secondo_Scenario_Definition.png}
-\end{figure}
+% \noindent The following scenario shows a situation where a user publishes a private 'BikePath'.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/Secondo_Scenario_Definition.png}
+% \end{figure}
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+pred secondScenario {
+	some u: User, b: BikePath | {
+		u in b.createdBy and b.isPublic = FALSE and after {
+			b.isPublic = TRUE
+		}
+	}
+}
+run secondScenario for 2 but 1 BikePath, 1 User, 0 Record
+\end{minted}
+\label{lst:fs_minted3}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/Second_Scenario_Universe.png}
-\end{figure}
-\bigskip
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/Second_Scenario_Universe.png}}
+
+\vspace{1cm}
 \noindent We can observe that the 'BikePath' is correctly updated, i.e. it gets a score. 
 
-\bigskip
+\vspace{0.5cm}
 
-\noindent We can Also observe that a 'BikePath' can lose its creator. What happens will be
+\noindent We can also observe that a 'BikePath' can lose its creator. What happens will be
 explained in the fourth scenario.
 
-\bigskip
+\vspace{0.5cm}
 
-\noindent Let’s see now a scenario where an User deletes its account, let’ s observe how their record changes
-\newpage
+\noindent Let us now look at a scenario where a User deletes their account, let us observe how their record changes:
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Definition.png}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Universe.png}
-\end{figure}
-\noindent The Record is correctly deleted. Now we can observe that if the User create a new Account:
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Universe_p2.png}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/ThirdScenario_Definition.png}
+% \end{figure}
 
-\noindent The Record does not get Recovered.
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+pred thirdScenario {
+	some u: User, r: Record | {
+		u.isRegistered = TRUE and r.belongsTo in u and r.recordedOn.isPublic = TRUE and r not in DeletedRecord 
+		and after {
+			u.isRegistered = FALSE and after {
+				u.isRegistered = TRUE
+			}
+		} 
+	}
+}
+run thirdScenario for 3 but 1 User, 1 Record, 1 BikePath
+\end{minted}
+\label{lst:fs_minted4}
 
-\bigskip
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/ThirdScenario_Universe.png}}
 
-\newpage
+\noindent The Record is correctly deleted. We can now observe that if the User creates a new Account the Record does not get restored:
 
-\noindent The following scenario expands the situation briefly shown in the Second Scenario:
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/FourthScenario_Definition.png}
-\end{figure}
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.0\textwidth]{images/ThirdScenario_Universe_p2.png}}
+
+% \noindent The following scenario expands the situation briefly shown in the Second Scenario:
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/FourthScenario_Definition.png}
+% \end{figure}
+
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+pred fourthScenario {
+	some u: User, b: BikePath | {
+		u in b.createdBy and b.isPublic = FALSE and after {
+			u in b.createdBy and b.isPublic = TRUE and after {
+				u.isRegistered = FALSE
+			}
+		}
+	}
+}
+run fourthScenario for 3 but 1 User, 1 BikePath, 0 Record
+\end{minted}
+\label{lst:fs_minted5}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\linewidth]{images/Fourth_Scenario_Universe.png}
@@ -928,35 +1190,75 @@ explained in the fourth scenario.
     \includegraphics[width=1.0\linewidth]{images/FourthScenario_Universe_p2.png}
 \end{figure}
 
-\noindent We observe the following: 
-For a registered User it is obviously possible to create and Publish a 'BikePath'. If the user decide to delete the account, the public 'BikePath' remain available and only lose the reference to the user that created it.
+\noindent We observe the following: for a registered User it is obviously possible to create and Publish a 'BikePath'. If the user decides to delete their account, the public 'BikePath' remains available and only loses its reference to the user that created it.
 
 \bigskip
 
-\noindent The following scenario shows how a particular situation is allowed in the model: 
+\noindent The following scenario shows how this particular situation is allowed in the model: 
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/FifthScenario_Definition.png}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/FifthScenario_Universe.png}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/FifthScenario_Definition.png}
+% \end{figure}
+
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+pred FifthScenario {
+	some u: User, r: Record | r in DeletedRecord and u.isRegistered = FALSE and u in r.belongsTo
+}
+run fifthScenario
+\end{minted}
+\label{lst:fs_minted6}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/FifthScenario_Universe.png}
+% \end{figure}
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.0\textwidth]{images/FifthScenario_Universe.png}}
 
 \bigskip
 
-\noindent A Deleted Record can Belong to a Deleted User. 
-So far we have seen that a Deleted Record can belong to a Non-Registered User and a Registered User. We will prove that a non-deleted record cannot belong to a non-registered user in one the following assertions: 
+\noindent A Deleted Record can belong to a Deleted User. 
+So far we have seen that a Deleted Record can belong to an unregistered User and a Registered User. We will prove that a non-deleted record cannot belong to a non-registered user in one the following assertions: 
 
-\newpage
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/FirstAssertionDefinition.png}
+% \end{figure}
 
-\noindent Let us now take a look to some assertions.
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+/* If a Record is non-deleted and the owner is not 
+* the creator of the BikePath, then the BikePath must be public
+*/
+assert CanAccessOnlyPublicPath {
+    always (all r: Record | r not in DeletedRecord and r.belongsTo != r.recordedOn.createdBy
+        implies
+			r.recordedOn.isPublic = TRUE)
+}
+check CanAccessOnlyPublicPath
+\end{minted}
+\label{lst:fs_minted7}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/FirstAssertionDefinition.png}
-\end{figure}
 \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\linewidth]{images/FirstAssertionOutput.png}
@@ -964,24 +1266,78 @@ So far we have seen that a Deleted Record can belong to a Non-Registered User an
 
 \bigskip
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/SecondAssertionDefinition.png}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\linewidth]{images/SecondAssertionOutput.png}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1.0\linewidth]{images/SecondAssertionDefinition.png}
+% \end{figure}
+
+\begin{minted}[
+    linenos=true,         % Show line numbers
+    framesep=2mm,         % Spacing between frame and code
+    fontsize=\small,      % Font size
+    style=default,        % Code highlighting theme (try default, colourful, or monokai)
+    breaklines=true,      % Allow long lines to wrap
+    tabsize=4,        
+    obeytabs=true,    % Tells minted to process the tab as indentation
+    showspaces=false, 
+    frame=lines
+]{alloy}
+/* An unregistered user cannot have non-deleted records associated to them
+*/
+assert NoExistingRecordsForDeletedUser {
+	no r: Record | r not in DeletedRecord and r.belongsTo.isRegistered = FALSE
+}
+check NoExistingRecordsForDeletedUser
+\end{minted}
+\label{lst:fs_minted8}
+
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/SecondAssertionOutput.png}}
 
 \newpage
-
-
-
 \section{EFFORT SPENT}
-
-
-
+The following table shows the approximate amount of hours that each group member spent on each chapter of this document. Please note that is calculation is only approximate, as each section still required active collaboration from all group members.
+\begin{table}[h]
+    \centering
+    % \caption{Effort Spent (Hours)}
+    \label{tab:effort}
+    \begin{tabular}{|l|c|c|c|c|}
+        \hline
+        \textbf{Group Member} & \textbf{Chapter 1} & \textbf{Chapter 2} & \textbf{Chapter 3} & \textbf{Chapter 4} \\
+        \hline
+        A. Rubino & 6 & 1 & 1 & 25 \\
+        \hline
+        E. Uvinsi & 6 & 1 & 25 & 1 \\
+        \hline
+        I. Vinciguerra & 8 & 20 & 6 & 1 \\
+        \hline
+        \textbf{TOT} & \textbf{20} & \textbf{22} & \textbf{32} & \textbf{27} \\
+        \hline
+    \end{tabular}
+\end{table}
 
 \section{REFERENCES}
+\begin{enumerate}
+    \item \textbf{Project documents}:
+        \begin{itemize}
+            \item Specification document for the 2025/26 RASD project for the Software Engineering II course.
+            \item Slides on the WeBeep page of the Software Engineering II course.
+        \end{itemize}
+    \item \textbf{Standards and regulations}:
+        \begin{itemize}
+            \item GDPR (General Data Protection Regulation).
+        \end{itemize}
+    \item \textbf{External service provider documentation/APIs}:
+        \begin{itemize}
+            \item Documentation or specifications for the MSP.
+            \item Any specific API documentation or licensing terms mentioned for third-party software, libraries, or commercial mapping APIs.
+        \end{itemize}
+    \item \textbf{Technical specification documentation} for the following tools/protocols/formats:
+        \begin{itemize}
+            \item Alloy
+            \item Standard geospatial data formats
+            \item TLS 1.3
+            \item JSON
+        \end{itemize}
+\end{enumerate}
 
 \end{document}
