@@ -2,7 +2,30 @@
 
 \subsection{Overview: High level components and their interaction}
 \subsection{Component view}
+%Introduzione generale ai componenti. Architettura client-server 3 livelli (min) distribuita
+%Server distribuiti geograficamente. GUI e salvataggi percorsi privati esclusivamente in locale (dunque parte del db in locale)
+%Ricerca dei percorsi tramite server
+
+\begin{itemize}
+    \item \textbf{User Management Service}
+    \item \textbf{Automated Path Data Collection Service}
+    \item \textbf{Path Data Transformation Service} %trasforma i dati raw collezionati dai sensori in un formato human readable
+    \item \textbf{Meteorological Data Retrieval Service}
+    \item \textbf{Path Research Service} %unico riservato anche a utenti non registrati
+    \item \textbf{Path Publication Service}
+    \item \textbf{Manual Path Insertion Service}
+    \item \textbf{Inventory Handling Service}
+\end{itemize}
+
 \subsection{Deployment view}
+\begin{itemize}
+    \item \textbf{Database Server for Published Paths}
+    \item \textbf{Database Server for Registered Users}
+    \item \textbf{Application Server}
+    \item \textbf{Load Balancer}
+    \item \textbf{Firewall}
+    \item \textbf{Mobile Device}
+\end{itemize}
 \subsection{Runtime view}
 \subsection{Component interfaces}
 \subsection{Selected architectural styles and patterns}

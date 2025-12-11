@@ -52,7 +52,8 @@ class Obstacle {
     - obstacle : ObstacleType
     - coordinates : Coordinates
     --
-    + getCoordinates : Coordinate
+    + getCoordinates() : Coordinate
+    +getObstacle() : ObstacleType
 }
 
 enum ObstacleType {
@@ -63,47 +64,60 @@ class RegisteredUser {
     - email : String
     - username : String
     - passwordHash : String
-    - Collection<Record> : personalRecords
-    - Collection<BikePath> : privatePath
+    ' - clientManager : ClientManager
     --
-    + getRecords()
-    + getRecords(path: BikePath)
-    + getRecords(date: Date)
-    + publishPath(path : BikePath)
-    + trackMyRide() : Record 
-    + buildPath() : BikePath
-    + getPrivatePaths() 
-    + exportRecord()
+
 }
 
 class User {
     - selectedLanguage : Language
     - searchRadius : int
     --
-    + searchPath(origin: Coordinates, destination: Coordinates)
+    ' + searchPath(origin: Coordinates, destination: Coordinates)
 }
 
 RegisteredUser --|> User 
 
-class Controller {
+class AuthenticationManager {
 --
-+ logIn(email: String, password: String)
++ login(email: String, password: String)
 + signUp(email: String, password: String, username: String)
 + modifyPassword()
 + modifyEmail()
 + modifyUsername()
 }
 
-class PathManager {
---
-+ postPath(newPath : BikePath)
-+ findPath(start: Coordinate, end: Coordinate) : Collection<BikePath> res
-- mergeStreets(streets : Street) 
+class PathPublicationManager {
+    --
+    + publishPath(newPath : BikePath)
+    - mergeStreets(streets : Street) 
 }
 
-class Record {
-    - bikePath : BikePath
-    - recordingDate : Date    
+class PathSearchEngine {
+    --
+    + findPath(start: Coordinate, end: Coordinate) : Collection<BikePath>
+    + viewPathDetails(pathID : int) : BikePath
+}
+
+class ClientManager{
+    -myRecords : Collection<Record>
+    --
+    +trackMyRide()
+    +manuallyInsertPath()
+    +viewInventory() : Collection<Record>
+    +findRecord(path: BikePath)
+    +findRecord(date: Date)
+    +exportRecord()
+}
+
+class DataElaborationEngine {
+    --
+    +buildRecord() : Record
+    -buildPath() : BikePath
+    +getMeteoData(rec : Record)
+}
+
+class CyclingSession { /'. estende Record, rappresenta il record tracciato in modalità automatica'/
     - totalDistance : float
     - averageSpeed : int
     - maxSpeed : int
@@ -114,18 +128,33 @@ class Record {
     + getStats()
 }
 
+class Record {
+    - bikePath : BikePath
+    - recordingDate : Date
+    --
+    + getBikePath() : BikePath
+}
 
+CyclingSession --|> Record
 
 class Time {
     - hour : int
     - minute : int
     - second : int
+    --
+    +getHour : int
+    +getMinute : int
+    +getSecond : int
 }
 
 class MeteoData {
  - averageWindSpeed : int
  - averageTemperature : int
- - weaterConditions : Collection<WeatherCondition>
+ - weatherConditions : Collection<WeatherCondition>
+ --
+ +retrieveWeatherConditions()
+ +getAverageWindSpeed() : int
+ +getAverageTemperature() : int
 }
 
 enum WeatherCondition {
@@ -141,6 +170,11 @@ class Date {
     - month : int
     - year : int
     - time : Time
+    --
+    +getDay() : int
+    +getMonth() : int
+    +getYear() : int
+    +getTime() : Time
 }
 
 
@@ -169,5 +203,11 @@ da 1 RegisteredUser'/
 'User -- BikePath 
 /'User visualizza 0...n BikePath e ogni BikePath è visualizzato
 da 1(autore)...* User'/
+
+User ..> PathSearchEngine : uses
+AuthenticationManager ..> User : handles
+RegisteredUser --o ClientManager : has a
+ClientManager ..> DataElaborationEngine : uses
+ClientManager ..> PathPublicationManager : uses
 
 @enduml
