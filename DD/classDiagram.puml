@@ -1,0 +1,173 @@
+@startuml
+
+
+
+
+
+@startuml BBP
+
+
+class Street {
+    - name : String 
+    - status : Status
+    -  obstacles: Collection<Obstacle>
+    - coordinates : Collection<Coordinate>
+    --
+    + getStatus()
+    + getName()
+    + getObstacles()
+    + setObstacle(obstacle: Obstacle)
+    + removeObstacle(obstacle: Obstacle)
+}
+
+
+
+class BikePath {
+    - streets : Collection<Street>
+    - published : boolean
+    - score : int
+    - publicationDate : Date
+    - insertionDate : Date
+    - startingPoint : Coordinates
+    - endingPoint : Coordinates
+    --
+    + setPublic()
+    + setScore(newScore: int)
+    + getStreets()
+}
+
+/'The published attribute declare the Path as 
+"public", i.e. visible to other user aside from
+the owner'/
+
+class Coordinates {
+    - latitude : int
+    - longitude : int 
+    --
+    + getLatitude() : int
+    + getLongitude() : int
+}
+
+class Obstacle {
+    - obstacle : ObstacleType
+    - coordinates : Coordinates
+    --
+    + getCoordinates : Coordinate
+}
+
+enum ObstacleType {
+
+}
+
+class RegisteredUser {
+    - email : String
+    - username : String
+    - passwordHash : String
+    - Collection<Record> : personalRecords
+    - Collection<BikePath> : privatePath
+    --
+    + getRecords()
+    + getRecords(path: BikePath)
+    + getRecords(date: Date)
+    + publishPath(path : BikePath)
+    + trackMyRide() : Record 
+    + buildPath() : BikePath
+    + getPrivatePaths() 
+    + exportRecord()
+}
+
+class User {
+    - selectedLanguage : Language
+    - searchRadius : int
+    --
+    + searchPath(origin: Coordinates, destination: Coordinates)
+}
+
+RegisteredUser --|> User 
+
+class Controller {
+--
++ logIn(email: String, password: String)
++ signUp(email: String, password: String, username: String)
++ modifyPassword()
++ modifyEmail()
++ modifyUsername()
+}
+
+class PathManager {
+--
++ postPath(newPath : BikePath)
++ findPath(start: Coordinate, end: Coordinate) : Collection<BikePath> res
+- mergeStreets(streets : Street) 
+}
+
+class Record {
+    - bikePath : BikePath
+    - recordingDate : Date    
+    - totalDistance : float
+    - averageSpeed : int
+    - maxSpeed : int
+    - elevationGain : int
+    - movingTime : Time
+    - cadence : int
+    --
+    + getStats()
+}
+
+
+
+class Time {
+    - hour : int
+    - minute : int
+    - second : int
+}
+
+class MeteoData {
+ - averageWindSpeed : int
+ - averageTemperature : int
+ - weaterConditions : Collection<WeatherCondition>
+}
+
+enum WeatherCondition {
+
+}
+
+enum Status {
+
+}
+
+class Date {
+    - day : int
+    - month : int
+    - year : int
+    - time : Time
+}
+
+
+
+'MeteoData "0...1" --* "1" Record
+'Obstacle "0...*" --* "1...*"  Street
+/'
+If an Obstacle is in a crossroad than it
+belongs to more roads. An obstacle cannot exist
+if it has not a road.
+'/
+
+'RegisteredUser --|> User
+
+
+'Record "0...*" --* "0...1" RegisteredUser
+'BikePath "1" --o "0...*" Record
+
+
+'Street "1...*" --o "1...*" BikePath
+
+'RegisteredUser --  BikePath 
+/'RegisteredUser crea 0...* Bikepath e un BikePath è creato
+da 1 RegisteredUser'/
+
+'User -- BikePath 
+/'User visualizza 0...n BikePath e ogni BikePath è visualizzato
+da 1(autore)...* User'/
+
+@enduml
