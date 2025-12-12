@@ -114,10 +114,11 @@ class DataElaborationEngine {
     --
     +buildRecord() : Record
     -buildPath() : BikePath
-    +getMeteoData(rec : Record)
+    +getMeteoData(log: CyclingSession)
 }
 
 class CyclingSession { /'. estende Record, rappresenta il record tracciato in modalità automatica'/
+    - meteoData : MeteoData
     - totalDistance : float
     - averageSpeed : int
     - maxSpeed : int
@@ -177,37 +178,19 @@ class Date {
     +getTime() : Time
 }
 
-
-
-'MeteoData "0...1" --* "1" Record
-'Obstacle "0...*" --* "1...*"  Street
-/'
-If an Obstacle is in a crossroad than it
-belongs to more roads. An obstacle cannot exist
-if it has not a road.
-'/
-
-'RegisteredUser --|> User
-
-
-'Record "0...*" --* "0...1" RegisteredUser
-'BikePath "1" --o "0...*" Record
-
-
-'Street "1...*" --o "1...*" BikePath
-
-'RegisteredUser --  BikePath 
-/'RegisteredUser crea 0...* Bikepath e un BikePath è creato
-da 1 RegisteredUser'/
-
-'User -- BikePath 
-/'User visualizza 0...n BikePath e ogni BikePath è visualizzato
-da 1(autore)...* User'/
-
 User ..> PathSearchEngine : uses
 AuthenticationManager ..> User : handles
-RegisteredUser --o ClientManager : has a
+ClientManager -up-o RegisteredUser : has a
 ClientManager ..> DataElaborationEngine : uses
-ClientManager ..> PathPublicationManager : uses
+DataElaborationEngine -> Record : creates
+DataElaborationEngine -> MeteoData : retrieves
+MeteoData --o CyclingSession : can contain
+ClientManager .> PathPublicationManager : uses
+BikePath ..* Street : owns
+Obstacle -o Street : can contain
+BikePath --o Record : contains
+PathPublicationManager -> BikePath : publishes
+PathSearchEngine --> BikePath : finds
+
 
 @enduml
