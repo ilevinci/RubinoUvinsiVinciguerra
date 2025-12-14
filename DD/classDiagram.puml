@@ -16,7 +16,7 @@ class Street {
     + getStatus()
     + getName()
     + getObstacles()
-    + setObstacle(obstacle: Obstacle)
+    + setObstacle(obstacle: Obstacle)   
     + removeObstacle(obstacle: Obstacle)
 }
 
