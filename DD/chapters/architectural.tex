@@ -34,14 +34,14 @@ While account management, path processing, publication and research require an i
 that is only available to the user that recorded it, while a bike path is a shared entity that is available to all users to the platform and it only contains the "publishable" data of the cycling sessions: the geographical reconstruction of the path, the status of its streets and the presence of obstacles.
 Therefore, since a record is private, it is only stored locally on the user's device and it can be accessed offline. Its creation though does need an internet connection in order to interact with the external providers to retrieve meteorological data and to process raw sensor data into a human-readable and visualizable format.
 The same concept applies to manually inserted paths that have not been published yet: we handle these drafts locally on the user's device until (and if ever) the user decides to publish them. \\
-The presentation layer is therefore responsible both for providing the user interface and for managing the local storage of the user's path inventory.
+The presentation layer is therefore responsible for providing the user interface, for managing the local storage of the user's path inventory and for interaction with the external services that are needed to create records and paths.
 
 \vspace{0.5cm}
 \noindent \textbf{Gateway Tier}: The gateway tier acts as an intermediary between the presentation layer and the application layer. It receives requests from the mobile application and forwards them to the appropriate services in the application tier.
 In particular, the gateway tier separates account management and permission related requests to a specific server, whereas all path related requests are forwarded to the application server.
 
 \vspace{0.5cm}
-\noindent \textbf{Application Tier}: The application tier contains the core logic of the BPP platform and it is responsible for processing both path publication and research requests. It also contains the authentication service that manages user accounts and permissions.
+\noindent \textbf{Application Tier}: The application tier contains the core logic of the BPP platform and it is responsible for processing both path publication and research requests. It is therefore the point of interaction with the data tier. The application tier also contains the authentication service that manages user accounts and permissions.
 The application server in this tier is structured to be scalable and it could therefore be replicated and distributed geographically.
 
 \vspace{0.5cm}
@@ -51,9 +51,14 @@ Both databases are designed to be highly available and to provide eventual consi
 \vspace{0.5cm}
 \noindent In the next sections we go deeper in the details of the components and the deployment.
 
-
+\newpage
 \subsection{Component view}
 This section gives a more detailed description of the components of the architecture of the BPP system.
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.5\textwidth]{images/ComponentDiagram2.png}}
+
+\vspace{0.5cm}
 The main components of the system are:
 \begin{itemize}
     \item \textbf{User Management Service}: This service is responsible for managing user accounts, including registration, authentication, and profile management. It ensures that only authorized users can access certain features of the application.
