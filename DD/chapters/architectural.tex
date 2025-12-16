@@ -63,7 +63,7 @@ The main components of the system are:
 \begin{itemize}
     \item \textbf{User Management Service}: This service is responsible for managing user accounts, including registration, authentication, and profile management. It ensures that only authorized users can access certain features of the application.
     \item \textbf{Automated Path Data Collection Service}: This service collects raw data from the mobile device's sensors during a cycling session. It gathers information such as GPS coordinates, speed, elevation, and other relevant metrics and stores them in the local storage of the device.
-    \item \textbf{Path Data Transformation Service}: This service processes the raw sensor data collected during a cycling session and transforms it into a human-readable and visualizable format. AApart from reconstructing paths, it gives an evaluation of each street's conditions, and identifies obstacles along the route. It is also responsible for computing and storing performance metrics.
+    \item \textbf{Path Data Transformation Service}: This service processes the raw sensor data collected during a cycling session and transforms it into a human-readable and visualizable format. Apart from reconstructing paths, it gives an evaluation of each street's conditions, and identifies obstacles along the route. It is also responsible for computing and storing performance metrics.
     \item \textbf{Meteorological Data Retrieval Service}: This service interacts with external meteorological data providers to retrieve weather information for the area where the cycling session took place. It ensures that the weather data is accurately associated with the corresponding record data.
     \item \textbf{Path Research Service}: This service allows users to search for bike paths that connect their desired origin and destination points. It retrieves relevant paths from the database and provides customization options for visualization.
     \item \textbf{Path Publication Service}: This service handles the publication of bike paths to the platform. It ensures that the path data is properly formatted and stored in the database, making it accessible to other users.
@@ -73,8 +73,8 @@ The main components of the system are:
 
 \newpage
 \subsection{Deployment view}
-This chapter describes the deployment view of the BPP system. it outlines the execution
-environment of the system and details the gegraphical distribution of the hardware components that host the
+This chapter describes the deployment view of the BPP system. It outlines the execution
+environment of the system and details the geographical distribution of the hardware components that host the
 software making up the application.
 
 \vspace{0.5cm}
@@ -114,4 +114,37 @@ We proceed to provide further details about the elements in the graph.
 \subsection{Runtime view}
 \subsection{Component interfaces}
 \subsection{Selected architectural styles and patterns}
+\textbf{Client Server 4-tier Architecture}\newline
+The system adopts a 4-Tier Infrastructure. With this solution we can split the
+layer that manage the application and communicate with the Databases from the Gateway layer
+that hide all the application logic and acts as single entry point for all client requests.
+With this solution the system expose only a secure, monitored endpoint to the external network.
+The separation allows also the internal architecture to evolve or scale without impacting the client.\newline
+\noindent\textbf{Service-Based Architecture}\newline
+The application is decomposed into two independent Service: The Account Manager Service and the Path Manager Service.
+The first Service is responsible to all the operations that regard the creation, modification and deletion of accounts.
+The second Service is responsible to all that operation that regard the publication and the search of bike paths. This 
+Separation of Concerns (both logical and physical) offers significant advantages:
+\begin{itemize}
+    \item Independent scalability: The two services can be scaled separately from one another.
+    \item Fault Isolation: Fault that affect one service do not affect the other.
+    \item Separation of Responsibilities: Each Service manages its own dedicated database schema, assuring decoupling. 
+\end{itemize} 
+\noindent
+\textbf{Bulkhead Pattern} \newline
+The adoption of a Service-Based Architecture enables this pattern, responsible to ensure system resilience and graceful degradation.
+The pattern is implemented via the physical and logical separation of Account Manager Service and the Path Manager Service.
+These two services use separate servers and use different databases.\newpage
+\noindent\textbf{Command Pattern - CQRS} \newline
+The system exploits the Command Pattern to decouple the actions requested to the system
+by a user and the implementation of that action in the server-side of the application.
+Since all the possible operations concerns either the publication of a path or the search for a path we can
+laverage CQRS (Command Query Responsibility Segregation) to split the "Command" part from the "Query" part.
+The "write side" (command model) handles all the operations that regard the publication of paths prioritizing the consistency and rule validation for each published path while the 
+"read side"(Query model) handles all the search operations. This query model will retrieve the pre-calculated bike path, ensuring quick response time
+due to the bypass of all complex domain logic.\newline
+\textbf{Observer Pattern} \newline
+The Observer pattern is used to manage the interaction between GPS and accelerometer and the user device.
+GPS and accelerometer are the 'Subject' and the ClientManager is the 'Observer'.
+
 \subsection{Other design decisions}
