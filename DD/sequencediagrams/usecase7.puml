@@ -1,0 +1,77 @@
+@startuml UC7_VisualizePath_Design
+autonumber "<b>0:"
+title [UC7] Visualization of a Path
+
+' =======================================================
+' COMPONENT DEFINITION
+' =======================================================
+actor "User" as User
+participant "Mobile Application\n(Tier 1)" as Client
+
+' Backend System
+participant "BBP API Gateway\n(Tier 2)" as GW
+box "BBP Application Server (Tier 3)" #LightBlue
+    ' Usiamo SearchEngine coerentemente con UC6
+    participant "PathSearchEngine" as Search
+end box
+participant "BBP BikePath DB\n(Tier 4)" as DB
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over User, Client: Entry Condition: User has selected a path and pressed "View"
+
+' =======================================================
+' (a) SYSTEM SHOWS DETAILS
+' =======================================================
+User -> Client: pressView(pathID)
+activate Client
+
+' Check cache locale (Opzionale, Smart Client optimization)
+alt Details not cached locally
+    note right of Client: Fetching aggregated data
+    Client -> GW: GET /api/paths/{pathID}/full
+    activate GW
+    
+    note right of GW: Routing to Search Engine
+    GW -> Search: getPathDetails(pathID)
+    deactivate GW
+    activate Search
+
+    ' Recupero Dati Aggregati (Punto critico del Design)
+    note right of Search: Fetch Path Entity + Related Streets + Scores
+    Search -> DB: fetchPathAndSegments(pathID)
+    activate DB
+    DB --> Search: FullPathEntity (Nested Data)
+    deactivate DB
+
+    ' Trasformazione in DTO
+    Search -> Search: createFullPathDTO(FullPathEntity)
+
+    Search --> GW: 200 OK (FullPathDTO)
+    deactivate Search
+    activate GW
+    GW --> Client: 200 OK (FullPathDTO)
+    deactivate GW
+end
+
+' Rendering Lato Client
+note right of Client: Client renders geometry and colors based on score
+Client -> Client: renderMapGeometry(pathData.segments)
+Client -> Client: displayMetrics(pathData.scores)
+
+Client --> User: displayPathDetails(Map, Stats)
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+User -> Client: pressExit()
+
+' Pulizia vista
+Client -> Client: closeDetailView()
+Client --> User: returnToPreviousScreen()
+
+note over User, Client: Exit Condition: User closes the details view
+
+deactivate Client
+@enduml

@@ -1,0 +1,116 @@
+@startuml UC8_PublicationPath_Design
+autonumber "<b>0:"
+title [UC8] Publication of a Path (Design View)
+
+' =======================================================
+' COMPONENT DEFINITION
+' =======================================================
+actor "Registered User" as RU
+participant "Mobile Application\n(Tier 1)" as Client
+
+' Backend System
+participant "BBP API Gateway\n(Tier 2)" as GW
+box "BBP Application Server (Tier 3)" #LightBlue
+    ' PathManager gestisce la scrittura e la logica di business dei percorsi
+    participant "PathManager" as PM
+end box
+participant "BBP DB Cluster\n(Tier 4)" as DB
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, Client: Entry Condition: RU has selected a stored/draft path and presses "Publish"
+
+' =======================================================
+' (a) PREVIEW GENERATION
+' =======================================================
+RU -> Client: clickPublish()
+activate Client
+
+' Il Client richiede i dati aggiornati per la preview (es. Score attuale)
+note right of Client: Request preview data
+Client -> GW: GET /api/paths/{pathID}/preview
+activate GW
+
+note right of GW: Routing to PathManager
+GW -> PM: getPublishPreview(pathID)
+deactivate GW
+activate PM
+
+' Recupero dati grezzi
+PM -> DB: fetchPathData(pathID)
+activate DB
+DB --> PM: PathEntity
+deactivate DB
+
+' Calcolo preliminare dello score (Preview)
+note right of PM: Calculate potential score impact
+PM -> PM: calculateProjectedScore(PathEntity)
+
+PM --> GW: 200 OK (PreviewDTO: streets, score)
+deactivate PM
+activate GW
+GW --> Client: 200 OK (PreviewDTO)
+deactivate GW
+
+' Visualizzazione
+Client --> RU: displayPreview(streets, score)
+
+' =======================================================
+' EXIT CONDITION: CONFIRM OR BACK
+' =======================================================
+alt User presses "Confirm" (Success)
+    RU -> Client: pressConfirm()
+    
+    ' Richiesta di pubblicazione
+    note right of Client: Trigger Publication
+    Client -> GW: POST /api/paths/{pathID}/publish
+    activate GW
+    
+    GW -> PM: publishPath(pathID)
+    deactivate GW
+    activate PM
+
+    ' 1. Aggiornamento Visibilità
+    PM -> DB: updateVisibility(pathID, PUBLIC)
+    activate DB
+    DB --> PM: OK
+    deactivate DB
+
+    ' 2. ESECUZIONE MERGING LOGIC (Core Business Logic)
+    note right of PM: **CRITICAL: Merging Logic**\nAggregates new data into public streets
+    
+    loop For each segment in Path
+        PM -> DB: fetchStreetAggregate(segmentID)
+        activate DB
+        DB --> PM: StreetAggregateData
+        deactivate DB
+        
+        PM -> PM: recalculateStreetStatus(NewData, OldAggregate)
+        
+        PM -> DB: updateStreetStatus(segmentID, NewStatus)
+        activate DB
+        DB --> PM: OK
+        deactivate DB
+    end loop
+
+    ' Risposta Finale
+    PM --> GW: 200 OK (Success)
+    deactivate PM
+    activate GW
+    GW --> Client: 200 OK
+    deactivate GW
+    
+    Client --> RU: showSuccessMessage("Path is now public")
+    note over RU, Client: Exit Condition: Publication finalized
+
+else User presses "Back" (Aborted)
+    RU -> Client: pressBack()
+    
+    ' Nessuna interazione col server necessaria
+    Client -> Client: returnToPreviousScreen()
+    note over RU, Client: Exit Condition: Publication aborted
+end
+
+deactivate Client
+@enduml

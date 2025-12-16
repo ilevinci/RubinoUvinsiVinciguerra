@@ -1,0 +1,91 @@
+@startuml UC2_UserLogin_Design
+autonumber "<b>0:"
+title [UC2] User Login 
+
+' =======================================================
+' COMPONENT DEFINITION (4-TIER ARCHITECTURE)
+' =======================================================
+actor "Registered User" as RU
+participant "Mobile Application\n(Tier 1)" as Client
+participant "BBP API Gateway\n(Tier 2)" as GW
+
+box "BBP Application Server (Tier 3)" #LightBlue
+    participant "AuthenticationService" as Auth
+end box
+
+participant "BBP Account DB\n(Tier 4)" as DB
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, Client: Entry Condition: RU opens the BBP platform
+
+' =======================================================
+' INTERACTION FLOW
+' =======================================================
+
+RU -> Client: clickSignIn()
+activate Client
+
+Client --> RU: displayLoginForm()
+
+' Steps (a) and (b): Insertion of credentials
+RU -> Client: insertCredentials(nickname/email, password)
+
+' Preparazione chiamata sicura
+note right of Client: Encrypt payload over HTTPS
+Client -> GW: POST /api/auth/login (LoginDTO)
+activate GW
+
+' Routing al componente di Auth
+note right of GW: Routing logic
+GW -> Auth: authenticateUser(LoginDTO)
+deactivate GW
+activate Auth
+
+' Step (c): Verification
+' Il sistema verifica i dati interrogando il DB
+note right of Auth: System checks if data is correct
+Auth -> DB: findUserByCredentials(email, nickname)
+activate DB
+DB --> Auth: userEntity / null
+deactivate DB
+
+' Logic: Alternative paths
+alt Data is not correct (Exception)
+    ' Return 401 Unauthorized
+    Auth --> GW: 401 Unauthorized
+    activate GW
+    GW --> Client: 401 Unauthorized
+    deactivate GW
+    Client --> RU: showError("Invalid credentials")
+
+else Data is correct (Success)
+    ' Logica interna di autenticazione (Hash check & Token generation)
+    note right of Auth: Password Hash Check & Token Generation
+    
+    ' Aggiornamento stato (opzionale ma raccomandato)
+    Auth -> DB: updateLastLogin(userID)
+    activate DB
+    DB --> Auth: ok
+    deactivate DB
+
+    ' Risposta con Token di sessione
+    Auth --> GW: 200 OK (AuthToken)
+    deactivate Auth
+    activate GW
+    GW --> Client: 200 OK (AuthToken)
+    deactivate GW
+    
+    ' Gestione lato client
+    Client -> Client: storeTokenLocally()
+    Client --> RU: loginSuccessful()
+    deactivate Client
+end
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+note over RU, Client: Exit Condition: User successfully logged in
+
+@enduml

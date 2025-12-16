@@ -1,0 +1,82 @@
+@startuml UC1_UserRegistration_Design
+autonumber "<b>0:"
+title [UC1] User Registration 
+
+' =======================================================
+' COMPONENT DEFINITION (4-TIER)
+' =======================================================
+actor "Unregistered User" as User
+participant "Mobile Application\n(Tier 1)" as Client
+participant "BBP API Gateway\n(Tier 2)" as GW
+
+box "BBP Application Server (Tier 3)" #LightBlue
+    participant "AuthenticationService" as Auth
+end box
+
+participant "BBP Account DB\n(Tier 4)" as DB
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over User, Client: Entry condition: the user opens the BBP platform
+
+' =======================================================
+' SCENARIO
+' =======================================================
+User -> Client: clickSignUp()
+activate Client
+
+Client --> User: displayRegistrationForm()
+
+User -> Client: submitPersonalData(name, email, password)
+
+' Validazione locale
+note right of Client: Local validation (format check)
+Client -> GW: POST /api/auth/register (UserDTO)
+activate GW
+
+' Instradamento
+note right of GW: Routing logic
+GW -> Auth: registerUser(UserDTO)
+deactivate GW
+activate Auth
+
+' Verifica Esistenza
+Auth -> DB: checkUserExistence(email, nickname)
+activate DB
+DB --> Auth: userFound (boolean)
+deactivate DB
+
+alt User already registered
+    Auth --> GW: 409 Conflict (Error)
+    activate GW
+    GW --> Client: 409 Conflict
+    deactivate GW
+    Client --> User: showError("User already registered")
+
+else Data is new
+    ' Creazione Utente
+    note right of Auth: Password Hashing
+    Auth -> DB: createProfile(UserEntity)
+    activate DB
+    DB --> Auth: confirmation
+    deactivate DB
+
+    ' Risposta Positiva
+    Auth --> GW: 201 Created
+    deactivate Auth
+    activate GW
+    GW --> Client: 201 Created
+    deactivate GW
+    
+    Client -> Client: createLocalSession()
+    Client --> User: showSuccessMessage()
+    deactivate Client
+end
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+note over User, Client: Exit Condition: the user successfully registered to the platform
+
+@enduml
