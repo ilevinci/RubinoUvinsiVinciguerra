@@ -2,22 +2,14 @@
 autonumber "<b>0:"
 title [UC1] User Registration 
 
-' =======================================================
-' COMPONENT DEFINITION (4-TIER)
-' =======================================================
 actor "Unregistered User" as User
 participant "Mobile Application" as Client
 participant "UserManagement" as Auth
 participant "UserDBMS" as DB
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
+'entry condition
 note over User, Client: Entry condition: the user opens the BBP platform
 
-' =======================================================
-' SCENARIO
-' =======================================================
 User -> Client: clickSignUp()
 activate Client
 
@@ -57,9 +49,7 @@ else Data is new
     deactivate Client
 end
 
-' =======================================================
-' EXIT CONDITION
-' =======================================================
+'exit condition
 note over User, Client: Exit Condition: the user successfully registered to the platform
 
 @enduml
