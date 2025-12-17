@@ -6,17 +6,13 @@ title [UC4] Insert data of the bike path in Manual Mode
 ' COMPONENT DEFINITION
 ' =======================================================
 actor "Registered User" as RU
-participant "Mobile Application\n(Tier 1)" as Client
+participant "Mobile Application" as Client
+participant "Manual Path Insertion Module" as MPIM
 
 ' External Service (Validazione Geografica)
 participant "MapServiceProvider" as Map
 
-' Backend System
-participant "BBP API Gateway\n(Tier 2)" as GW
-box "BBP Application Server (Tier 3)" #LightBlue
-    participant "PathManager" as TM
-end box
-participant "BBP BikePath DB\n(Tier 4)" as DB
+
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -28,31 +24,32 @@ note over RU, Client: Entry Condition: RU presses "Insert new ride"
 ' =======================================================
 RU -> Client: clickInsertNewRide()
 activate Client
-Client -> Client: initManualSession()
+Client -> MPIM: initManualSession()
+activate MPIM
 Client --> RU: displayManualInputForm()
 
 ' =======================================================
 ' (a) & (b) ITERATIVE INSERTION & VALIDATION
 ' =======================================================
 loop For each street inserted by RU
-    RU -> Client: insertStreetDetails(name, location, status)
+    RU -> MPIM: insertStreetDetails(name, location, status)
     
     ' Validazione Esterna (Smart Client)
-    note right of Client: Validate existence via Map Service
-    Client -> Map: validateStreetSegment(name, location)
+    note right of MPIM: Validate existence via Map Service
+    MPIM -> Map: validateStreetSegment(name, location)
     activate Map
-    Map --> Client: ValidationResult (Coords, Geometry)
+    Map --> MPIM: ValidationResult (Coords, Geometry)
     deactivate Map
     
     alt Segment Valid
         ' Validazione Logica Locale
-        note right of Client: Check continuity with previous segment
-        Client -> Client: checkPathContinuity()
+        note right of MPIM: Check continuity with previous segment
+        MPIM -> MPIM: checkPathContinuity()
         
-        Client -> Client: storeTempSegment(SegmentData)
-        Client --> RU: showSegmentAdded()
+        MPIM -> MPIM: storeTempSegment(SegmentData)
+        MPIM --> RU: showSegmentAdded()
     else Segment Invalid
-        Client --> RU: showError("Street not found or invalid")
+        MPIM --> RU: showError("Street not found or invalid")
     end
 end
 
@@ -60,47 +57,22 @@ end
 ' (c) PREVIEW
 ' =======================================================
 note right of Client: Assemble all segments
-Client -> Client: prepareFinalPathPreview()
+MPIM -> Client: prepareFinalPathPreview()
+deactivate MPIM
 Client --> RU: displayPreview(Path_Data)
 
-' =======================================================
-' EXIT CONDITION: PUBLISH OR DISCARD
+' ' =======================================================
+' EXIT CONDITION: SAVE OR DISCARD
 ' =======================================================
 alt RU presses "Save" (Sync to Backend)
     RU -> Client: pressSave()
     
-    ' Invio del pacchetto completo e pulito al server
-    note right of Client: Uploading VALIDATED data via HTTPS
-    Client -> GW: POST /api/paths (PathDTO)
-    activate GW
-    
-    note right of GW: Routing to PathManager
-    GW -> TM: saveNewPath(PathDTO)
-    deactivate GW
-    activate TM
-
-    ' Persistenza
-    TM -> DB: createPath(PathEntity)
-    activate DB
-    DB --> TM: confirmation
-    deactivate DB
-
-    ' Logica di Fusione (Requisito Gruppo 3)
-    note right of TM: Trigger Async Merging Logic
-    TM -> TM: updateStreetStatus(PathDTO)
-
-    ' Risposta
-    TM --> GW: 201 Created
-    deactivate TM
-    activate GW
-    GW --> Client: 201 Created
-    deactivate GW
-    
-    Client -> Client: deleteLocalFile()
+    Client -> Client: storeDataInLocalFile()
     Client --> RU: showSuccessMessage()
-else RU presses "Discard" (Aborted)
+
+else RU presses "Discard"
     RU -> Client: pressDiscard()
-    Client -> Client: discardTempData()
+    Client -> Client: deleteLocalFile()
     Client --> RU: showDiscardMessage()
 end
 

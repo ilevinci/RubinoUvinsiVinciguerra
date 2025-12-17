@@ -1,4 +1,4 @@
-@startuml UC5_VisualizeSessionLog_Design
+@startuml UC5_VisualizeSessionLog_Local
 autonumber "<b>0:"
 title [UC5] Visualize a session in the personal sessions log
 
@@ -6,15 +6,13 @@ title [UC5] Visualize a session in the personal sessions log
 ' COMPONENT DEFINITION
 ' =======================================================
 actor "Registered User" as RU
-participant "Mobile Application\n(Tier 1)" as Client
-participant "BBP API Gateway\n(Tier 2)" as GW
+participant "Mobile Application" as Client
 
-box "BBP Application Server (Tier 3)" #LightBlue
-    ' Usiamo PathManager perché gestisce le sessioni/corse
-    participant "PathManager" as TM
-end box
+' Componente che gestisce l'archivio locale
+participant "Inventory Handling" as IH
 
-participant "BBP BikePath DB\n(Tier 4)" as DB
+' Servizio Esterno per il rendering mappe
+participant "MapServiceProvider" as Map
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -27,31 +25,17 @@ note over RU, Client: Entry Condition: RU selects "My recorded trips"
 RU -> Client: clickMyRecordedTrips()
 activate Client
 
-' Richiesta della lista (solo sommari, per efficienza)
-note right of Client: Fetching lightweight list summary
-Client -> GW: GET /api/users/me/sessions
-activate GW
+note right of Client: Request local session history
+Client -> IH: retrieveUserSessions()
+activate IH
 
-note right of GW: Routing to PathManager
-GW -> TM: retrieveUserSessions(UserID)
-deactivate GW
-activate TM
+' Accesso al File System Locale
+note right of IH: **Local File System Access**\nScan directory for session logs
+IH -> IH: readLocalSessionFiles()
 
-' Query al DB per i sommari
-TM -> DB: findSessionsByUserID(UserID)
-activate DB
-note right of DB: Returns: ID, Date, Distance, Duration
-DB --> TM: List<SessionEntity>
-deactivate DB
-
-' Conversione in DTO
-TM -> TM: convertToSummaryDTOs(List)
-
-TM --> GW: 200 OK (List<SessionSummaryDTO>)
-deactivate TM
-activate GW
-GW --> Client: 200 OK (List<SessionSummaryDTO>)
-deactivate GW
+' Ritorno lista sommari
+IH --> Client: returnSessionSummaries(List<SessionSummary>)
+deactivate IH
 
 ' Visualizzazione Lista
 Client --> RU: displaySessionLog(list_of_trips)
@@ -61,33 +45,27 @@ Client --> RU: displaySessionLog(list_of_trips)
 ' =======================================================
 RU -> Client: selectSession(sessionID)
 
-' =======================================================
-' (c) THE SYSTEM SHOWS THE DETAILS
-' =======================================================
-note right of Client: Fetching full details (GPS points, Metrics)
-Client -> GW: GET /api/sessions/{sessionID}
-activate GW
+' 1. Recupero Dati Sessione dallo Storage Locale
+note right of Client: Step 1: Fetch full raw data from file
+Client -> IH: getFullSessionData(sessionID)
+activate IH
 
-GW -> TM: fetchSessionDetails(sessionID)
-deactivate GW
-activate TM
+note right of IH: Read JSON/XML file from device storage
+IH -> IH: readSessionFile(sessionID)
+note right of IH: Returns: Waypoints, Speed, Elev, Meteo
+IH --> Client: SessionFullData
+deactivate IH
 
-' Query al DB per i dettagli completi
-TM -> DB: findFullSessionData(sessionID)
-activate DB
-note right of DB: Returns: Waypoints, Speed/Elev profiles, Meteo
-DB --> TM: SessionFullEntity
-deactivate DB
+' 2. Recupero Mappa dal Service Provider
+note right of Client: Step 2: Request map background for specific coords
+Client -> Map: requestMapContext(SessionFullData.coordinates)
+activate Map
+Map --> Client: MapTiles/VectorData
+deactivate Map
 
-TM --> GW: 200 OK (SessionDetailDTO)
-deactivate TM
-activate GW
-GW --> Client: 200 OK (SessionDetailDTO)
-deactivate GW
-
-' Rendering lato Client (Smart Client)
-note right of Client: Client renders Map and Charts locally
-Client -> Client: renderMapPath(GPS_Points)
+' Rendering lato Client
+note right of Client: **Rendering Logic:**\nCombine Map Tiles with Local GPS Path
+Client -> Client: renderMapPath(GPS_Points, MapTiles)
 Client -> Client: computeGraphs(Metrics)
 
 Client --> RU: displaySessionDetails(data, map, metrics)

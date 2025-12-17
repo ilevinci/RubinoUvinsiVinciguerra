@@ -6,17 +6,14 @@ title [UC6] Search for a bike path
 ' COMPONENT DEFINITION
 ' =======================================================
 actor "User" as User
-participant "Mobile Application\n(Tier 1)" as Client
+participant "Mobile Application" as Client
 
 ' External Service (Geocoding)
 participant "MapServiceProvider" as Map
 
 ' Backend System
-participant "BBP API Gateway\n(Tier 2)" as GW
-box "BBP Application Server (Tier 3)" #LightBlue
-    participant "PathSearchEngine" as Search
-end box
-participant "BBP BikePath DB\n(Tier 4)" as DB
+participant "PathSearchEngine" as Search
+participant "BikePath DBMS" as DB
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -68,12 +65,8 @@ deactivate Map
 ' =======================================================
 ' Invio della query con le coordinate già pronte
 note right of Client: Request paths matching Origin/Dest
-Client -> GW: GET /api/paths/search?origin=..&dest=..
-activate GW
 
-note right of GW: Routing to Search Engine
-GW -> Search: findBestPaths(SearchCriteriaDTO)
-deactivate GW
+Client -> Search: findBestPaths(SearchCriteriaDTO)
 activate Search
 
 ' Query al DB: Trova percorsi vicini e ordinali per Score
@@ -85,12 +78,8 @@ deactivate DB
 
 ' Conversione in DTO leggeri per la lista
 Search -> Search: rankAndConvertToSummary(List)
-
-Search --> GW: 200 OK (List<PathSummaryDTO>)
+Search --> Client: returnRankedPaths(List<PathSummaryDTO>)
 deactivate Search
-activate GW
-GW --> Client: 200 OK (List<PathSummaryDTO>)
-deactivate GW
 
 Client --> User: displayPathSelection(ranked_paths)
 

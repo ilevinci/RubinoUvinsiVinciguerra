@@ -6,14 +6,9 @@ title [UC1] User Registration
 ' COMPONENT DEFINITION (4-TIER)
 ' =======================================================
 actor "Unregistered User" as User
-participant "Mobile Application\n(Tier 1)" as Client
-participant "BBP API Gateway\n(Tier 2)" as GW
-
-box "BBP Application Server (Tier 3)" #LightBlue
-    participant "AuthenticationService" as Auth
-end box
-
-participant "BBP Account DB\n(Tier 4)" as DB
+participant "Mobile Application" as Client
+participant "UserManagement" as Auth
+participant "UserDBMS" as DB
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -32,13 +27,7 @@ User -> Client: submitPersonalData(name, email, password)
 
 ' Validazione locale
 note right of Client: Local validation (format check)
-Client -> GW: POST /api/auth/register (UserDTO)
-activate GW
-
-' Instradamento
-note right of GW: Routing logic
-GW -> Auth: registerUser(UserDTO)
-deactivate GW
+Client -> Auth: registerUser(UserDTO)
 activate Auth
 
 ' Verifica Esistenza
@@ -48,10 +37,7 @@ DB --> Auth: userFound (boolean)
 deactivate DB
 
 alt User already registered
-    Auth --> GW: 409 Conflict (Error)
-    activate GW
-    GW --> Client: 409 Conflict
-    deactivate GW
+    Auth --> Client: errorMessage("User exists")
     Client --> User: showError("User already registered")
 
 else Data is new
@@ -63,11 +49,8 @@ else Data is new
     deactivate DB
 
     ' Risposta Positiva
-    Auth --> GW: 201 Created
+    Auth --> Client: createdProfile()
     deactivate Auth
-    activate GW
-    GW --> Client: 201 Created
-    deactivate GW
     
     Client -> Client: createLocalSession()
     Client --> User: showSuccessMessage()

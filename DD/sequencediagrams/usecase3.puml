@@ -6,18 +6,12 @@ title [UC3] Track a training session in Automated Mode
 ' COMPONENT DEFINITION
 ' =======================================================
 actor "Registered User" as RU
-participant "Mobile Application\n(Tier 1)" as Client
+participant "Mobile Application" as Client
+participant "Automated Path Data Collector" as APDC
 
 ' Servizi Esterni (Chiamati direttamente dal Client)
 participant "MeteoServiceProvider" as Meteo
 participant "MapServiceProvider" as Map
-
-' Backend System
-participant "BBP API Gateway\n(Tier 2)" as GW
-box "BBP Application Server (Tier 3)" #LightBlue
-    participant "PathManager" as TM
-end box
-participant "BBP BikePath DB\n(Tier 4)" as DB
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -30,28 +24,29 @@ note over RU, Client: Entry Condition: RU presses "Track new ride"
 RU -> Client: clickTrackNewRide()
 activate Client
 
-Client -> Client: initLocalSession()
-note right of Client: Create temp file on Device Storage
+Client -> APDC: initLocalSession()
+note right of APDC: Create temp file on Device Storage
 
 ' =======================================================
 ' (b), (c) LOCAL ACQUISITION LOOP
 ' =======================================================
+activate APDC
 loop Continuous Data Acquisition
-    note right of Client: Internal Sensor Access
-    Client -> Client: acquireSensors(GPS, Gyro, Accel)
-    Client -> Client: appendToLocalFile(DataChunk)
+    note right of APDC: Internal Sensor Access
+    APDC -> APDC: acquireSensors(GPS, Gyro, Accel)
+    APDC -> APDC: appendToLocalFile(DataChunk)
 end
 
 ' =======================================================
 ' (d) DETECT END OF ACTIVITY
 ' =======================================================
 alt User manually stops
-    RU -> Client: pressStop()
+    RU -> APDC: pressStop()
 else System detects inactivity
-    Client -> Client: analyzeMovementPatterns()
-    note right of Client: No movement detected for threshold time
-    Client -> Client: triggerAutoStop()
-    Client --> RU: notifyAutoStop()
+    APDC -> APDC: analyzeMovementPatterns()
+    note right of APDC: No movement detected for threshold time
+    APDC -> APDC: triggerAutoStop()
+    APDC --> RU: notifyAutoStop()
 end
 
 ' =======================================================
@@ -62,20 +57,21 @@ end
 ' Chiamate dirette dal Client ai Servizi Esterni
 par Parallel External Requests
     ' Meteo
-    Client -> Meteo: fetchWeather(GPS, Timestamp)
+    APDC -> Meteo: fetchWeather(GPS, Timestamp)
     activate Meteo
-    Meteo --> Client: WeatherData
+    Meteo --> APDC: WeatherData
     deactivate Meteo
     
     ' Map Matching
-    Client -> Map: requestMapMatching(RawGPSPoints)
+    APDC -> Map: requestMapMatching(RawGPSPoints)
     activate Map
-    Map --> Client: RefinedPathGeometry
+    Map --> APDC: RefinedPathGeometry
     deactivate Map
 end par
 
 ' Generazione Preview Locale
-Client -> Client: generateTripPreview(RefinedPath, Weather)
+APDC -> Client: generateTripPreview(RefinedPath, Weather)
+deactivate
 Client --> RU: displayPreview()
 
 ' (f) USER VALIDATION
@@ -87,34 +83,7 @@ RU -> Client: checkAndCorrectData()
 alt RU presses "Save" (Sync to Backend)
     RU -> Client: pressSave()
     
-    ' Invio del pacchetto completo e pulito al server
-    note right of Client: Uploading VALIDATED data via HTTPS
-    Client -> GW: POST /api/paths (PathDTO)
-    activate GW
-    
-    note right of GW: Routing to PathManager
-    GW -> TM: saveNewPath(PathDTO)
-    deactivate GW
-    activate TM
-
-    ' Persistenza
-    TM -> DB: createPath(PathEntity)
-    activate DB
-    DB --> TM: confirmation
-    deactivate DB
-
-    ' Logica di Fusione (Requisito Gruppo 3)
-    note right of TM: Trigger Async Merging Logic
-    TM -> TM: updateStreetStatus(PathDTO)
-
-    ' Risposta
-    TM --> GW: 201 Created
-    deactivate TM
-    activate GW
-    GW --> Client: 201 Created
-    deactivate GW
-    
-    Client -> Client: deleteLocalFile()
+    Client -> Client: storeDataInLocalFile()
     Client --> RU: showSuccessMessage()
 
 else RU presses "Discard"

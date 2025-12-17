@@ -6,15 +6,12 @@ title [UC8] Publication of a Path (Design View)
 ' COMPONENT DEFINITION
 ' =======================================================
 actor "Registered User" as RU
-participant "Mobile Application\n(Tier 1)" as Client
+participant "Mobile Application" as Client
+participant "Inventory Handling" as IH
 
 ' Backend System
-participant "BBP API Gateway\n(Tier 2)" as GW
-box "BBP Application Server (Tier 3)" #LightBlue
-    ' PathManager gestisce la scrittura e la logica di business dei percorsi
-    participant "PathManager" as PM
-end box
-participant "BBP DB Cluster\n(Tier 4)" as DB
+participant "PathPublication" as PM
+participant "BikePath DBMS" as DB
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -29,30 +26,18 @@ activate Client
 
 ' Il Client richiede i dati aggiornati per la preview (es. Score attuale)
 note right of Client: Request preview data
-Client -> GW: GET /api/paths/{pathID}/preview
-activate GW
-
-note right of GW: Routing to PathManager
-GW -> PM: getPublishPreview(pathID)
-deactivate GW
-activate PM
+Client -> IH: getPublishPreview(pathID)
+activate IH
 
 ' Recupero dati grezzi
-PM -> DB: fetchPathData(pathID)
-activate DB
-DB --> PM: PathEntity
-deactivate DB
+IH -> IH: fetchPathData(pathID)
 
 ' Calcolo preliminare dello score (Preview)
-note right of PM: Calculate potential score impact
-PM -> PM: calculateProjectedScore(PathEntity)
+note right of IH: Calculate potential score impact
+IH -> IH: calculateProjectedScore(PathEntity)
 
-PM --> GW: 200 OK (PreviewDTO: streets, score)
-deactivate PM
-activate GW
-GW --> Client: 200 OK (PreviewDTO)
-deactivate GW
-
+IH --> Client: returnPreviewData(<streets, status>, score)
+deactivate IH
 ' Visualizzazione
 Client --> RU: displayPreview(streets, score)
 
@@ -61,18 +46,13 @@ Client --> RU: displayPreview(streets, score)
 ' =======================================================
 alt User presses "Confirm" (Success)
     RU -> Client: pressConfirm()
+
     
-    ' Richiesta di pubblicazione
-    note right of Client: Trigger Publication
-    Client -> GW: POST /api/paths/{pathID}/publish
-    activate GW
-    
-    GW -> PM: publishPath(pathID)
-    deactivate GW
+    Client -> PM: publishPath(pathID)
     activate PM
 
     ' 1. Aggiornamento Visibilità
-    PM -> DB: updateVisibility(pathID, PUBLIC)
+    PM -> DB: storeNewPath(pathID)
     activate DB
     DB --> PM: OK
     deactivate DB
@@ -95,11 +75,8 @@ alt User presses "Confirm" (Success)
     end loop
 
     ' Risposta Finale
-    PM --> GW: 200 OK (Success)
+    PM --> Client: returnPublishConfirmation()
     deactivate PM
-    activate GW
-    GW --> Client: 200 OK
-    deactivate GW
     
     Client --> RU: showSuccessMessage("Path is now public")
     note over RU, Client: Exit Condition: Publication finalized

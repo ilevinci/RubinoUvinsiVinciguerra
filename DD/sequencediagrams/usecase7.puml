@@ -1,4 +1,4 @@
-@startuml UC7_VisualizePath_Design
+@startuml UC7_VisualizationPath_Final
 autonumber "<b>0:"
 title [UC7] Visualization of a Path
 
@@ -6,72 +6,67 @@ title [UC7] Visualization of a Path
 ' COMPONENT DEFINITION
 ' =======================================================
 actor "User" as User
-participant "Mobile Application\n(Tier 1)" as Client
+participant "Mobile Application" as Client
+
+' Servizio Esterno (Indispensabile per il rendering grafico)
+participant "MapServiceProvider" as Map
 
 ' Backend System
-participant "BBP API Gateway\n(Tier 2)" as GW
-box "BBP Application Server (Tier 3)" #LightBlue
-    ' Usiamo SearchEngine coerentemente con UC6
-    participant "PathSearchEngine" as Search
-end box
-participant "BBP BikePath DB\n(Tier 4)" as DB
+participant "PathResearch" as PR
+participant "BikePath DBMS" as DB
 
 ' =======================================================
 ' ENTRY CONDITION
 ' =======================================================
-note over User, Client: Entry Condition: User has selected a path and pressed "View"
+note over User, Client: Entry Condition: User has selected a path and presses "View"
 
 ' =======================================================
-' (a) SYSTEM SHOWS DETAILS
+' (a) FETCH DATA & MAP CONTEXT
 ' =======================================================
 User -> Client: pressView(pathID)
 activate Client
 
-' Check cache locale (Opzionale, Smart Client optimization)
-alt Details not cached locally
-    note right of Client: Fetching aggregated data
-    Client -> GW: GET /api/paths/{pathID}/full
-    activate GW
-    
-    note right of GW: Routing to Search Engine
-    GW -> Search: getPathDetails(pathID)
-    deactivate GW
-    activate Search
+' 1. Recupero Dati del Percorso (Logica di Business)
+note right of Client: Step 1: Get coordinates & scores from Backend
+Client -> PR: getAggregatedPathDetails(pathID)
+activate PR
 
-    ' Recupero Dati Aggregati (Punto critico del Design)
-    note right of Search: Fetch Path Entity + Related Streets + Scores
-    Search -> DB: fetchPathAndSegments(pathID)
-    activate DB
-    DB --> Search: FullPathEntity (Nested Data)
-    deactivate DB
+' Query al DBMS
+note right of PR: Fetch Path Entity JOIN Streets (with Scores)
+PR -> DB: fetchAggregatedPathData(pathID)
+activate DB
+DB --> PR: AggregatedPathEntity
+deactivate DB
 
-    ' Trasformazione in DTO
-    Search -> Search: createFullPathDTO(FullPathEntity)
+' Ritorno dati al Client
+PR --> Client: returnPathDetails(PathDTO)
+deactivate PR
 
-    Search --> GW: 200 OK (FullPathDTO)
-    deactivate Search
-    activate GW
-    GW --> Client: 200 OK (FullPathDTO)
-    deactivate GW
-end
+' 2. Recupero Dati Cartografici (Logica di Visualizzazione)
+note right of Client: Step 2: Request map background for specific coords
+Client -> Map: requestMapContext(PathDTO.coordinates)
+activate Map
+Map --> Client: returnMapTiles(VectorData)
+deactivate Map
 
-' Rendering Lato Client
-note right of Client: Client renders geometry and colors based on score
-Client -> Client: renderMapGeometry(pathData.segments)
-Client -> Client: displayMetrics(pathData.scores)
+' =======================================================
+' RENDERING LATO CLIENT
+' =======================================================
+note right of Client: **Rendering Logic:**\nOverlay Business Data (Colored Lines) on Map Tiles
 
-Client --> User: displayPathDetails(Map, Stats)
+
+Client -> Client: renderMapWithOverlays()
+Client --> User: displayPathDetails(Map, Legend)
 
 ' =======================================================
 ' EXIT CONDITION
 ' =======================================================
 User -> Client: pressExit()
 
-' Pulizia vista
 Client -> Client: closeDetailView()
-Client --> User: returnToPreviousScreen()
+Client --> User: returnToRankedList()
 
-note over User, Client: Exit Condition: User closes the details view
+note over User, Client: Exit Condition: User returns to the search results
 
 deactivate Client
 @enduml
