@@ -12,8 +12,6 @@ participant "Manual Path Insertion Module" as MPIM
 ' External Service (Validazione Geografica)
 participant "MapServiceProvider" as Map
 
-
-
 ' =======================================================
 ' ENTRY CONDITION
 ' =======================================================
@@ -61,7 +59,7 @@ MPIM -> Client: prepareFinalPathPreview()
 deactivate MPIM
 Client --> RU: displayPreview(Path_Data)
 
-' ' =======================================================
+' =======================================================
 ' EXIT CONDITION: SAVE OR DISCARD
 ' =======================================================
 alt RU presses "Save" (Sync to Backend)

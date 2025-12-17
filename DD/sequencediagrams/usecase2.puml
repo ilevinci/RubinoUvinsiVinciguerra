@@ -2,22 +2,13 @@
 autonumber "<b>0:"
 title [UC2] User Login 
 
-' =======================================================
-' COMPONENT DEFINITION (4-TIER ARCHITECTURE)
-' =======================================================
 actor "Registered User" as RU
 participant "Mobile Application" as Client
 participant "UserManagement" as Auth
 participant "UserDBMS" as DB
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
+'entry condition
 note over RU, Client: Entry Condition: RU opens the BBP platform
-
-' =======================================================
-' INTERACTION FLOW
-' =======================================================
 
 RU -> Client: clickSignIn()
 activate Client
@@ -64,9 +55,7 @@ else Data is correct (Success)
     deactivate Client
 end
 
-' =======================================================
-' EXIT CONDITION
-' =======================================================
+'exit condition
 note over RU, Client: Exit Condition: User successfully logged in
 
 @enduml
