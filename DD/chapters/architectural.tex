@@ -34,14 +34,14 @@ While account management, path processing, publication and research require an i
 that is only available to the user that recorded it, while a bike path is a shared entity that is available to all users to the platform and it only contains the "publishable" data of the cycling sessions: the geographical reconstruction of the path, the status of its streets and the presence of obstacles.
 Therefore, since a record is private, it is only stored locally on the user's device and it can be accessed offline. Its creation though does need an internet connection in order to interact with the external providers to retrieve meteorological data and to process raw sensor data into a human-readable and visualizable format.
 The same concept applies to manually inserted paths that have not been published yet: we handle these drafts locally on the user's device until (and if ever) the user decides to publish them. \\
-The presentation layer is therefore responsible for providing the user interface, for managing the local storage of the user's path inventory and for interaction with the external services that are needed to create records and paths.
+The presentation layer is therefore responsible both for providing the user interface and for managing the local storage of the user's path inventory.
 
 \vspace{0.5cm}
 \noindent \textbf{Gateway Tier}: The gateway tier acts as an intermediary between the presentation layer and the application layer. It receives requests from the mobile application and forwards them to the appropriate services in the application tier.
 In particular, the gateway tier separates account management and permission related requests to a specific server, whereas all path related requests are forwarded to the application server.
 
 \vspace{0.5cm}
-\noindent \textbf{Application Tier}: The application tier contains the core logic of the BPP platform and it is responsible for processing both path publication and research requests. It is therefore the point of interaction with the data tier. The application tier also contains the authentication service that manages user accounts and permissions.
+\noindent \textbf{Application Tier}: The application tier contains the core logic of the BPP platform and it is responsible for processing both path publication and research requests. It also contains the authentication service that manages user accounts and permissions.
 The application server in this tier is structured to be scalable and it could therefore be replicated and distributed geographically.
 
 \vspace{0.5cm}
@@ -51,7 +51,7 @@ Both databases are designed to be highly available and to provide eventual consi
 \vspace{0.5cm}
 \noindent In the next sections we go deeper in the details of the components and the deployment.
 
-\newpage
+
 \subsection{Component view}
 This section gives a more detailed description of the components of the architecture of the BPP system.
 
@@ -63,7 +63,7 @@ The main components of the system are:
 \begin{itemize}
     \item \textbf{User Management Service}: This service is responsible for managing user accounts, including registration, authentication, and profile management. It ensures that only authorized users can access certain features of the application.
     \item \textbf{Automated Path Data Collection Service}: This service collects raw data from the mobile device's sensors during a cycling session. It gathers information such as GPS coordinates, speed, elevation, and other relevant metrics and stores them in the local storage of the device.
-    \item \textbf{Path Data Transformation Service}: This service processes the raw sensor data collected during a cycling session and transforms it into a human-readable and visualizable format. Apart from reconstructing paths, it gives an evaluation of each street's conditions, and identifies obstacles along the route. It is also responsible for computing and storing performance metrics.
+    \item \textbf{Path Data Transformation Service}: This service processes the raw sensor data collected during a cycling session and transforms it into a human-readable and visualizable format. AApart from reconstructing paths, it gives an evaluation of each street's conditions, and identifies obstacles along the route. It is also responsible for computing and storing performance metrics.
     \item \textbf{Meteorological Data Retrieval Service}: This service interacts with external meteorological data providers to retrieve weather information for the area where the cycling session took place. It ensures that the weather data is accurately associated with the corresponding record data.
     \item \textbf{Path Research Service}: This service allows users to search for bike paths that connect their desired origin and destination points. It retrieves relevant paths from the database and provides customization options for visualization.
     \item \textbf{Path Publication Service}: This service handles the publication of bike paths to the platform. It ensures that the path data is properly formatted and stored in the database, making it accessible to other users.
@@ -73,8 +73,8 @@ The main components of the system are:
 
 \newpage
 \subsection{Deployment view}
-This chapter describes the deployment view of the BPP system. It outlines the execution
-environment of the system and details the geographical distribution of the hardware components that host the
+This chapter describes the deployment view of the BPP system. it outlines the execution
+environment of the system and details the gegraphical distribution of the hardware components that host the
 software making up the application.
 
 \vspace{0.5cm}
@@ -113,15 +113,108 @@ We proceed to provide further details about the elements in the graph.
 \end{itemize}
 \subsection{Runtime view}
 \subsection{Component interfaces}
+In this section we provide details about the interfaces of the main components of the BPP system by specifying their methods, parameters, and return types.
+
+\subsubsection{Client subsystem}
+\begin{itemize}
+    \item \textbf{TrackSession}
+        \begin{enumerate}
+            \item \texttt{initLocalSession(): void}
+            \item \texttt{acquireSensors(GPS: GPSData, Gyro: GyroData, Accel: AccelData): void}
+            \item \texttt{appendToLocalFile(dataChunk: DataChunk): void}
+            \item \texttt{analyzeMovementPatterns(): void}
+            \item \texttt{triggerAutoStop(): void}
+            \item \texttt{generateTripPreview(RefinedPath: RefinedPathGeometry, Weather: WeatherData): PreviewData}
+        \end{enumerate}
+    \item \textbf{ManageRecords}
+        \begin{enumerate}
+            \item \texttt{retrieveUserSessions(): List<Record>}
+            \item \texttt{readLocalSessionFiles(): List<Record>}
+            \item \texttt{getFullSessionData(sessionID: String): Record}
+            \item \texttt{readSessionFile(sessionID: String): Record}
+        \end{enumerate}
+    \item \textbf{ManuallyInsertPath}
+        \begin{enumerate}
+            \item \texttt{initManualSession(): void}
+            \item \texttt{insertStreetDetails(name: String, location: Location, status: Status): void}
+            \item \texttt{checkPathContinuity(): boolean}
+            \item \texttt{storeTempSegment(SegmentData): void}
+            \item \texttt{prepareFinalPathPreview(): PathPreview}
+        \end{enumerate}
+    \item \textbf{StoreRecord}
+        \begin{enumerate}
+            \item \texttt{storeDataInLocalFile(): void}
+            \item \texttt{deleteLocalFile(): void}
+        \end{enumerate}
+    \item \textbf{MeteoProviderAPI}
+        \begin{enumerate}
+            \item \texttt{fetchWeather(GPS: Coordinates, Timestamp: DateTime): WeatherData}
+        \end{enumerate}
+    \item \textbf{MapProviderAPI}
+        \begin{enumerate}
+            \item \texttt{requestMapMatching(RawGPSPoints: List<Coordinates>): RefinedPathGeometry}
+            \item \texttt{validateStreetSegment(name: String, location: Location): ValidationResult}
+            \item \texttt{requestMapContext(coordinates: List<Coordinates>): MapTiles}
+            \item \texttt{getCoordinates(address: String): Coordinates}
+        \end{enumerate}
+\end{itemize}
+
+
+\subsubsection{Backend system}
+\begin{itemize}
+    \item \textbf{ManageAccount}
+        \begin{enumerate}
+            \item \texttt{registerUser(userDTO: UserDTO): void}
+            \item \texttt{authenticateUser(loginDTO: LoginDTO): AuthToken}
+        \end{enumerate}
+    \item \textbf{SearchPath}
+        \begin{enumerate}
+            \item \texttt{findBestPaths(criteria: SearchCriteriaDTO): List<BikePath>}
+            \item \texttt{rankAndConvertToSummary(paths: List<BikePath>): List<BikePath>}
+            \item \texttt{getAggregatedPathDetails(pathID: String): BikePath}
+        \end{enumerate}
+    \item \textbf{PublishPath}
+        \begin{enumerate}
+            \item \texttt{publishPath(pathID: String): void}
+            \item \texttt{recalculateStreetStatus(newData: StreetData, oldAggregate: StreetAggregate): Status}
+        \end{enumerate}
+\end{itemize}
+
+
+\subsubsection{Data system}
+\begin{itemize}
+    \item \textbf{AccessUserDB}
+        \begin{enumerate}
+            \item \texttt{checkUserExistence(email: String, nickname: String): boolean}
+            \item \texttt{createProfile(userEntity: User): void}
+            \item \texttt{findUserByCredentials(email: String, nickname: String): User}
+            \item \texttt{updateLastLogin(userID: String): void}
+        \end{enumerate}
+    \item \textbf{AccessPathDB}
+        \begin{enumerate}
+            \item \texttt{findPathsByProximityAndScore(origin: Coordinates, dest: Coordinates): List<BikePath>}
+            \item \texttt{fetchAggregatedPathData(pathID: String): AggregatedPathData}
+            \item \texttt{storeNewPath(pathID: String): void}
+            \item \texttt{fetchStreetAggregate(segmentID: String): StreetAggregateData}
+            \item \texttt{updateStreetStatus(segmentID: String, newStatus: Status): void}
+        \end{enumerate}
+\end{itemize}
+
+
+\newpage
 \subsection{Selected architectural styles and patterns}
+
 \textbf{Client Server 4-tier Architecture}\newline
-The system adopts a 4-Tier Infrastructure. With this solution we can split the
+
+\noindent The system adopts a 4-Tier Infrastructure. With this solution we can split the
 layer that manage the application and communicate with the Databases from the Gateway layer
 that hide all the application logic and acts as single entry point for all client requests.
 With this solution the system expose only a secure, monitored endpoint to the external network.
-The separation allows also the internal architecture to evolve or scale without impacting the client.\newline
+The separation allows also the internal architecture to evolve or scale without impacting the client. \newline
+
 \noindent\textbf{Service-Based Architecture}\newline
-The application is decomposed into two independent Service: The Account Manager Service and the Path Manager Service.
+
+\noindent The application is decomposed into two independent Service: The Account Manager Service and the Path Manager Service.
 The first Service is responsible to all the operations that regard the creation, modification and deletion of accounts.
 The second Service is responsible to all that operation that regard the publication and the search of bike paths. This 
 Separation of Concerns (both logical and physical) offers significant advantages:
@@ -132,19 +225,24 @@ Separation of Concerns (both logical and physical) offers significant advantages
 \end{itemize} 
 \noindent
 \textbf{Bulkhead Pattern} \newline
-The adoption of a Service-Based Architecture enables this pattern, responsible to ensure system resilience and graceful degradation.
+
+\noindent The adoption of a Service-Based Architecture enables this pattern, responsible to ensure system resilience and graceful degradation.
 The pattern is implemented via the physical and logical separation of Account Manager Service and the Path Manager Service.
 These two services use separate servers and use different databases.\newpage
+
 \noindent\textbf{Command Pattern - CQRS} \newline
-The system exploits the Command Pattern to decouple the actions requested to the system
+
+\noindent The system exploits the Command Pattern to decouple the actions requested to the system
 by a user and the implementation of that action in the server-side of the application.
 Since all the possible operations concerns either the publication of a path or the search for a path we can
 laverage CQRS (Command Query Responsibility Segregation) to split the "Command" part from the "Query" part.
 The "write side" (command model) handles all the operations that regard the publication of paths prioritizing the consistency and rule validation for each published path while the 
 "read side"(Query model) handles all the search operations. This query model will retrieve the pre-calculated bike path, ensuring quick response time
 due to the bypass of all complex domain logic.\newline
-\textbf{Observer Pattern} \newline
-The Observer pattern is used to manage the interaction between GPS and accelerometer and the user device.
+
+\noindent\textbf{Observer Pattern} \newline
+
+\noindent The Observer pattern is used to manage the interaction between GPS and accelerometer and the user device.
 GPS and accelerometer are the 'Subject' and the ClientManager is the 'Observer'.
 
 \subsection{Other design decisions}
