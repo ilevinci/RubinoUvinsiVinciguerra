@@ -33,11 +33,11 @@ activate IH
 note right of IH: **Local File System Access**\nScan directory for session logs
 IH -> IH: readLocalLogFiles()
 
-IH --> Client: returnRecordedTrips(List<Record>)
+IH --> Client: List<recordID>
 deactivate IH
 
 ' Visualizzazione Lista
-Client --> RU: displayLog(List<Record>)
+Client --> RU: List<recordID>
 ' =======================================================
 ' (b) RU FINDS AND SELECTS THE SESSION
 ' =======================================================
@@ -51,7 +51,7 @@ activate IH
 note right of IH: Read JSON/XML file from device storage
 IH -> IH: readSessionFile(recordID)
 note right of IH: Returns: Waypoints, Speed, Elev, Meteo
-IH --> Client: SessionFullData
+IH --> Client: Record
 deactivate IH
 
 ' 2. Recupero Mappa dal Service Provider
@@ -69,14 +69,14 @@ note right of Client: **Rendering Logic:**\nCombine Map Tiles with Local GPS Pat
 Client -> Client: renderMapPath(GPS_Points, MapTiles)
 Client -> Client: computeAllData()
 
-Client --> RU: displayRecordDetails(data, map, metrics)
+Client --> RU: RecordDetails(data, map, metrics)
 
 ' =======================================================
 ' EXIT CONDITION
 ' =======================================================
 RU -> Client: pressExit()
 Client -> Client: clearDetailView()
-Client --> RU: returnToMenu()
+Client -> RU: returnToMenu()
 note over RU, Client: Exit Condition: RU closes the log page
 
 deactivate Client

@@ -13,12 +13,12 @@ note over RU, Client: Entry Condition: RU opens the BBP platform
 RU -> Client: clickSignIn()
 activate Client
 
-Client --> RU: displayLoginForm()
+Client --> RU: LoginForm
 
 ' Steps (a) and (b): Insertion of credentials
 RU -> Client: insertCredentials(nickname/email, password)
 
-Client -> Auth: authenticateUser(LoginDTO)
+Client -> Auth: authenticateUser(UserDTO)
 activate Auth
 
 ' Step (c): Verification
@@ -26,13 +26,13 @@ activate Auth
 note right of Auth: System checks if data is correct
 Auth -> DB: findUserByCredentials(email, nickname)
 activate DB
-DB --> Auth: userEntity / null
+DB --> Auth: RegisteredUser / null
 deactivate DB
 
 ' Logic: Alternative paths
 alt Data is not correct (Exception)
     ' Return 401 Unauthorized
-    Auth --> Client: unauthorizedUser()
+    Auth --> Client: unauthorizedException
     Client --> RU: showError("Invalid credentials")
 
 else Data is correct (Success)
@@ -40,13 +40,14 @@ else Data is correct (Success)
     note right of Auth: Password Hash Check & Token Generation
     
     ' Aggiornamento stato (opzionale ma raccomandato)
-    Auth -> DB: updateLastLogin(userID)
+    Auth -> DB: updateLastLogin(nickname/email)
     activate DB
     DB --> Auth: ok
     deactivate DB
 
     ' Risposta con Token di sessione
-    Auth --> Client: createToken(AuthToken)
+    Auth -> Auth: createToken(RegisteredUser)
+    Auth --> Client: AuthToken
     deactivate Auth
     
     ' Gestione lato client

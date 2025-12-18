@@ -134,7 +134,7 @@ class CyclingSession { /'. estende Record, rappresenta il record tracciato in mo
 }
 
 class Record {
-    -recordID : int
+    - recordID : int
     - bikePath : BikePath
     - recordingDate : Date
     --

@@ -23,22 +23,22 @@ note over User, Client: Entry Condition: User has selected a path and presses "V
 ' =======================================================
 ' (a) FETCH DATA & MAP CONTEXT
 ' =======================================================
-User -> Client: pressView(BikePath)
+User -> Client: pressView(bikePathID)
 activate Client
 
 ' 1. Recupero Dati del Percorso (Logica di Business)
 note right of Client: Step 1: Get coordinates & scores from Backend
-Client -> PR: getAggregatedPathDetails(BikePath)
+Client -> PR: getAggregatedPathDetails(bikePathID)
 activate PR
 
 ' Query al DBMS
-PR -> DB: fetchAggregatedPathData(BikePath)
+PR -> DB: fetchAggregatedPathData(bikePathID)
 activate DB
 DB --> PR: AggregatedPathData
 deactivate DB
 
 ' Ritorno dati al Client
-PR --> Client: returnPathDetails(BikePath)
+PR --> Client: BikePath
 deactivate PR
 
 ' 2. Recupero Mappa dal Service Provider
@@ -58,7 +58,7 @@ note right of Client: **Rendering Logic:**\nOverlay Business Data (Colored Lines
 
 
 Client -> Client: renderMapWithOverlays()
-Client --> User: displayPathDetails(Map)
+Client --> User: BikePath, Map
 
 ' =======================================================
 ' EXIT CONDITION

@@ -13,9 +13,9 @@ note over User, Client: Entry condition: the user opens the BBP platform
 User -> Client: clickSignUp()
 activate Client
 
-Client --> User: displayRegistrationForm()
+Client --> User: RegistrationForm
 
-User -> Client: submitPersonalData(name, email, password)
+User -> Client: submitPersonalData(name, surname, \nnickname, email, password)
 
 ' Validazione locale
 note right of Client: Local validation (format check)
@@ -25,11 +25,11 @@ activate Auth
 ' Verifica Esistenza
 Auth -> DB: checkUserExistence(email, nickname)
 activate DB
-DB --> Auth: userFound (boolean)
+DB --> Auth: exists / notExists
 deactivate DB
 
 alt User already registered
-    Auth --> Client: errorMessage("User exists")
+    Auth --> Client: UserExistsException
     Client --> User: showError("User already registered")
 
 else Data is new

@@ -24,8 +24,8 @@ RU -> Client: clickInsertNewRide()
 activate Client
 Client -> MPIM: initManualSession()
 activate MPIM
-MPIM --> Client: readyForInput()
-Client--> RU: displayManualInputForm()
+MPIM --> Client: ManualInputForm
+Client--> RU: ManualInputForm
 
 ' =======================================================
 ' (a) & (b) ITERATIVE INSERTION & VALIDATION
@@ -37,7 +37,7 @@ loop For each street inserted by RU
     note right of MPIM: Validate existence via Map Service
     MPIM -> Map: validateStreetSegment(name, city)
     activate Map
-    Map --> MPIM: ValidationResult (Coords, Geometry)
+    Map --> MPIM: Coordinates, Tiles / null
     deactivate Map
     
     alt Segment Valid
@@ -46,9 +46,11 @@ loop For each street inserted by RU
         MPIM -> MPIM: checkPathContinuity()
         
         MPIM -> MPIM: storeTempSegment(SegmentData)
-        MPIM --> RU: showSegmentAdded()
+        MPIM --> Client: SegmentAddedConfirmation
+        Client --> RU: SegmentAddedConfirmation
     else Segment Invalid
-        MPIM --> RU: showError("Street not found or invalid")
+        MPIM --> Client: ErrorMessage("Invalid Segment")
+        Client --> RU: ErrorMessage("Invalid Segment")
     end
 end
 
@@ -56,9 +58,10 @@ end
 ' (c) PREVIEW
 ' =======================================================
 note right of Client: Assemble all segments
-MPIM -> Client: prepareFinalPathPreview()
+MPIM -> MPIM: prepareFinalPathPreview()
+MPIM -> Client: PathPreviewData
 deactivate MPIM
-Client --> RU: displayPreview(Path_Data)
+Client --> RU: PathPreviewData
 
 ' =======================================================
 ' EXIT CONDITION: SAVE OR DISCARD
@@ -67,12 +70,12 @@ alt RU presses "Save" (Sync to Backend)
     RU -> Client: pressSave()
     
     Client -> Client: storeDataInLocalFile()
-    Client --> RU: showSuccessMessage()
+    Client --> RU: SuccessMessage
 
 else RU presses "Discard"
     RU -> Client: pressDiscard()
     Client -> Client: deleteLocalFile()
-    Client --> RU: showDiscardMessage()
+    Client --> RU: DiscardMessage
 end
 
 deactivate Client

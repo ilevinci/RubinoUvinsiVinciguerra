@@ -46,7 +46,7 @@ else System detects inactivity
     APDC -> APDC: analyzeMovementPatterns()
     note right of APDC: No movement detected for threshold time
     APDC -> APDC: triggerAutoStop()
-    APDC --> RU: notifyAutoStop()
+    APDC --> RU: AutoStopNotification
 end
 
 ' =======================================================
@@ -57,13 +57,13 @@ end
 ' Chiamate dirette dal Client ai Servizi Esterni
 par Parallel External Requests
     ' Meteo
-    APDC -> Meteo: fetchWeather(GPS, Timestamp)
+    APDC -> Meteo: fetchWeather(GPS, Time)
     activate Meteo
     Meteo --> APDC: WeatherData
     deactivate Meteo
     
     ' Map Matching
-    APDC -> Map: requestMapMatching(RawGPSPoints)
+    APDC -> Map: requestMapMatching(GPS, gyro, accel)
     activate Map
     Map --> APDC: RefinedPathGeometry
     deactivate Map
@@ -72,10 +72,11 @@ end par
 ' Generazione Preview Locale
 APDC -> Client: generateTripPreview(RefinedPath, Weather)
 deactivate
-Client --> RU: displayPreview()
+Client --> RU: RefinedTripPreview
 
 ' (f) USER VALIDATION
 RU -> Client: checkAndCorrectData()
+Client -> Client: updateData()
 
 ' =======================================================
 ' EXIT CONDITION: SAVE OR DISCARD
@@ -84,12 +85,12 @@ alt RU presses "Save" (Sync to Backend)
     RU -> Client: pressSave()
     
     Client -> Client: storeDataInLocalFile()
-    Client --> RU: showSuccessMessage()
+    Client --> RU: SuccessMessage
 
 else RU presses "Discard"
     RU -> Client: pressDiscard()
     Client -> Client: deleteLocalFile()
-    Client --> RU: showDiscardMessage()
+    Client --> RU: DiscardMessage
 end
 
 deactivate Client

@@ -27,15 +27,15 @@ User -> Client: clickSearch()
 activate Client
 
 ' Acquisizione locale sensori
-Client -> Client: acquireSensorData(GPS Position)
+Client -> Client: acquireSensorData\n(GPS, gyro, accel)
 
 ' =======================================================
 ' (b) ORIGIN SELECTION
 ' =======================================================
-Client --> User: displaySearchForm(CurrentPosition)
+Client --> User: CurrentCoordinates
 
 alt Use Detected GPS Position
-    User -> Client: selectPosition(CurrentGPS)
+    User -> Client: selectPosition(CurrentCoordinates)
     note right of Client: Set Origin = Current Coords
 else Use Manual Input
     User -> Client: selectPosition(name, city)
@@ -51,7 +51,7 @@ end
 ' =======================================================
 ' (c) DESTINATION SELECTION
 ' =======================================================
-Client --> User: requestDestination()
+Client --> User: ok
 User -> Client: insertDestination(name, city)
 
 ' Smart Client: Geocoding Destination
@@ -77,10 +77,10 @@ DB --> Search: List<BikePath>
 deactivate DB
 
 ' Conversione in DTO leggeri per la lista
-Search --> Client: returnRankedPaths(List<BikePath>)
+Search --> Client: List<BikePath>
 deactivate Search
 
-Client --> User: displayPathSelection(List<BikePath>)
+Client -> User: displayPathSelection(List<BikePath>)
 
 note over User, Client: Exit Condition: User presses "View" or "Exit"
 

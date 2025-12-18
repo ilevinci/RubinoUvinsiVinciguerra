@@ -35,10 +35,10 @@ IH -> IH: fetchPathData(BikePath)
 note right of IH: Calculate potential score impact
 IH -> IH: calculateProjectedScore(BikePath)
 
-IH --> Client: returnPreviewData(<streets, status>, score)
+IH --> Client: PreviewData(<streets, status>, score)
 deactivate IH
 ' Visualizzazione
-Client --> RU: displayPreview(streets, score)
+Client --> RU: Preview(<streets, status>, score)
 
 ' =======================================================
 ' EXIT CONDITION: CONFIRM OR BACK
@@ -74,10 +74,10 @@ alt User presses "Confirm" (Success)
     end loop
 
     ' Risposta Finale
-    PM --> Client: returnPublishConfirmation()
+    PM --> Client: PublishConfirmation
     deactivate PM
     
-    Client --> RU: showSuccessMessage("Path is now public")
+    Client --> RU: SuccessMessage("Path is now public")
     note over RU, Client: Exit Condition: Publication finalized
 
 else User presses "Back" (Aborted)
