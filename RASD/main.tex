@@ -561,7 +561,9 @@ This section specifies the communication protocols and standards required for da
         (c) The system shows a preview of the created path.
         \\
         \hline
-        \textbf{Exit Condition} & The user presses "Publish" or "Discard" \\
+        \textbf{Exit Condition} & The user presses "Save" or "Discard" \\
+        \hline
+        \textbf{Exception} & (a) Data is not correct \\
         \hline
     \end{tabularx}
     \caption{Insert data of the bike path in Manual Mode}
@@ -668,7 +670,7 @@ This section specifies the communication protocols and standards required for da
         (b) The system waits for the Registered User's final confirmation.
         \\
         \hline
-        \textbf{Exit Condition} & The user presses "Confirm" or "Back"\\
+        \textbf{Exit Condition} & The user presses "Confirm" or "Exit"\\
         \hline 
     \end{tabularx}
     \caption{Publication of a path}
@@ -676,23 +678,21 @@ This section specifies the communication protocols and standards required for da
 
 
 \subsubsection{Sequence Diagrams}
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.4\textwidth]{images/UC1sequencediagram.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC1_UserRegistration_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC2sequencediagram.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC2_UserLogin_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC3sequencediagram.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC3_AutomatedMode_RASD.png}}
 
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC4_ManualMode_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC4sequencediagram.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC5_ReviewPath_RASD.png}}
 
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC6_SearchBikePath_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC5sequencediagram.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC7_VisualizationPath_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{images/UC6sequencediagram.png}}
-
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/UC7sequencediagram.png}}
-
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC8sequencediagram.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC8_PublicationPath_RASD.png}}
 
 \newpage
 \subsubsection{Requirement Mapping}
