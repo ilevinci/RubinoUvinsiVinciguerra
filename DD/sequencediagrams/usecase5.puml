@@ -25,50 +25,51 @@ note over RU, Client: Entry Condition: RU selects "My recorded trips"
 RU -> Client: clickMyRecordedTrips()
 activate Client
 
-note right of Client: Request local session history
-Client -> IH: retrieveUserSessions()
+note right of Client: Request local inventory log
+Client -> IH: retrieveUserLog()
 activate IH
 
 ' Accesso al File System Locale
 note right of IH: **Local File System Access**\nScan directory for session logs
-IH -> IH: readLocalSessionFiles()
+IH -> IH: readLocalLogFiles()
 
-' Ritorno lista sommari
-IH --> Client: returnSessionSummaries(List<SessionSummary>)
+IH --> Client: returnRecordedTrips(List<Record>)
 deactivate IH
 
 ' Visualizzazione Lista
-Client --> RU: displaySessionLog(list_of_trips)
-
+Client --> RU: displayLog(List<Record>)
 ' =======================================================
 ' (b) RU FINDS AND SELECTS THE SESSION
 ' =======================================================
-RU -> Client: selectSession(sessionID)
+RU -> Client: selectBikePath(recordID)
 
 ' 1. Recupero Dati Sessione dallo Storage Locale
 note right of Client: Step 1: Fetch full raw data from file
-Client -> IH: getFullSessionData(sessionID)
+Client -> IH: getFullSessionData(recordID)
 activate IH
 
 note right of IH: Read JSON/XML file from device storage
-IH -> IH: readSessionFile(sessionID)
+IH -> IH: readSessionFile(recordID)
 note right of IH: Returns: Waypoints, Speed, Elev, Meteo
 IH --> Client: SessionFullData
 deactivate IH
 
 ' 2. Recupero Mappa dal Service Provider
 note right of Client: Step 2: Request map background for specific coords
-Client -> Map: requestMapContext(SessionFullData.coordinates)
-activate Map
-Map --> Client: MapTiles/VectorData
-deactivate Map
+loop For each Street in BikePath of the Record
+
+    Client -> Map: requestMapContext(Street.coordinates)
+    activate Map
+    Map --> Client: MapTiles/VectorData
+    deactivate Map
+end
 
 ' Rendering lato Client
 note right of Client: **Rendering Logic:**\nCombine Map Tiles with Local GPS Path
 Client -> Client: renderMapPath(GPS_Points, MapTiles)
-Client -> Client: computeGraphs(Metrics)
+Client -> Client: computeAllData()
 
-Client --> RU: displaySessionDetails(data, map, metrics)
+Client --> RU: displayRecordDetails(data, map, metrics)
 
 ' =======================================================
 ' EXIT CONDITION

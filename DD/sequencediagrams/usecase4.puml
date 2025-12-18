@@ -24,17 +24,18 @@ RU -> Client: clickInsertNewRide()
 activate Client
 Client -> MPIM: initManualSession()
 activate MPIM
-Client --> RU: displayManualInputForm()
+MPIM --> Client: readyForInput()
+Client--> RU: displayManualInputForm()
 
 ' =======================================================
 ' (a) & (b) ITERATIVE INSERTION & VALIDATION
 ' =======================================================
 loop For each street inserted by RU
-    RU -> MPIM: insertStreetDetails(name, location, status)
+    RU -> MPIM: insertStreetDetails(name, city, status)
     
     ' Validazione Esterna (Smart Client)
     note right of MPIM: Validate existence via Map Service
-    MPIM -> Map: validateStreetSegment(name, location)
+    MPIM -> Map: validateStreetSegment(name, city)
     activate Map
     Map --> MPIM: ValidationResult (Coords, Geometry)
     deactivate Map

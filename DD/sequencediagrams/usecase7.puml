@@ -23,31 +23,33 @@ note over User, Client: Entry Condition: User has selected a path and presses "V
 ' =======================================================
 ' (a) FETCH DATA & MAP CONTEXT
 ' =======================================================
-User -> Client: pressView(pathID)
+User -> Client: pressView(BikePath)
 activate Client
 
 ' 1. Recupero Dati del Percorso (Logica di Business)
 note right of Client: Step 1: Get coordinates & scores from Backend
-Client -> PR: getAggregatedPathDetails(pathID)
+Client -> PR: getAggregatedPathDetails(BikePath)
 activate PR
 
 ' Query al DBMS
-note right of PR: Fetch Path Entity JOIN Streets (with Scores)
-PR -> DB: fetchAggregatedPathData(pathID)
+PR -> DB: fetchAggregatedPathData(BikePath)
 activate DB
-DB --> PR: AggregatedPathEntity
+DB --> PR: AggregatedPathData
 deactivate DB
 
 ' Ritorno dati al Client
-PR --> Client: returnPathDetails(PathDTO)
+PR --> Client: returnPathDetails(BikePath)
 deactivate PR
 
-' 2. Recupero Dati Cartografici (Logica di Visualizzazione)
+' 2. Recupero Mappa dal Service Provider
 note right of Client: Step 2: Request map background for specific coords
-Client -> Map: requestMapContext(PathDTO.coordinates)
-activate Map
-Map --> Client: returnMapTiles(VectorData)
-deactivate Map
+loop For each Street in BikePath
+
+    Client -> Map: requestMapContext(Street.coordinates)
+    activate Map
+    Map --> Client: MapTiles/VectorData
+    deactivate Map
+end
 
 ' =======================================================
 ' RENDERING LATO CLIENT
@@ -56,7 +58,7 @@ note right of Client: **Rendering Logic:**\nOverlay Business Data (Colored Lines
 
 
 Client -> Client: renderMapWithOverlays()
-Client --> User: displayPathDetails(Map, Legend)
+Client --> User: displayPathDetails(Map)
 
 ' =======================================================
 ' EXIT CONDITION

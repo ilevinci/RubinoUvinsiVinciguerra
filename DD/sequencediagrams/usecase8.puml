@@ -1,6 +1,6 @@
 @startuml UC8_PublicationPath_Design
 autonumber "<b>0:"
-title [UC8] Publication of a Path (Design View)
+title [UC8] Publication of a Path
 
 ' =======================================================
 ' COMPONENT DEFINITION
@@ -21,20 +21,19 @@ note over RU, Client: Entry Condition: RU has selected a stored/draft path and p
 ' =======================================================
 ' (a) PREVIEW GENERATION
 ' =======================================================
-RU -> Client: clickPublish()
+RU -> Client: clickPublish(BikePath)
 activate Client
 
 ' Il Client richiede i dati aggiornati per la preview (es. Score attuale)
 note right of Client: Request preview data
-Client -> IH: getPublishPreview(pathID)
+Client -> IH: getPublishPreview(BikePath)
 activate IH
 
 ' Recupero dati grezzi
-IH -> IH: fetchPathData(pathID)
-
+IH -> IH: fetchPathData(BikePath)
 ' Calcolo preliminare dello score (Preview)
 note right of IH: Calculate potential score impact
-IH -> IH: calculateProjectedScore(PathEntity)
+IH -> IH: calculateProjectedScore(BikePath)
 
 IH --> Client: returnPreviewData(<streets, status>, score)
 deactivate IH
@@ -48,11 +47,11 @@ alt User presses "Confirm" (Success)
     RU -> Client: pressConfirm()
 
     
-    Client -> PM: publishPath(pathID)
+    Client -> PM: publishPath(BikePath)
     activate PM
 
     ' 1. Aggiornamento Visibilità
-    PM -> DB: storeNewPath(pathID)
+    PM -> DB: storeNewPath(BikePath)
     activate DB
     DB --> PM: OK
     deactivate DB
@@ -60,15 +59,15 @@ alt User presses "Confirm" (Success)
     ' 2. ESECUZIONE MERGING LOGIC (Core Business Logic)
     note right of PM: **CRITICAL: Merging Logic**\nAggregates new data into public streets
     
-    loop For each segment in Path
-        PM -> DB: fetchStreetAggregate(segmentID)
+    loop For each Street in BikePath
+        PM -> DB: fetchStreetAggregate(Street.coordinates)
         activate DB
         DB --> PM: StreetAggregateData
         deactivate DB
         
         PM -> PM: recalculateStreetStatus(NewData, OldAggregate)
         
-        PM -> DB: updateStreetStatus(segmentID, NewStatus)
+        PM -> DB: updateStreetStatus(Street.coordinates, NewStatus)
         activate DB
         DB --> PM: OK
         deactivate DB

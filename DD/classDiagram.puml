@@ -8,13 +8,16 @@
 
 
 class Street {
-    - name : String 
+    - name : String
+    - city: String 
     - status : Status
-    -  obstacles: Collection<Obstacle>
+    - obstacles: Collection<Obstacle>
     - coordinates : Collection<Coordinate>
     --
     + getStatus()
     + getName()
+    + getCity()
+    + getCoordinates()
     + getObstacles()
     + setObstacle(obstacle: Obstacle)   
     + removeObstacle(obstacle: Obstacle)
@@ -130,6 +133,7 @@ class CyclingSession { /'. estende Record, rappresenta il record tracciato in mo
 }
 
 class Record {
+    -recordID : int
     - bikePath : BikePath
     - recordingDate : Date
     --
