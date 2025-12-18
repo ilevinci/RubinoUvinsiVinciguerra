@@ -107,6 +107,7 @@ class ClientManager{
     --
     +trackMyRide()
     +manuallyInsertPath()
+    +deleteRecord()
     +viewInventory() : Collection<Record>
     +findRecord(path: BikePath)
     +findRecord(date: Date)
