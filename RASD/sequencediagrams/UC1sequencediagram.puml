@@ -1,0 +1,45 @@
+@startuml UC1_UserRegistration_RASD
+autonumber
+title [UC1] User Registration
+
+' =======================================================
+' ACTORS & SYSTEM (Black Box View)
+' =======================================================
+actor "Unregistered User" as User
+participant "BBP system" as System
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over User, System: Entry condition: the user opens the BBP platform
+
+' =======================================================
+' (a) The user presses "Sign up"
+' =======================================================
+User -> System: clickSignUp()
+
+' =======================================================
+' (b) The system requires the user to fill out a form
+' =======================================================
+System --> User: displayRegistrationForm()
+
+User -> System: submitPersonalData(name, surname, \nnickname, email, password)
+
+' =======================================================
+' (c) Validation Logic
+' =======================================================
+note right of System: System checks for existing user \n(Validation Logic)
+
+alt User is already registered (Exception)
+    System --> User: showError("User is already registered")
+else Data is new (Exit Condition)
+    System -> System: createAccount()
+    System --> User: showSuccessMessage()
+end
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+note over User, System: Exit Condition: the user successfully registered to the platform
+
+@enduml

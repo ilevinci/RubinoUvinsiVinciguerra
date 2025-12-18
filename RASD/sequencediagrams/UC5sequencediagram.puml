@@ -1,0 +1,45 @@
+@startuml UC5_VisualizeSessionLog_RASD
+autonumber
+title [UC5] Visualize a session in the personal sessions log
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "Registered User" as RU
+participant "BBP system" as System
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, System: Entry Condition: RU selects "My recorded trips"
+
+' =======================================================
+' (a) SYSTEM SHOWS THE SESSIONS LOG
+' =======================================================
+RU -> System: clickMyRecordedTrips()
+
+' Internal Action
+System -> System: retrieveSessionLog()
+System --> RU: displaySessionLog(list_of_record)
+
+' =======================================================
+' (b) RU FINDS AND SELECTS THE SESSION
+' =======================================================
+RU -> System: selectSession(recordID)
+
+' =======================================================
+' (c) THE SYSTEM SHOWS THE DETAILS
+' =======================================================
+' Internal Action
+System -> System: fetchSessionDetails(recordID)
+System --> RU: displaySessionDetails(map, metrics)
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+RU -> System: pressExit()
+System --> RU: returnToMenu()
+
+note over RU, System: Exit Condition: RU closes the log page
+
+@enduml

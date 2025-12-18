@@ -1,0 +1,43 @@
+@startuml UC2_UserLogin_RASD
+autonumber
+title [UC2] User Login
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "Registered User" as RU
+participant "BBP system" as System
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, System: Entry Condition: RU opens the BBP platform
+
+' =======================================================
+' INTERACTION FLOW
+' =======================================================
+RU -> System: clickSignIn()
+System --> RU: displayLoginForm()
+
+' Steps (a) and (b): Insertion of credentials
+RU -> System: insertCredentials(nickname/email, password)
+
+' Step (c): Verification
+note right of System: System checks if data\nis correct
+
+' =======================================================
+' LOGIC: ALTERNATIVE PATHS
+' =======================================================
+alt Data is not correct (Exception)
+    System --> RU: showError("Invalid credentials")
+else Data is correct (Success)
+    System -> System: authenticateUser()
+    System --> RU: loginSuccessful()
+end
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+note over RU, System: Exit Condition: User successfully logged in
+
+@enduml

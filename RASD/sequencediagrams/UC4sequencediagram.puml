@@ -1,0 +1,55 @@
+@startuml UC4_InsertManualMode_RASD
+autonumber
+title [UC4] Insert data of the bike path in Manual Mode
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "Registered User" as RU
+participant "BBP system" as System
+participant "Map Service" as Map
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, System: Entry Condition: RU presses "Insert new ride"
+
+' =======================================================
+' INITIALIZATION
+' =======================================================
+RU -> System: clickInsertNewRide()
+System --> RU: displayManualInputForm()
+
+' =======================================================
+' (a) & (b) ITERATIVE INSERTION AND VALIDATION
+' =======================================================
+loop For each street inserted by RU
+    RU -> System: insertStreetDetails(name,city,status)
+    
+    ' Validation of the street segment (Step b)
+    System -> Map: validateStreetSegment(name, city)
+    Map --> System: returnValidationResult()
+    
+    note right of System: System temporarily stores data\n and checks path continuity
+end
+
+' =======================================================
+' (c) PREVIEW AND FINAL VALIDATION
+' =======================================================
+System -> System: prepareFinalPathPreview()
+System --> RU: displayPreview(Path_Data)
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+alt User presses "Save" (Success)
+    RU -> System: pressSave()
+    System -> System: savePath()
+    note over RU, System: Exit Condition: Path saved successfully
+else User presses "Discard" (Aborted)
+    RU -> System: pressDiscard()
+    System -> System: discardTempData()
+    note over RU, System: Exit Condition: Operation aborted
+end
+
+@enduml

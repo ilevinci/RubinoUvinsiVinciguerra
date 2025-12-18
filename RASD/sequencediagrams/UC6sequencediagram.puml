@@ -1,0 +1,65 @@
+@startuml UC6_SearchBikePath_RASD
+autonumber
+title [UC6] Search for a bike path
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "User" as User
+participant "BBP System" as System
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over User, System: Entry Condition: User presses "Search" to find a path
+
+' =======================================================
+' (a) SYSTEM DETECTS GPS POSITION
+' =======================================================
+User -> System: clickSearch()
+
+' Internal Action
+System -> System: acquireSensorData(position)
+
+' =======================================================
+' (b) USER CHOOSES ORIGIN (MODE CHOICE)
+' =======================================================
+System --> User: displaySearchForm(position)
+
+alt Use Detected GPS Position
+    User -> System: selectPosition(position)
+else Use Manual Input
+    User -> System: selectPosition(newAddress)
+end
+
+' =======================================================
+' (c) USER CHOOSES DESTINATION
+' =======================================================
+System --> User: requestDestination()
+User -> System: insertDestination(address)
+
+' =======================================================
+' (d) PATH RETRIEVAL AND SCORING
+' =======================================================
+note right of System: The system searches for all similar paths\n with their respective scores
+System --> User: displayPathSelection(paths_ranked_by_score)
+
+' =======================================================
+' (e) USER CHOOSES DESIRED PATH
+' =======================================================
+User -> System: selectPath(BikePath)
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+alt User presses "View" (Success)
+    User -> System: pressView()
+    System --> User: showPathDetails(BikePath)
+    note over User, System: Exit Condition: User viewing path details
+else User presses "Exit" (Aborted)
+    User -> System: pressExit()
+    System --> User: returnToMenu()
+    note over User, System: Exit Condition: Operation aborted
+end
+
+@enduml

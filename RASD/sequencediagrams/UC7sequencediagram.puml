@@ -1,0 +1,35 @@
+@startuml UC7_VisualizationPath_RASD
+autonumber
+title [UC7] Visualization of a Path
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "User" as User
+participant "BBP System" as System
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over User, System: Entry Condition: User has selected a path and pressed "View"
+
+' =======================================================
+' (a) SYSTEM SHOWS DETAILS
+' =======================================================
+User -> System: pressView(BikePath)
+
+' Internal Action
+note right of System: System retrieves all necessary aggregated \ndata (streets and their score)
+System -> System: fetchAggregatedPathData(BikePath)
+
+System --> User: displayPathDetails(pathData)
+
+' =======================================================
+' EXIT CONDITION
+' =======================================================
+User -> System: pressExit()
+System --> User: returnToPreviousScreen()
+
+note over User, System: Exit Condition: User closes the details view
+
+@enduml

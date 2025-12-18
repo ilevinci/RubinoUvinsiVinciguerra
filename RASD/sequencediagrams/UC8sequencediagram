@@ -1,0 +1,44 @@
+@startuml UC8_PublicationPath_RASD
+autonumber
+title [UC8] Publication of a path
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "Registered User" as RU
+participant "BBP system" as System
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, System: Entry Condition: RU presses "Publish"
+
+' =======================================================
+' (a) PREVIEW GENERATION
+' =======================================================
+RU -> System: clickPublish()
+
+' Internal Action
+note right of System: System prepares preview of data
+System -> System: retrievePublishableData()
+
+System --> RU: displayPreview(<streets,status>, score)
+
+' =======================================================
+' EXIT CONDITION: CONFIRM OR BACK
+' =======================================================
+alt User presses "Confirm" (Success)
+    RU -> System: pressConfirm()
+    
+    note right of System: System executes Merging Logic
+    System -> System: mergeAndFinalizePublication()
+    
+    System --> RU: showSuccessMessage("Path is now public")
+else User presses "Back" (Aborted)
+    RU -> System: pressBack()
+    System --> RU: returnToPreviousScreen()
+end
+
+note over RU, System: Exit Condition: Publication either finalized or aborted
+
+@enduml

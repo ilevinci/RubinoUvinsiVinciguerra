@@ -1,0 +1,68 @@
+@startuml UC3_TrackAutomatedRide_RASD
+autonumber
+title [UC3] Track a training session in Automated Mode
+
+' =======================================================
+' ACTORS & SYSTEM
+' =======================================================
+actor "Registered User" as RU
+participant "BBP system" as System
+participant "Meteo Service" as Meteo
+participant "Map Service" as Map
+
+' =======================================================
+' ENTRY CONDITION
+' =======================================================
+note over RU, System: Entry Condition: RU presses "Track new ride"
+
+' =======================================================
+' (a) START TRACKING
+' =======================================================
+RU -> System: clickTrackNewRide()
+System -> System: startTracking()
+
+' =======================================================
+' (b), (c) LOOP ACQUISITION
+' =======================================================
+loop Continuous Data Acquisition and Movement Tracking
+    note right of System: System acquires and records data (GPS, Gyro, Accel)
+    System -> System: acquireSensorData(position, speed, acceleration, gain, altitude, tilt)
+end
+
+' =======================================================
+' (d) DETECT END OF ACTIVITY
+' =======================================================
+alt User manually stops tracking
+    RU -> System: pressStop()
+else System detects no movement
+    System -> System: autoStopTracking()
+end
+
+System -> System: terminateTracking()
+
+' Internal Processing and External Service Calls
+System -> Meteo: requestWeatherData(location, time)
+Meteo --> System: returnWeatherData(weatherCondition)
+note right of Meteo: Metereological\ninformation\ncould be not\navailable 
+
+note right of System: System reconstructs path and prepares\npreview with the stored data
+
+System -> Map: requestPathPreview(path_data)
+Map --> System: returnPathPreview()
+
+' (e) System shows preview and waits for validation
+System --> RU: displayPreview(path, obstacles)
+
+' (f) RU checks and corrects data
+RU -> System: checkAndCorrectData()
+
+' Exit Condition: User confirms or discards
+alt RU presses "Save" (Success)
+    RU -> System: pressSave()
+    System -> System: saveValidatedTripAndPublishStatus()
+else RU presses "Discard" (Aborted)
+    RU -> System: pressDiscard()
+    System -> System: discardTrip()
+end
+
+@enduml
