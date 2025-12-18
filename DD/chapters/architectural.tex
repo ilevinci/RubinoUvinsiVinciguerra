@@ -246,3 +246,21 @@ due to the bypass of all complex domain logic.\newline
 GPS and accelerometer are the 'Subject' and the ClientManager is the 'Observer'.
 
 \subsection{Other design decisions}
+\textbf{Session Token}\newline\newline
+Each time a user logs into the system, this provides the user with a TokenID that 
+remains valid for a set about of time. When a user is not registered or logged into the system they have not this token.
+Without is not possible to interact with the remote part of the application that manages the path (Path Manager Service) to publish a 
+Path and cannot record personal Cycling Session, i.e. the user must be logged into the System to use these features. Without the token a user
+can only search for published bike path.\newline\newline
+\textbf{Consistency Model}\newline\newline
+This regard the implementation of the Databases. The system adopts Linearizability for the account's databases, with this consistency model 
+each operation related to accounts appears to take effect instantaneously at some point between its invocation and its competition. With this approach
+even if we have multiple copies of the Database the system behaves as if there were only a single copy of the data, so the system ensure that once a write is acknowledged by the system, all
+the future read operations (e.g. logins) will reflect that change, preventing race conditions that could lead to a bad user experience.\newline For the Bike paths' databases the system adopts an eventual consistent model prioritizing hight 
+availability and low-latency than consistency. So, when a new path is published, the write is propagate asynchronously to all the other replica. When a user
+publishes a path this is written on the closest copy of the database, all the replicas eventually converge to the same state.\newline\newline
+\textbf{Data Portability and Storage Strategy}\newline\newline
+Unlike public paths, personal records (including traveled path) are not stored on the system's database but are kept exclusively on the user's device storage.
+This strategy reduces the overall cost of the infrastructure. To ensure that the user does not lose data if he uninstalls the application the system support data export and import using
+GPX (GPS Exchange Format). We selected format is the standard for sharing GPS data and ensure that user can export personal rides and visualize them also on
+third party software or migrate them to a new device.\newline\newline This approach also reduces the impact of an eventual data breach.\newline\newline 

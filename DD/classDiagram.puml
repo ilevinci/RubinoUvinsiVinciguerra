@@ -110,7 +110,8 @@ class ClientManager{
     +viewInventory() : Collection<Record>
     +findRecord(path: BikePath)
     +findRecord(date: Date)
-    +exportRecord()
+    +exportRecords()
+    +importRecords()
 }
 
 class DataElaborationEngine {
