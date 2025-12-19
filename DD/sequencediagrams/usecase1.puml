@@ -19,7 +19,7 @@ User -> Client: submitPersonalData(name, surname, \nnickname, email, password)
 
 ' Validazione locale
 note right of Client: Local validation (format check)
-Client -> Auth: registerUser(UserDTO)
+Client -> Auth: registerUser(name, surname, \nnickname, email, password)
 activate Auth
 
 ' Verifica Esistenza
@@ -35,16 +35,16 @@ alt User already registered
 else Data is new
     ' Creazione Utente
     note right of Auth: Password Hashing
-    Auth -> DB: createProfile(UserEntity)
+    Auth -> DB: createProfile(name, surname, \nnickname, email, hashedPassword)
     activate DB
-    DB --> Auth: confirmation
+    DB --> Auth: RegisteredUser
     deactivate DB
 
     ' Risposta Positiva
-    Auth --> Client: createdProfile()
+    Auth --> Client: RegisteredUser
     deactivate Auth
     
-    Client -> Client: createLocalSession()
+    Client -> Client: saveUserLocally(RegisteredUser)
     Client --> User: showSuccessMessage()
     deactivate Client
 end

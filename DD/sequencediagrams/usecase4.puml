@@ -24,8 +24,8 @@ RU -> Client: clickInsertNewRide()
 activate Client
 Client -> MPIM: initManualSession()
 activate MPIM
-MPIM --> Client: ManualInputForm
-Client--> RU: ManualInputForm
+MPIM --> Client: ok
+Client-> RU: displayManualInputForm()
 
 ' =======================================================
 ' (a) & (b) ITERATIVE INSERTION & VALIDATION
@@ -57,7 +57,7 @@ end
 ' =======================================================
 ' (c) PREVIEW
 ' =======================================================
-note right of Client: Assemble all segments
+
 MPIM -> MPIM: prepareFinalPathPreview()
 MPIM -> Client: PathPreviewData
 deactivate MPIM

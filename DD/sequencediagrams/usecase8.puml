@@ -21,24 +21,22 @@ note over RU, Client: Entry Condition: RU has selected a stored/draft path and p
 ' =======================================================
 ' (a) PREVIEW GENERATION
 ' =======================================================
-RU -> Client: clickPublish(BikePath)
+RU -> Client: clickPublish(bikePathID)
 activate Client
 
 ' Il Client richiede i dati aggiornati per la preview (es. Score attuale)
 note right of Client: Request preview data
-Client -> IH: getPublishPreview(BikePath)
+Client -> IH: getPublishPreview\n(bikePathID)
 activate IH
 
 ' Recupero dati grezzi
-IH -> IH: fetchPathData(BikePath)
-' Calcolo preliminare dello score (Preview)
-note right of IH: Calculate potential score impact
-IH -> IH: calculateProjectedScore(BikePath)
+IH -> IH: fetchPathData\n(bikePathID)
 
-IH --> Client: PreviewData(<streets, status>, score)
+IH --> Client: BikePath
+Client -> Client: renderPreviewData\n(BikePath)
 deactivate IH
 ' Visualizzazione
-Client --> RU: Preview(<streets, status>, score)
+Client -> RU: displayPreview\n(<streets, status>, score)
 
 ' =======================================================
 ' EXIT CONDITION: CONFIRM OR BACK
@@ -65,9 +63,9 @@ alt User presses "Confirm" (Success)
         DB --> PM: StreetAggregateData
         deactivate DB
         
-        PM -> PM: recalculateStreetStatus(NewData, OldAggregate)
+        PM -> PM: recalculateStreetStatus(NewData, \nOldAggregate)
         
-        PM -> DB: updateStreetStatus(Street.coordinates, NewStatus)
+        PM -> DB: updateStreetStatus(Street.coordinates, \nNewStatus)
         activate DB
         DB --> PM: OK
         deactivate DB
@@ -77,7 +75,7 @@ alt User presses "Confirm" (Success)
     PM --> Client: PublishConfirmation
     deactivate PM
     
-    Client --> RU: SuccessMessage("Path is now public")
+    Client --> RU: SuccessMessage\n("Path is now public")
     note over RU, Client: Exit Condition: Publication finalized
 
 else User presses "Back" (Aborted)

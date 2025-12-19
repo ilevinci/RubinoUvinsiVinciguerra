@@ -27,14 +27,13 @@ User -> Client: pressView(bikePathID)
 activate Client
 
 ' 1. Recupero Dati del Percorso (Logica di Business)
-note right of Client: Step 1: Get coordinates & scores from Backend
-Client -> PR: getAggregatedPathDetails(bikePathID)
+Client -> PR: getAggregatedPathDetails\n(bikePathID)
 activate PR
 
 ' Query al DBMS
-PR -> DB: fetchAggregatedPathData(bikePathID)
+PR -> DB: fetchAggregatedPathData\n(bikePathID)
 activate DB
-DB --> PR: AggregatedPathData
+DB --> PR: BikePath
 deactivate DB
 
 ' Ritorno dati al Client
@@ -42,10 +41,9 @@ PR --> Client: BikePath
 deactivate PR
 
 ' 2. Recupero Mappa dal Service Provider
-note right of Client: Step 2: Request map background for specific coords
 loop For each Street in BikePath
 
-    Client -> Map: requestMapContext(Street.coordinates)
+    Client -> Map: requestMapContext\n(Street.coordinates)
     activate Map
     Map --> Client: MapTiles/VectorData
     deactivate Map

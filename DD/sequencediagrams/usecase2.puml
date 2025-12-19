@@ -18,13 +18,13 @@ Client --> RU: LoginForm
 ' Steps (a) and (b): Insertion of credentials
 RU -> Client: insertCredentials(nickname/email, password)
 
-Client -> Auth: authenticateUser(UserDTO)
+Client -> Auth: authenticateUser(nickname/\nemail, password)
 activate Auth
 
 ' Step (c): Verification
 ' Il sistema verifica i dati interrogando il DB
-note right of Auth: System checks if data is correct
-Auth -> DB: findUserByCredentials(email, nickname)
+note right of Auth: Hash password and check existence
+Auth -> DB: findUserByCredentials(nickname/\nemail, hashedPassword)
 activate DB
 DB --> Auth: RegisteredUser / null
 deactivate DB

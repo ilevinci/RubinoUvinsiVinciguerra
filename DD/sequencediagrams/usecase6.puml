@@ -71,7 +71,7 @@ activate Search
 
 ' Query al DB: Trova percorsi vicini e ordinali per Score
 note right of Search: Query logic: Proximity & High Score
-Search -> DB: findPathsByProximityAndScore(originCoords, destCoords)
+Search -> DB: findPathsByProximityAndScore\n(originCoords, destCoords)
 activate DB
 DB --> Search: List<BikePath>
 deactivate DB
