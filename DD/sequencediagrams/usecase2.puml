@@ -37,7 +37,7 @@ alt Data is not correct (Exception)
 
 else Data is correct (Success)
     ' Logica interna di autenticazione (Hash check & Token generation)
-    note right of Auth: Password Hash Check & Token Generation
+    note right of Auth: Token Generation
     
     ' Aggiornamento stato (opzionale ma raccomandato)
     Auth -> DB: updateLastLogin(nickname/email)

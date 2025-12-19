@@ -33,11 +33,11 @@ activate IH
 note right of IH: **Local File System Access**\nScan directory for session logs
 IH -> IH: readLocalLogFiles()
 
-IH --> Client: List<recordID>
+IH --> Client: List<Record>
 deactivate IH
 
 ' Visualizzazione Lista
-Client --> RU: List<recordID>
+Client --> RU: List<Record>
 ' =======================================================
 ' (b) RU FINDS AND SELECTS THE SESSION
 ' =======================================================
@@ -50,7 +50,7 @@ activate IH
 
 note right of IH: Read JSON/XML file from device storage
 IH -> IH: readSessionFile(recordID)
-note right of IH: Returns: Waypoints, Speed, Elev, Meteo
+note right of IH: Returns: Performance metrics and Meteo
 IH --> Client: Record
 deactivate IH
 
@@ -66,7 +66,7 @@ end
 
 ' Rendering lato Client
 note right of Client: **Rendering Logic:**\nCombine Map Tiles with Local GPS Path
-Client -> Client: renderMapPath(GPS_Points, MapTiles)
+Client -> Client: renderMapPath(Coordinates, MapTiles)
 Client -> Client: computeAllData()
 
 Client --> RU: RecordDetails(data, map, metrics)

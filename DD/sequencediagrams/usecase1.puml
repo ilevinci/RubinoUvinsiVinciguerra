@@ -37,15 +37,16 @@ else Data is new
     note right of Auth: Password Hashing
     Auth -> DB: createProfile(name, surname, \nnickname, email, hashedPassword)
     activate DB
-    DB --> Auth: RegisteredUser
+    DB --> Auth: ok
     deactivate DB
 
     ' Risposta Positiva
+    Auth -> Auth: createRegisteredUserObject()
     Auth --> Client: RegisteredUser
     deactivate Auth
     
     Client -> Client: saveUserLocally(RegisteredUser)
-    Client --> User: showSuccessMessage()
+    Client --> User: SuccessMessage
     deactivate Client
 end
 

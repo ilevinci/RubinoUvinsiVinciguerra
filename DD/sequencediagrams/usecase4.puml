@@ -31,11 +31,12 @@ Client-> RU: displayManualInputForm()
 ' (a) & (b) ITERATIVE INSERTION & VALIDATION
 ' =======================================================
 loop For each street inserted by RU
-    RU -> MPIM: insertStreetDetails(name, city, status)
-    
+    RU -> Client: insertStreetDetails(name, city, status, segment)
+    Client -> MPIM: forwardStreetDetails(name, city, status, segment)
+
     ' Validazione Esterna (Smart Client)
     note right of MPIM: Validate existence via Map Service
-    MPIM -> Map: validateStreetSegment(name, city)
+    MPIM -> Map: validateStreetSegment(name, city, segment)
     activate Map
     Map --> MPIM: Coordinates, Tiles / null
     deactivate Map
@@ -45,7 +46,7 @@ loop For each street inserted by RU
         note right of MPIM: Check continuity with previous segment
         MPIM -> MPIM: checkPathContinuity()
         
-        MPIM -> MPIM: storeTempSegment(SegmentData)
+        MPIM -> MPIM: storeTempSegment(Street)
         MPIM --> Client: SegmentAddedConfirmation
         Client --> RU: SegmentAddedConfirmation
     else Segment Invalid
@@ -58,8 +59,10 @@ end
 ' (c) PREVIEW
 ' =======================================================
 
+RU -> Client: pressConfirm()
+Client -> MPIM: requestPathPreview()
 MPIM -> MPIM: prepareFinalPathPreview()
-MPIM -> Client: PathPreviewData
+MPIM --> Client: PathPreviewData
 deactivate MPIM
 Client --> RU: PathPreviewData
 

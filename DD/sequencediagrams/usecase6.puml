@@ -27,7 +27,7 @@ User -> Client: clickSearch()
 activate Client
 
 ' Acquisizione locale sensori
-Client -> Client: acquireSensorData\n(GPS, gyro, accel)
+Client -> Client: acquireSensorData(GPS)
 
 ' =======================================================
 ' (b) ORIGIN SELECTION
@@ -44,7 +44,7 @@ else Use Manual Input
     note right of Client: Convert Position to Coords
     Client -> Map: getCoordinates(name, city)
     activate Map
-    Map --> Client: OriginCoords (Lat, Lon)
+    Map --> Client: OriginCoords (Coordinates)
     deactivate Map
 end
 
@@ -57,7 +57,7 @@ User -> Client: insertDestination(name, city)
 ' Smart Client: Geocoding Destination
 Client -> Map: getCoordinates(name, city)
 activate Map
-Map --> Client: DestCoords (Lat, Lon)
+Map --> Client: DestCoords (Coordinates)
 deactivate Map
 
 ' =======================================================

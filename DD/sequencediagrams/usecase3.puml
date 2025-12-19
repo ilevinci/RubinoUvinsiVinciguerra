@@ -41,12 +41,14 @@ end
 ' (d) DETECT END OF ACTIVITY
 ' =======================================================
 alt User manually stops
-    RU -> APDC: pressStop()
+    RU -> Client: pressStop()
+    Client -> APDC: stopAcquisition()
 else System detects inactivity
     APDC -> APDC: analyzeMovementPatterns()
     note right of APDC: No movement detected for threshold time
     APDC -> APDC: triggerAutoStop()
-    APDC --> RU: AutoStopNotification
+    APDC -> Client: notifyAutoStop()
+    Client -> RU: autoStopNotification()
 end
 
 ' =======================================================
@@ -59,13 +61,13 @@ par Parallel External Requests
     ' Meteo
     APDC -> Meteo: fetchWeather(GPS, Time)
     activate Meteo
-    Meteo --> APDC: WeatherData
+    Meteo --> APDC: Weather
     deactivate Meteo
     
     ' Map Matching
-    APDC -> Map: requestMapMatching(GPS, gyro, accel)
+    APDC -> Map: requestMapMatching(GPS)
     activate Map
-    Map --> APDC: RefinedPathGeometry
+    Map --> APDC: RefinedPath
     deactivate Map
 end par
 

@@ -1,6 +1,6 @@
 @startuml UC7_VisualizationPath_Final
 autonumber "<b>0:"
-title [UC7] Visualization of a Path
+title [UC7] Visualization of a Searched Path
 
 ' =======================================================
 ' COMPONENT DEFINITION
@@ -10,10 +10,6 @@ participant "Mobile Application" as Client
 
 ' Servizio Esterno (Indispensabile per il rendering grafico)
 participant "MapServiceProvider" as Map
-
-' Backend System
-participant "PathResearch" as PR
-participant "BikePath DBMS" as DB
 
 ' =======================================================
 ' ENTRY CONDITION
@@ -26,19 +22,10 @@ note over User, Client: Entry Condition: User has selected a path and presses "V
 User -> Client: pressView(bikePathID)
 activate Client
 
-' 1. Recupero Dati del Percorso (Logica di Business)
-Client -> PR: getAggregatedPathDetails\n(bikePathID)
-activate PR
 
 ' Query al DBMS
-PR -> DB: fetchAggregatedPathData\n(bikePathID)
-activate DB
-DB --> PR: BikePath
-deactivate DB
+Client -> Client: fetchAggregatedPathData\n(bikePathID)
 
-' Ritorno dati al Client
-PR --> Client: BikePath
-deactivate PR
 
 ' 2. Recupero Mappa dal Service Provider
 loop For each Street in BikePath

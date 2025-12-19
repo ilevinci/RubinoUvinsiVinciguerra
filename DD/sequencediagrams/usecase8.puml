@@ -16,27 +16,27 @@ participant "BikePath DBMS" as DB
 ' =======================================================
 ' ENTRY CONDITION
 ' =======================================================
-note over RU, Client: Entry Condition: RU has selected a stored/draft path and presses "Publish"
+note over RU, Client: Entry Condition: RU presses "Publish"
 
 ' =======================================================
 ' (a) PREVIEW GENERATION
 ' =======================================================
-RU -> Client: clickPublish(bikePathID)
+RU -> Client: clickPublish(recordID)
 activate Client
 
 ' Il Client richiede i dati aggiornati per la preview (es. Score attuale)
 note right of Client: Request preview data
-Client -> IH: getPublishPreview\n(bikePathID)
+Client -> IH: getPublishPreview\n(recordID)
 activate IH
 
 ' Recupero dati grezzi
-IH -> IH: fetchPathData\n(bikePathID)
-
+IH -> IH: fetchPathData\n(recordID)
 IH --> Client: BikePath
-Client -> Client: renderPreviewData\n(BikePath)
 deactivate IH
+Client -> Client: renderPreviewData\n(BikePath)
+
 ' Visualizzazione
-Client -> RU: displayPreview\n(<streets, status>, score)
+Client -> RU: displayPreview()
 
 ' =======================================================
 ' EXIT CONDITION: CONFIRM OR BACK
