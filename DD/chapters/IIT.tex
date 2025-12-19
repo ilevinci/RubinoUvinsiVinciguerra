@@ -1,8 +1,116 @@
 \section{IMPLEMENTATION, INTEGRATION AND TESTING}
 
 \subsection{Overview}
+This chapter explains how the BBP system will be implemented and tested.
 \subsection{Implementation Plan}
-\subsection{Features identification}
+Since the described system is logically and physically separated into two distinct parts: Online Functionalities
+and Offline ones, the two sub-system will be implemented independently of each other.
+\newline\newline
+In order to facilitate rapid prototyping of core services the token system (to get access to
+all the function reserved to registered and logged user) will be initially stubbed. Actual logic will
+be implemented during the final integration phase.
+\begin{itemize}
+    \item \textbf{Offline Functionalities}\\
+    In order to implement offline functionalities the system this
+    part of the system (located on the Client) will be implemented by
+    following a Thread-Based Strategy. Since the view of the local inventory 
+    and the export/import of local data depend on the existence of data, the implementation order
+    of the various functionalities will be dictated by the data lifecycle:\newline\newline Insertion $\to$ Visualization $\to$ Management\newline\newline
+    So first will be implemented the functionalities related to path creation and deletion, then will be implemented the functionalities related
+    to path visualization and finally will be implemented the functionalities to perform the export and import of records. 
+    \item \textbf{Online Functionalities}
+    The Server-side of the application will be implemented also by also following a Thread-Based strategy.\newline
+    Since the online functionalities consist of two services (Account Manager Service and Path Manager Service) they can be
+    implemented independently of each other. Two separate teams can work in parallel, one for the Account Management side and the 
+    other team for the Path Management side.
+\end{itemize}
+%\subsection{Features identification}
+%\subsubsection{Offline Functionalities}
+%\subsubsection{Online Functionalities}
+\newpage
 \subsection{Component Integration and Testing}
+In this section, we will present the testing plan, which will follow the following approach. 
+The Offline functionalities will be tested as first thing by using stubs when needed.\newline\newline
+
+\noindent In Order to avoid writing of drivers, as much as possible, once the Offline Functionalities are tested will be used to simulate an End-User to test
+Online functionalities
+
+\noindent In other words tests will be performed sequentially on the two subsystem. \newline
+The online part of the system will be tested by a bottom-up approach.
+%Since external components are not part of the developed system, they will not be represented.
+\subsubsection{Testing Offline Functionalities}
+The following functionalities all require an active user session, i.e. a valid token.
+But in order to be coherent on what said in the implementation plan, testing phase will bypass the Actual
+token verification, at least for the initial phases of testing.\newline\newline
+\textbf{Manual Path Insertion}
+\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing1.png}}
+The tested feature include all the operation that let a user to manually build a path by inserting the 
+single streets by hand. The test aim to verify the coherence of the inserted path. It verifies things as:
+\begin{itemize}
+    \item The system rejects street types tagged as unsuitable for bicycles (e.g., highways, pedestrian-only zones).
+    \item The system enforces graph connectivity, preventing the insertion of a segment that is not physically connected to the previous one.
+    \item The upper bound for number of possible streets in one path and that the system correctly manages this scenario.
+\end{itemize} 
+
+\newpage
+\noindent\textbf{Automatic Path Insertion}
+\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing2.png}}
+The tested functionalities include all that regards the automatic tracking of a path. 
+The system is stimulated with the injection of Coordinates and values regarding other metrics
+via stubs that simulates the necessary systems to automatically track a path. 
+The test verifies things as: 
+\begin{itemize}
+    \item The quantity errors registered during the tracking do not significantly affect the registered path (less than 3 errors per kilometer). It is considered an error: the detection of an obstacle that do not exist, the detection of a wrong street, incorrect values regarding speed exceeding 5 km/h.
+    \item The system reaction to the injection of completely wrong values such as: discontinuous coordinates, impossible values for elevation gain and average Speed and others.
+\end{itemize}
+
+\noindent\textbf{Path Visualization}
+\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing3.png}}\newline
+The testes functionalities regard the ability to search and visualize local records. The test verifies the correct interaction
+between The System end the File System of the device.
+
+\noindent\textbf{Path exportation and Importation}
+\newline\newline
+This test validates the system's ability to serialize internal records into the
+standard GPX format and, vice versa, to parse external GPX files into valid local records.
+The test verifies that:
+\begin{itemize}
+    \item The file is syntactically and can be also opened by third-party tools.
+    \item All the internal attribute of a record (distances, speed, time) are correctly mapped and reported into the file.
+    \item The behavior of the system when the system is stimulated with invalid files.
+    \item The behavior of the system with the import of very large files.
+\end{itemize}
+
+\subsubsection{Testing Online Functionalities}
+Online functionalities also require an active user session except for the one related
+to the search of public bike path.
+
+\noindent\textbf{Data Layer Test - Path Data}\newline\newline
+This test aims to observe the interaction between the application logic
+and the database to verify the correctness of the Object-Relational Mapping configuration.
+
+\noindent\textbf{Path Publication}\newline\newline
+This test aims to verify that when a user publishes a path the data are correctly saved and
+become visible to all the other users.\newline\newline
+
+\noindent This test verifies also that merge mechanism work as intended in order to
+correctly update data related to streets and their status.
+\newline\newline
+\noindent\textbf{Path search}\newline\newline
+The test aims to verify the correctness of the search logic, ensuring that 
+the service correctly interprets the user queries and returns the paths correctly
+sorted accordingly to their score. \newline The test must also verify the system behavior when the result
+set is large. Since for paths the system follows an eventual consistency pattern,
+the test should be executed on a stable dataset in order to get deterministic results. \newline\newline
+
+\noindent\textbf{Data Layer Test - User Data} \newline\newline
+placeolder
+\newline\newline
+\noindent\textbf{Account Management} \newline\newline
+placeholder
+\newline\newline
 \subsection{System Testing}
 \subsection{Additional Specifications on Testing}
