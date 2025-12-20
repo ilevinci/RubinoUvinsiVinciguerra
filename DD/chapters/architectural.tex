@@ -112,6 +112,102 @@ We proceed to provide further details about the elements in the graph.
     This represents the device used by the end user. It requires the app installed in order to access the BPP application. 
 \end{itemize}
 \subsection{Runtime view}
+In this section, we describe the dynamic behavior of the BBP system by detailing the flow of messages between the architectural components. 
+We utilize Sequence Diagrams to model the interactions required to fulfill the primary Use Cases.
+
+To ensure the diagrams remain readable and focused on the core logical flows, we applied the following abstractions:
+
+\begin{itemize}
+    \item \textbf{Authorization Checks:} For the sake of simplicity, we have omitted the repetitive verification steps where the system ensures a request is authorized. 
+It is implicitly assumed that the User Management Service and the Gateway enforce security policies (e.g., ensuring that a user can only view or modify 
+their own private sessions and cannot alter data belonging to other users).
+
+\item \textbf{Error Handling:} We have excluded low-level error handling related to incorrectly specified parameters, network timeouts, or minor validation issues, unless 
+they are significant to the specific use case (e.g., login failure).
+
+\item \textbf{Caching and Optimization:} While components such as the Load Balancer or API Gateway may implement caching mechanisms to reduce latency and database load, 
+our diagrams represent the general case where requests are processed by the application servers and reach the persistence layer.
+\end{itemize}
+
+These abstractions allow us to focus on the main architectural interactions and the data flow necessary to execute the functional requirements.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%PRIMO SEQUENCE DIAGRAM
+
+This diagram depicts the registration process initiated by the Unregistered User. Upon submitting personal data via the Mobile Application, the request is forwarded to the UserManagement component.
+
+The system first queries the UserDBMS to verify that the email or nickname is not already in use.
+
+If the user exists: The flow terminates with an exception, and an error message is displayed to the user.
+
+If the data is new: The UserManagement component hashes the password and persists the new profile in the database. Finally, it returns a confirmation to the Mobile Application, which saves 
+the user's session locally to complete the process.
+
+
+%SECODOND SEQUENCE DIAGRAM
+
+This diagram illustrates the authentication flow initiated by a Registered User. After the user enters their credentials, the Mobile Application forwards the authentication request to the UserManagement component.
+
+The system verifies the user's identity by hashing the provided password and querying the UserDBMS for a match.
+
+If the data is incorrect: The database returns no result, causing the system to raise an exception and display an "Invalid credentials" error to the user.
+
+If the data is correct: The UserManagement component updates the user's login history in the database and generates a secure session token (AuthToken). This token is returned to the Mobile Application, 
+which stores it locally to maintain the authenticated session.
+
+%TERZO SEQUENCE DIAGRAM
+This diagram details the automated tracking process handled by the Mobile Application and its internal component, the Automated Path Data Collector (APDC).
+
+Once the user initiates the ride, the APDC creates a local session and continuously records sensor data (GPS, Gyroscope, Accelerometer). The acquisition loop terminates either through a manual user action or 
+automatically if the system detects prolonged inactivity.
+
+Following the stop event, the APDC performs parallel requests to the MeteoServiceProvider for weather conditions and the MapServiceProvider for map matching. The consolidated data is presented 
+as a preview to the user. Finally, after any necessary manual corrections, the user decides to either save the session to local storage or discard the data entirely.
+
+%FOURTH SEQUENCE DIAGRAM
+This diagram portrays the workflow for manually constructing a bike path, managed by the Mobile Application and the Manual Path Insertion Module (MPIM).
+
+The process centers on an iterative loop where the user inputs details for individual street segments. For each segment, the MPIM validates the location against the MapServiceProvider and verifies geographical continuity with the previously added segment.
+
+If valid: The segment is temporarily stored, and the user receives confirmation.
+
+If invalid: An error message is returned.
+
+Once all segments are entered, the system generates a final path preview. The user then concludes the process by either saving the path to local storage or discarding the session.
+
+%FIFTH SEQUENCE DIAGRAM
+This diagram depicts the retrieval and visualization of a specific past ride. The process relies on the Inventory Handling component to access the device's local storage.
+
+Upon accessing the log view, the Mobile Application requests the list of saved sessions from the Inventory Handling component, which scans the local file system and returns the available records.
+
+Selection and Rendering: When the user selects a specific session, the application retrieves the full raw data (metrics and coordinates) from the local JSON/XML files.
+
+Map Integration: To provide visual context, the Mobile Application iteratively requests map tiles or vector data from the external MapServiceProvider corresponding to the recorded coordinates. Finally, it combines the local path data with the external map background to render the complete session details.
+
+%SIXTH SEQUENCE DIAGRAM
+This diagram illustrates the search workflow managed by the Mobile Application and the backend PathSearchEngine.
+
+The process begins with the definition of the trip's origin: the user may either select the automatically detected GPS position or manually input an address. In the case of manual input (and for the subsequent destination entry), the application invokes the MapServiceProvider to convert the addresses into geographical coordinates.
+
+Once the origin and destination coordinates are established, the Mobile Application queries the PathSearchEngine. This component accesses the BikePath DBMS to retrieve paths that match the specified proximity criteria, ranked by their quality score, and returns the result list to the user.
+
+%SEVENTH SEQUENCE DIAGRAM
+This diagram illustrates the visualization of a specific bike path selected from the search results.
+
+It is explicitly assumed that the Mobile Application has locally cached the list of paths retrieved during the previous Search phase (UC6). Consequently, the application retrieves the specific path data directly from its local memory, eliminating the need to query the PathSearchEngine or the backend database again for this step.
+
+The only external communication required is with the MapServiceProvider: the application iteratively requests the necessary map tiles (or vector data) corresponding to the cached street coordinates. The final view is rendered by overlaying the local path data onto these retrieved map tiles.
+
+%EIGHTH SEQUENCE DIAGRAM
+This diagram depicts the process of transforming a private local record into a shared public path.
+
+Initially, the Mobile Application retrieves the specific session data from the local Inventory Handling component to display a final preview to the user. Upon user confirmation, the data is transmitted to the backend PathPublication component.
+
+The system first persists the new path in the BikePath DBMS. Subsequently, it executes the critical merging logic: the component iterates through every street segment contained in the path, fetches the existing aggregate data for that specific location, recalculates the street's status 
+based on the new input, and updates the global database. This ensures that the public map reflects the combined inputs of the community.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \subsection{Component interfaces}
 In this section we provide details about the interfaces of the main components of the BPP system by specifying their methods, parameters, and return types.
 
