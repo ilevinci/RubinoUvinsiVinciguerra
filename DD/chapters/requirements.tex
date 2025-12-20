@@ -1,1 +1,78 @@
 \section{REQUIREMENTS TRACEABILITY}
+
+\begin{table}[H]
+\centering
+\renewcommand{\arraystretch}{1.5} 
+\begin{tabular}{|p{0.50\textwidth}|p{0.45\textwidth}|}
+\hline
+\textbf{Requirements} & \textbf{Design Elements} \\
+\hline
+
+\textbf{Access and Users Management} \newline
+R1: Create account \newline
+R2: Distinguish/Manage authorization & 
+User Management Service \newline
+Account Server \newline
+Database Server for Registered Users \\
+\hline
+
+\textbf{Data Acquisition and Validation} \newline
+R3: Initiate trip tracking \newline
+R4: Pause trip tracking \newline
+R5: Terminate trip tracking \newline
+R6: Collect data (GPS, gyroscope, accelerometer) \newline
+R9: Monitor speed to detect activity & 
+Automated Path Data Collection Service \newline
+Mobile Device \\
+\hline
+
+\textbf{Path reconstruction and metrics} \newline
+R7: Reconstruct path from GPS data \newline
+R8: Signal presence of obstacles \newline
+R16: Compute performance metrics & 
+Path Data Transformation Service \\
+\hline
+
+\textbf{External Data} \newline
+R10: Retrieve meteorological information & 
+Meteorological Data Retrieval Service \\
+\hline
+
+\textbf{Manual Input} \newline
+R13: Retrieve and validate manual street data & 
+Manual Path Insertion Service \newline
+Mobile Device \\
+\hline
+
+\textbf{Local Data Management} \newline
+R12: Correct data before publication \newline
+R15: Keep private log of tracked sessions & 
+Inventory Handling Service \newline
+Mobile Device \\
+\hline
+
+\textbf{Publication, Scoring \& Merging} \newline
+R11: Manual confirmation before publish \newline
+R14: Publish manually submitted data \newline
+R17: Calculate path's score \newline
+R18: Score computation logic \newline
+R23: Merge information for same streets \newline
+R24: Information merge logic & 
+Path Publication Service \newline
+Application Server \newline
+Database Server for Published Paths \\
+\hline
+
+\textbf{Browsing and Search} \newline
+R19: Display paths in order of score \newline
+R20: Display paths within radius \newline
+R21: Edit accuracy radius \newline
+R22: View published path data & 
+Path Research Service \newline
+Application Server \newline
+Database Server for Published Paths \\
+\hline
+
+\end{tabular}
+\label{tab:req_traceability}
+\end{table}
