@@ -21,7 +21,6 @@ RU -> Client: insertCredentials(nickname/email, password)
 Client -> Auth: authenticateUser(nickname/\nemail, password)
 activate Auth
 
-' Step (c): Verification
 ' Il sistema verifica i dati interrogando il DB
 note right of Auth: Hash password and check existence
 Auth -> DB: findUserByCredentials(nickname/\nemail, hashedPassword)
@@ -29,9 +28,7 @@ activate DB
 DB --> Auth: RegisteredUser / null
 deactivate DB
 
-' Logic: Alternative paths
 alt Data is not correct (Exception)
-    ' Return 401 Unauthorized
     Auth --> Client: unauthorizedException
     Client --> RU: showError("Invalid credentials")
 
@@ -39,7 +36,6 @@ else Data is correct (Success)
     ' Logica interna di autenticazione (Hash check & Token generation)
     note right of Auth: Token Generation
     
-    ' Aggiornamento stato (opzionale ma raccomandato)
     Auth -> DB: updateLastLogin(nickname/email)
     activate DB
     DB --> Auth: ok
@@ -50,7 +46,6 @@ else Data is correct (Success)
     Auth --> Client: AuthToken
     deactivate Auth
     
-    ' Gestione lato client
     Client -> Client: storeTokenLocally()
     Client --> RU: loginSuccessful()
     deactivate Client

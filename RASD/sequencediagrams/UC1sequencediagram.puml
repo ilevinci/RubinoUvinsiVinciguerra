@@ -2,9 +2,6 @@
 autonumber
 title [UC1] User Registration
 
-' =======================================================
-' ACTORS & SYSTEM (Black Box View)
-' =======================================================
 actor "Unregistered User" as User
 participant "BBP system" as System
 

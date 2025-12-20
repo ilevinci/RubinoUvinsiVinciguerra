@@ -2,24 +2,14 @@
 autonumber "<b>0:"
 title [UC4] Insert data of the bike path in Manual Mode
 
-' =======================================================
-' COMPONENT DEFINITION
-' =======================================================
 actor "Registered User" as RU
 participant "Mobile Application" as Client
 participant "Manual Path Insertion Module" as MPIM
 
-' External Service (Validazione Geografica)
 participant "MapServiceProvider" as Map
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
 note over RU, Client: Entry Condition: RU presses "Insert new ride"
 
-' =======================================================
-' INITIALIZATION
-' =======================================================
 RU -> Client: clickInsertNewRide()
 activate Client
 Client -> MPIM: initManualSession()
@@ -27,14 +17,10 @@ activate MPIM
 MPIM --> Client: ok
 Client-> RU: displayManualInputForm()
 
-' =======================================================
-' (a) & (b) ITERATIVE INSERTION & VALIDATION
-' =======================================================
 loop For each street inserted by RU
     RU -> Client: insertStreetDetails(name, city, status, segment)
     Client -> MPIM: forwardStreetDetails(name, city, status, segment)
 
-    ' Validazione Esterna (Smart Client)
     note right of MPIM: Validate existence via Map Service
     MPIM -> Map: validateStreetSegment(name, city, segment)
     activate Map
@@ -42,7 +28,6 @@ loop For each street inserted by RU
     deactivate Map
     
     alt Segment Valid
-        ' Validazione Logica Locale
         note right of MPIM: Check continuity with previous segment
         MPIM -> MPIM: checkPathContinuity()
         
@@ -55,10 +40,6 @@ loop For each street inserted by RU
     end
 end
 
-' =======================================================
-' (c) PREVIEW
-' =======================================================
-
 RU -> Client: pressConfirm()
 Client -> MPIM: requestPathPreview()
 MPIM -> MPIM: prepareFinalPathPreview()
@@ -66,9 +47,6 @@ MPIM --> Client: PathPreviewData
 deactivate MPIM
 Client --> RU: PathPreviewData
 
-' =======================================================
-' EXIT CONDITION: SAVE OR DISCARD
-' =======================================================
 alt RU presses "Save" (Sync to Backend)
     RU -> Client: pressSave()
     

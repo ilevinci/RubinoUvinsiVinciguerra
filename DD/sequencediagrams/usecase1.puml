@@ -17,12 +17,12 @@ Client --> User: RegistrationForm
 
 User -> Client: submitPersonalData(name, surname, \nnickname, email, password)
 
-' Validazione locale
+'validazione locale
 note right of Client: Local validation (format check)
 Client -> Auth: registerUser(name, surname, \nnickname, email, password)
 activate Auth
 
-' Verifica Esistenza
+'verifica Esistenza
 Auth -> DB: checkUserExistence(email, nickname)
 activate DB
 DB --> Auth: exists / notExists
@@ -33,14 +33,12 @@ alt User already registered
     Client --> User: showError("User already registered")
 
 else Data is new
-    ' Creazione Utente
     note right of Auth: Password Hashing
     Auth -> DB: createProfile(name, surname, \nnickname, email, hashedPassword)
     activate DB
     DB --> Auth: ok
     deactivate DB
 
-    ' Risposta Positiva
     Auth -> Auth: createRegisteredUserObject()
     Auth --> Client: RegisteredUser
     deactivate Auth

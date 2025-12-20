@@ -2,26 +2,15 @@
 autonumber "<b>0:"
 title [UC5] Visualize a session in the personal sessions log
 
-' =======================================================
-' COMPONENT DEFINITION
-' =======================================================
 actor "Registered User" as RU
 participant "Mobile Application" as Client
 
-' Componente che gestisce l'archivio locale
 participant "Inventory Handling" as IH
 
-' Servizio Esterno per il rendering mappe
 participant "MapServiceProvider" as Map
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
 note over RU, Client: Entry Condition: RU selects "My recorded trips"
 
-' =======================================================
-' (a) SYSTEM SHOWS THE SESSIONS LOG
-' =======================================================
 RU -> Client: clickMyRecordedTrips()
 activate Client
 
@@ -38,12 +27,9 @@ deactivate IH
 
 ' Visualizzazione Lista
 Client --> RU: List<Record>
-' =======================================================
-' (b) RU FINDS AND SELECTS THE SESSION
-' =======================================================
+
 RU -> Client: selectBikePath(recordID)
 
-' 1. Recupero Dati Sessione dallo Storage Locale
 note right of Client: Step 1: Fetch full raw data from file
 Client -> IH: getFullSessionData(recordID)
 activate IH
@@ -54,7 +40,7 @@ note right of IH: Returns: Performance metrics and Meteo
 IH --> Client: Record
 deactivate IH
 
-' 2. Recupero Mappa dal Service Provider
+' recupero Mappa dal Service Provider
 note right of Client: Step 2: Request map background for specific coords
 loop For each Street in BikePath of the Record
 
@@ -71,9 +57,6 @@ Client -> Client: computeAllData()
 
 Client --> RU: RecordDetails(data, map, metrics)
 
-' =======================================================
-' EXIT CONDITION
-' =======================================================
 RU -> Client: pressExit()
 Client -> Client: clearDetailView()
 Client -> RU: returnToMenu()

@@ -2,32 +2,20 @@
 autonumber "<b>0:"
 title [UC7] Visualization of a Searched Path
 
-' =======================================================
-' COMPONENT DEFINITION
-' =======================================================
 actor "User" as User
 participant "Mobile Application" as Client
 
-' Servizio Esterno (Indispensabile per il rendering grafico)
 participant "MapServiceProvider" as Map
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
 note over User, Client: Entry Condition: User has selected a path and presses "View"
 
-' =======================================================
-' (a) FETCH DATA & MAP CONTEXT
-' =======================================================
 User -> Client: pressView(bikePathID)
 activate Client
 
-
-' Query al DBMS
 Client -> Client: fetchAggregatedPathData\n(bikePathID)
 
 
-' 2. Recupero Mappa dal Service Provider
+' Recupero Mappa dal Service Provider
 loop For each Street in BikePath
 
     Client -> Map: requestMapContext\n(Street.coordinates)
@@ -36,18 +24,12 @@ loop For each Street in BikePath
     deactivate Map
 end
 
-' =======================================================
-' RENDERING LATO CLIENT
-' =======================================================
 note right of Client: **Rendering Logic:**\nOverlay Business Data (Colored Lines) on Map Tiles
 
 
 Client -> Client: renderMapWithOverlays()
 Client --> User: BikePath, Map
 
-' =======================================================
-' EXIT CONDITION
-' =======================================================
 User -> Client: pressExit()
 
 Client -> Client: closeDetailView()

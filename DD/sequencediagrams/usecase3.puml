@@ -2,34 +2,22 @@
 autonumber "<b>0:"
 title [UC3] Track a training session in Automated Mode
 
-' =======================================================
-' COMPONENT DEFINITION
-' =======================================================
 actor "Registered User" as RU
 participant "Mobile Application" as Client
 participant "Automated Path Data Collector" as APDC
 
-' Servizi Esterni (Chiamati direttamente dal Client)
 participant "MeteoServiceProvider" as Meteo
 participant "MapServiceProvider" as Map
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
+' entry condition
 note over RU, Client: Entry Condition: RU presses "Track new ride"
 
-' =======================================================
-' (a) START TRACKING
-' =======================================================
 RU -> Client: clickTrackNewRide()
 activate Client
 
 Client -> APDC: initLocalSession()
 note right of APDC: Create temp file on Device Storage
 
-' =======================================================
-' (b), (c) LOCAL ACQUISITION LOOP
-' =======================================================
 activate APDC
 loop Continuous Data Acquisition
     note right of APDC: Internal Sensor Access
@@ -37,9 +25,6 @@ loop Continuous Data Acquisition
     APDC -> APDC: appendToLocalFile(DataChunk)
 end
 
-' =======================================================
-' (d) DETECT END OF ACTIVITY
-' =======================================================
 alt User manually stops
     RU -> Client: pressStop()
     Client -> APDC: stopAcquisition()
@@ -51,10 +36,6 @@ else System detects inactivity
     Client -> RU: autoStopNotification()
 end
 
-' =======================================================
-' EXTERNAL REFINEMENT (Smart Client)
-' =======================================================
-'note right of Client: Client acts as Orchestrator
 
 ' Chiamate dirette dal Client ai Servizi Esterni
 par Parallel External Requests
@@ -73,17 +54,13 @@ end par
 
 ' Generazione Preview Locale
 APDC -> Client: generateTripPreview(RefinedPath, Weather)
-deactivate
+deactivate APDC
 Client --> RU: RefinedTripPreview
 
-' (f) USER VALIDATION
 RU -> Client: checkAndCorrectData()
 Client -> Client: updateData()
 
-' =======================================================
-' EXIT CONDITION: SAVE OR DISCARD
-' =======================================================
-alt RU presses "Save" (Sync to Backend)
+alt RU presses "Save"
     RU -> Client: pressSave()
     
     Client -> Client: storeDataInLocalFile()

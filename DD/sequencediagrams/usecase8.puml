@@ -2,45 +2,29 @@
 autonumber "<b>0:"
 title [UC8] Publication of a Path
 
-' =======================================================
-' COMPONENT DEFINITION
-' =======================================================
 actor "Registered User" as RU
 participant "Mobile Application" as Client
 participant "Inventory Handling" as IH
 
-' Backend System
 participant "PathPublication" as PM
 participant "BikePath DBMS" as DB
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
 note over RU, Client: Entry Condition: RU presses "Publish"
 
-' =======================================================
-' (a) PREVIEW GENERATION
-' =======================================================
 RU -> Client: clickPublish(recordID)
 activate Client
 
-' Il Client richiede i dati aggiornati per la preview (es. Score attuale)
 note right of Client: Request preview data
 Client -> IH: getPublishPreview\n(recordID)
 activate IH
 
-' Recupero dati grezzi
 IH -> IH: fetchPathData\n(recordID)
 IH --> Client: BikePath
 deactivate IH
 Client -> Client: renderPreviewData\n(BikePath)
 
-' Visualizzazione
 Client -> RU: displayPreview()
 
-' =======================================================
-' EXIT CONDITION: CONFIRM OR BACK
-' =======================================================
 alt User presses "Confirm" (Success)
     RU -> Client: pressConfirm()
 
@@ -48,13 +32,11 @@ alt User presses "Confirm" (Success)
     Client -> PM: publishPath(BikePath)
     activate PM
 
-    ' 1. Aggiornamento Visibilità
     PM -> DB: storeNewPath(BikePath)
     activate DB
     DB --> PM: OK
     deactivate DB
 
-    ' 2. ESECUZIONE MERGING LOGIC (Core Business Logic)
     note right of PM: **CRITICAL: Merging Logic**\nAggregates new data into public streets
     
     loop For each Street in BikePath
@@ -71,7 +53,6 @@ alt User presses "Confirm" (Success)
         deactivate DB
     end loop
 
-    ' Risposta Finale
     PM --> Client: PublishConfirmation
     deactivate PM
     
@@ -81,7 +62,6 @@ alt User presses "Confirm" (Success)
 else User presses "Back" (Aborted)
     RU -> Client: pressBack()
     
-    ' Nessuna interazione col server necessaria
     Client -> Client: returnToPreviousScreen()
     note over RU, Client: Exit Condition: Publication aborted
 end

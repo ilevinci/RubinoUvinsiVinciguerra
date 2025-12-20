@@ -2,36 +2,22 @@
 autonumber "<b>0:"
 title [UC6] Search for a bike path
 
-' =======================================================
-' COMPONENT DEFINITION
-' =======================================================
 actor "User" as User
 participant "Mobile Application" as Client
 
-' External Service (Geocoding)
 participant "MapServiceProvider" as Map
 
-' Backend System
 participant "PathSearchEngine" as Search
 participant "BikePath DBMS" as DB
 
-' =======================================================
-' ENTRY CONDITION
-' =======================================================
 note over User, Client: Entry Condition: User presses "Search" to find a path
 
-' =======================================================
-' (a) GPS DETECTION & INIT
-' =======================================================
 User -> Client: clickSearch()
 activate Client
 
 ' Acquisizione locale sensori
 Client -> Client: acquireSensorData(GPS)
 
-' =======================================================
-' (b) ORIGIN SELECTION
-' =======================================================
 Client --> User: CurrentCoordinates
 
 alt Use Detected GPS Position
@@ -40,7 +26,6 @@ alt Use Detected GPS Position
 else Use Manual Input
     User -> Client: selectPosition(name, city)
     
-    ' Smart Client: Geocoding prima della ricerca
     note right of Client: Convert Position to Coords
     Client -> Map: getCoordinates(name, city)
     activate Map
@@ -48,35 +33,25 @@ else Use Manual Input
     deactivate Map
 end
 
-' =======================================================
-' (c) DESTINATION SELECTION
-' =======================================================
 Client --> User: ok
 User -> Client: insertDestination(name, city)
 
-' Smart Client: Geocoding Destination
 Client -> Map: getCoordinates(name, city)
 activate Map
 Map --> Client: DestCoords (Coordinates)
 deactivate Map
 
-' =======================================================
-' (d) PATH RETRIEVAL AND SCORING
-' =======================================================
-' Invio della query con le coordinate già pronte
 note right of Client: Request paths matching Origin/Dest
 
 Client -> Search: findBestPaths(originCoords, destCoords)
 activate Search
 
-' Query al DB: Trova percorsi vicini e ordinali per Score
 note right of Search: Query logic: Proximity & High Score
 Search -> DB: findPathsByProximityAndScore\n(originCoords, destCoords)
 activate DB
 DB --> Search: List<BikePath>
 deactivate DB
 
-' Conversione in DTO leggeri per la lista
 Search --> Client: List<BikePath>
 deactivate Search
 
