@@ -335,18 +335,17 @@ In this section we provide mockups of the application user interface. \\
 \noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/prototipo1.png}}
 \newline
 
-The subsequent interfaces pertain exclusively to logged-in users' UI. A prototype illustrating the potential process for tracking a new ride in both manual and automatic modes is shown. \\
+\noindent The subsequent interfaces belong exclusively to logged-in users' UI. A prototype illustrating the potential process for tracking a new ride in both manual and automatic modes is shown. \\
 
-For manual mode, a screen is presented featuring a form to be completed with the ride's origin and destination. Furthermore, the travelled streets must be added in sequential order, along with their respective status. Upon finalizing the entry, the user can select either to "Confirm" or "Discard" the data. \\
+\noindent For manual mode, a screen is presented featuring a form to be completed with the ride's origin and destination. Furthermore, the travelled streets must be added in sequential order, along with their respective status. Upon finalizing the entry, the user can select either to "Confirm" or "Discard" the data. \\
 
-Regarding automatic mode, a simple notification is displayed, confirming the initiation of tracking, alongside controls to "Stop" or "Terminate" the session. \\
+\noindent Regarding automatic mode, a simple notification is displayed, confirming the initiation of tracking, alongside controls to "Stop" or "Terminate" the session. \\
 
-Upon session termination, the user is redirected to the preview screen. This shared preview interface is common to both manual and automatic modes and displays a summary of all automatically collected or manually inserted data, offering the distinct option to publish the path. \\
+\noindent Upon session termination, the user is redirected to the preview screen. This shared preview interface is common to both manual and automatic modes and displays a summary of all automatically collected or manually inserted data, offering the distinct option to publish the path. \\
 
-In the case of an automatic session, after selecting "Publish," the system must allow the user to save the session exclusively to their private log. Publishing the path from this private log must then be enabled at a later time.
+\noindent In the case of an automatic session, after selecting "Publish", the system must allow the user to save the session exclusively to their private log. Publishing the path from this private log must then be enabled at a later time.
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.05\textwidth]{images/prototipo2.png}}
-
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/prototipo2.png}}
 Please note that the mockups are shown purely for illustrative purposes and to clarify the requested functional requirements. They are certainly not intended to be a guide that must be strictly adhered to.
 
 \subsubsection{Hardware Interfaces}
@@ -683,9 +682,9 @@ This section specifies the communication protocols and standards required for da
 
 \noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC2_UserLogin_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.3\textwidth]{images/UC3_TrackAutomatedRide_RASD.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.2\textwidth]{images/UC3_TrackAutomatedRide_RASD.png}}
 
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{images/UC4_InsertManualMode_RASD.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC4_InsertManualMode_RASD.png}}
 
 \noindent\makebox[\textwidth][c]{\includegraphics[width=1\textwidth]{images/UC5_VisualizeSessionLog_RASD.png}}
 
@@ -699,12 +698,19 @@ This section specifies the communication protocols and standards required for da
 \subsubsection{Requirement Mapping}
 
 %G1 requirement mapping
-\begin{xltabular}{\textwidth}{|X|X|}
+\begin{longtable}{|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|}
     \hline
     \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
         \textbf{G1:} Bikers share a path that they have ridden along with other bikers.
     } \\
     \hline
+    \endfirsthead
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G1:} Bikers share a path that they have ridden along with other bikers.
+    } \\
+    \hline
+    \endhead
  
     R1: BBP allows users to create an account \par
     R2: BBP system must distinguish and manage authorization for registered and not registered users \par
@@ -732,16 +738,23 @@ This section specifies the communication protocols and standards required for da
     & \par
     \\
     \hline
-\end{xltabular}
+\end{longtable}
 
 \newpage
 %G2 requirement mapping
-\begin{xltabular}{\textwidth}{|X|X|}
+\begin{longtable}{|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|}
     \hline
     \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
         \textbf{G2:} Bikers give other bikers information about the status and the presence of obstacles on paths that they have ridden along.
     } \\
     \hline
+    \endfirsthead
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G2:} Bikers give other bikers information about the status and the presence of obstacles on paths that they have ridden along.
+    } \\
+    \hline
+    \endhead
  
     R1: BBP allows users to create an account \par
     R2: BBP system must distinguish and manage authorization for registered and not registered users \par
@@ -763,16 +776,23 @@ This section specifies the communication protocols and standards required for da
     R20: BBP system shall display the existing paths whose origin and destination are within a predefined radius from the ones specified by the user.  & 
     \\
     \hline
-\end{xltabular}
+\end{longtable}
 
 \newpage
 %G3 requirement mapping
-\begin{xltabular}{\textwidth}{|X|X|}
+\begin{longtable}{|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|}
     \hline
     \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
         \textbf{G3:} Bikers are able to track and record their cycling trips to maintain a log of their activity that contains relevant information about their performance.
     } \\
     \hline
+    \endfirsthead
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G3:} Bikers are able to track and record their cycling trips to maintain a log of their activity that contains relevant information about their performance.
+    } \\
+    \hline
+    \endhead
  
     R1: BBP allows users to create an account \par
     R2: BBP system must distinguish and manage authorization for registered and not registered users \par
@@ -793,16 +813,23 @@ This section specifies the communication protocols and standards required for da
     \\
     \hline
 
-\end{xltabular}
+\end{longtable}
 
 \newpage
 %G4 requirement mapping
-\begin{xltabular}{\textwidth}{|X|X|}
+\begin{longtable}{|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|p{\dimexpr0.5\textwidth-2\tabcolsep-1.5\arrayrulewidth}|}
     \hline
     \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
         \textbf{G4:} Bikers are presented with a set of paths, comprehensive of information about the path’s status and navigational efficiency, between a specified origin and destination.
     } \\
     \hline
+    \endfirsthead
+    \hline
+    \multicolumn{2}{|p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth}|}{
+        \textbf{G4:} Bikers are presented with a set of paths, comprehensive of information about the path’s status and navigational efficiency, between a specified origin and destination.
+    } \\
+    \hline
+    \endhead
  
     R17: BBP system shall calculate the path score which is based on the status of the streets that composed the path and based on bikers’ opinion too \par
     R18: BBP system shall display similar paths ordered by their score \par
@@ -815,7 +842,7 @@ This section specifies the communication protocols and standards required for da
     DA7: Information provided by different bikers is considered mergeable if it regards the same street. \\
     \hline
 
-\end{xltabular}
+\end{longtable}
 
 \newpage
 \subsection{Performance Requirements}
