@@ -1,6 +1,50 @@
 \section{INTRODUCTION}
-\subsection{Purpose}
 \subsection{Scope}
+The core function of the BBP system is to provide a comprehensive, community-driven platform to all types of cyclists. The system acts as an intermediary,
+processing heterogeneous data inputs from various sources, including external
+providers, and synthesizing this information to generate reliable output for all
+users. \\
+\noindent The architectural design detailed in this document aims to fulfill the requirements outlined in the RASD document. The BBP system is designed to be scalable, modular, and maintainable, ensuring that it can adapt to future needs and technological advancements. \\
+\noindent The design is centered around \textbf{a multi-tier client-server architecture} that separates concerns across different layers, promoting a clear division of responsibilities. This approach enhances the system's ability to handle diverse data sources and user interactions effectively. \\
+\noindent The BBP system incorporates various components, each responsible for specific functionalities such as user management, data acquisition, path reconstruction, and path publication. These components interact seamlessly to provide a cohesive user experience while ensuring data integrity and reliability. \\
+
 \subsection{Definitions, Acronyms, Abbreviations}
+\subsubsection{Definitions}
+\begin{itemize}
+    \item \textbf{Global Positioning System}: a satellite-based navigation system owned by the U.S. government that uses a constellation of orbiting satellites, ground control stations, and receivers to provide precise positioning, navigation, and timing information.
+    \item \textbf{Accelerometer}: a sensor that measures linear acceleration (changes in velocity over time) along one or more axes.
+    \item \textbf{Gyroscope}: a sensor that measures angular velocity. It detects how fast an object is rotating around a specific axis, which is essential for determining a device’s current orientation in space.
+    \item \textbf{Meteorological Service Provider}: a formal entity that is responsible for the collection, processing, analysis, forecasting, and dissemination of meteorological and related environmental information and services.
+    \item \textbf{Map Service Provider}: a formal entity that provides geospatial infrastructure, data, and rendering capabilities to software applications. It manages the acquisition, storage, and processing of raw Geographic Information Systems (GIS) data such as satellite imagery, vector topology, and traffic signals, allowing client applications to request processed map assets and perform spatial calculations on demand, without maintaining a proprietary geospatial backend.
+\end{itemize}
+
+\subsubsection{Acronyms}
+\begin{itemize}
+    \item \textbf{BBP}: Bike Better Paths
+    \item \textbf{RU}: Registered User
+    \item \textbf{RASD}: Requirements Analysis and Specification Document
+    \item \textbf{DD}: Design Document
+    \item \textbf{GPS}: Global Positioning System
+    \item \textbf{API}: Application Programming Interface
+    \item \textbf{UI}: User Interface
+    \item \textbf{JSON}: JavaScript Object Notation
+    \item \textbf{REST}: Representational State Transfer
+    \item \textbf{HTTP}: HyperText Transfer Protocol
+    \item \textbf{HTTPS}: HyperText Transfer Protocol Secure
+    \item \textbf{SQL}: Structured Query Language
+    \item \textbf{NoSQL}: Not Only SQL
+    \item \textbf{GIS}: Geographic Information Systems
+    \item \textbf{XML}: eXtensible Markup Language
+\end{itemize}
+
 \subsection{Revision History}
 \subsection{Document Structure}
+\begin{enumerate}
+    \item \textbf{Introduction}: This section aims to give a brief description of the project. In particular it is focused on the reasons and the goals that are going to be achieved with its development, as previously explained in the RASD.
+    \item \textbf{Architectural Design}: This part of the document describes at different levels of granularity how the architecture is designed.
+    \item \textbf{User Interface Design}: This section shows the wire frame that constitutes the platform UI.
+    \item \textbf{Requirements Traceability}: This section contains the traceability matrix that maps the requirements to the components that implement them.
+    \item \textbf{Implementation, Integration and Test Plan}: This section provides a description of the implementation integration and testing details, useful for the developers and producer of the platform.
+    \item \textbf{Effort Spent}: It contains a table that shows the effort spent to write this document.
+    \item \textbf{References}: It contains the references to any documents and software used to write this paper.
+\end{enumerate}

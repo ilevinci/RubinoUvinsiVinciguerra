@@ -1,11 +1,41 @@
 \section{REQUIREMENTS TRACEABILITY}
+In this section, we present the traceability matrix that maps the identified requirements to the corresponding system components responsible for their implementation. This matrix serves as a crucial tool for ensuring that all specified requirements are adequately addressed throughout the system's architecture and design.
+For the sake of clarity, we list below the requirements as they were defined in the RASD document, along with their identifiers:
+\begin{itemize}
+    \item R1: BBP system allows users to create an account.
+    \item R2: BBP system must distinguish and manage authorization for registered and not registered users.
+    \item R3: BBP system shall enable a RU to initiate a trip tracking session.
+    \item R4: BBP system shall enable a RU to pause a trip tracking session.
+    \item R5: BBP system shall enable a RU to terminate a trip tracking session. 
+    \item R6: BBP system shall collect data from the mobile device’s GPS, gyroscope and accelerometer.
+    \item R7: BBP system shall geographically reconstruct the path that the user has ridden along from the GPS data that has been acquired in automated mode.
+    \item R8: BBP system shall use the data that has been acquired in automated mode to signal the possible presence of obstacles.
+    \item R9: In automated mode, BBP system shall monitor the biker’s speed to detect the start, pause and end of the activity.
+    \item R10: BBP system shall retrieve meteorological information from an external provider.
+    \item R11: BBP system shall receive a manual confirmation from the user before publishing data that has been acquired in automated mode.
+    \item R12: BBP system shall allow the RU to correct automatically identified data before publication.
+    \item R13: In manual mode, BBP system shall retrieve and validate the names and status of the streets that form the path that the RU has ridden along.
+    \item R14: BBP system shall publish the data that is manually submitted.
+    \item R15: BBP system shall keep a private log of tracked sessions for each RU that is only accessible from that user.
+    \item R16: BBP system shall compute and store the following performance metrics for a completed session: total distance covered, average speed, maximum speed, elevation gain, moving time and cadence.
+    \item R17: for each published path, BBP system shall calculate the path's score.
+    \item R18: the score of a path is computed by subtracting from the established maximum possible score a predefined number of points that depends on the individual streets' status and the relevance of the obstacles.
+    \item R19: BBP system shall display paths that match the user's request in order of score.
+    \item R20: BBP system shall display the existing paths whose origin and destination are within a predefined radius from the ones specified by the user.
+    \item R21: BBP system shall allow registered users to edit the accuracy radius within a certain range for their path queries.
+    \item R22: BBP system shall allow users to view all currently published path data, including their score.
+    \item R23: if multiple registered users have inserted information about the same street in different paths, BBP system shall internally merge the information and only show the result of the merge.
+    \item R24: the information merge performed by BBP shall consist of a computation that uses all the existing status values for the same streets and the insertion dates of the paths those streets are associated to.
+\end{itemize}
+
+Here is the traceability matrix:
 
 \begin{table}[H]
 \centering
 \renewcommand{\arraystretch}{1.5} 
 \begin{tabular}{|p{0.50\textwidth}|p{0.45\textwidth}|}
 \hline
-\textbf{Requirements} & \textbf{Design Elements} \\
+\textbf{Requirements} & \textbf{Components} \\
 \hline
 
 \textbf{Access and Users Management} \newline
@@ -13,6 +43,7 @@ R1: Create account \newline
 R2: Distinguish/Manage authorization & 
 User Management Service \newline
 Account Server \newline
+Mobile Application \newline
 Database Server for Registered Users \\
 \hline
 
@@ -23,7 +54,7 @@ R5: Terminate trip tracking \newline
 R6: Collect data (GPS, gyroscope, accelerometer) \newline
 R9: Monitor speed to detect activity & 
 Automated Path Data Collection Service \newline
-Mobile Device \\
+Mobile Application \\
 \hline
 
 \textbf{Path reconstruction and metrics} \newline
@@ -41,14 +72,14 @@ Meteorological Data Retrieval Service \\
 \textbf{Manual Input} \newline
 R13: Retrieve and validate manual street data & 
 Manual Path Insertion Service \newline
-Mobile Device \\
+Mobile Application \\
 \hline
 
 \textbf{Local Data Management} \newline
 R12: Correct data before publication \newline
 R15: Keep private log of tracked sessions & 
 Inventory Handling Service \newline
-Mobile Device \\
+Mobile Application \\
 \hline
 
 \textbf{Publication, Scoring \& Merging} \newline
@@ -60,6 +91,7 @@ R23: Merge information for same streets \newline
 R24: Information merge logic & 
 Path Publication Service \newline
 Application Server \newline
+Mobile Application \newline
 Database Server for Published Paths \\
 \hline
 
@@ -70,6 +102,7 @@ R21: Edit accuracy radius \newline
 R22: View published path data & 
 Path Research Service \newline
 Application Server \newline
+Mobile Application \newline
 Database Server for Published Paths \\
 \hline
 

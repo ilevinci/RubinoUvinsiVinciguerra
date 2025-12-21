@@ -114,7 +114,6 @@ We proceed to provide further details about the elements in the graph.
 \subsection{Runtime view}
 In this section, we describe the dynamic behavior of the BBP system by detailing the flow of messages between the architectural components. 
 We utilize Sequence Diagrams to model the interactions required to fulfill the primary Use Cases.
-
 To ensure the diagrams remain readable and focused on the core logical flows, we applied the following abstractions:
 
 \begin{itemize}
@@ -129,7 +128,7 @@ they are significant to the specific use case (e.g., login failure).
 our diagrams represent the general case where requests are processed by the application servers and reach the persistence layer.
 \end{itemize}
 
-These abstractions allow us to focus on the main architectural interactions and the data flow necessary to execute the functional requirements.
+\noindent These abstractions allow us to focus on the main architectural interactions and the data flow necessary to execute the functional requirements.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %PRIMO SEQUENCE DIAGRAM
@@ -138,9 +137,9 @@ This diagram depicts the registration process initiated by the Unregistered User
 
 The system first queries the UserDBMS to verify that the email or nickname is not already in use.
 
-If the user exists: The flow terminates with an exception, and an error message is displayed to the user.
+If the user is already registered: The flow terminates with an exception, and an error message is displayed to the user.
 
-If the data is new: The UserManagement component hashes the password and persists the new profile in the database. Finally, it returns a confirmation to the Mobile Application, which saves 
+If the user is not registered yet: The UserManagement component hashes the password and persists the new profile in the database. Finally, it returns a confirmation to the Mobile Application, which saves 
 the user's session locally to complete the process.
 
 
@@ -215,43 +214,47 @@ In this section we provide details about the interfaces of the main components o
 \begin{itemize}
     \item \textbf{TrackSession}
         \begin{enumerate}
-            \item \texttt{initLocalSession(): void}
-            \item \texttt{acquireSensors(GPS: GPSData, Gyro: GyroData, Accel: AccelData): void}
-            \item \texttt{appendToLocalFile(dataChunk: DataChunk): void}
-            \item \texttt{analyzeMovementPatterns(): void}
-            \item \texttt{triggerAutoStop(): void}
-            \item \texttt{generateTripPreview(RefinedPath: RefinedPathGeometry, Weather: WeatherData): PreviewData}
+            \item \texttt{initLocalSession(): void} \\ Initializes a new tracking session and creates a temporary file on the device storage.
+            \item \texttt{acquireSensors(GPS: GPSData, Gyro: GyroData, Accel: AccelData): void} \\ Reads data from GPS, Gyroscope, and Accelerometer sensors.
+            \item \texttt{appendToLocalFile(dataChunk: DataChunk): void} \\ Appends the acquired sensor data chunk to the local temporary file.
+            \item \texttt{stopAcquisition(): void} \\ Stops the sensor data acquisition process.
+            \item \texttt{analyzeMovementPatterns(): void} \\ Analyzes sensor data to detect inactivity or movement patterns.
+            \item \texttt{triggerAutoStop(): void} \\ Automatically stops the session if inactivity is detected.
+            \item \texttt{generateTripPreview(RefinedPath: RefinedPathGeometry, Weather: WeatherData): PreviewData} \\ Generates a preview of the trip using refined path geometry and weather data.
         \end{enumerate}
     \item \textbf{ManageRecords}
         \begin{enumerate}
-            \item \texttt{retrieveUserSessions(): List<Record>}
-            \item \texttt{readLocalSessionFiles(): List<Record>}
-            \item \texttt{getFullSessionData(sessionID: String): Record}
-            \item \texttt{readSessionFile(sessionID: String): Record}
+            \item \texttt{retrieveUserLog(): List<Record>} \\ Retrieves the list of recorded sessions from the local storage.
+            \item \texttt{readLocalLogFiles(): List<Record>} \\ Scans the local file system for session log files.
+            \item \texttt{getFullSessionData(sessionID: String): Record} \\ Reads the full details (metrics, coordinates) of a specific session from the local file.
+            \item \texttt{readSessionFile(sessionID: String): Record} \\ Helper method to read the content of a specific session file.
+            \item \texttt{getPublishPreview(recordID: String): BikePath} \\ Retrieves the data of a session to be prepared for publication.
+            \item \texttt{fetchPathData(recordID: String): BikePath} \\ Fetches the specific path data required for publication.
         \end{enumerate}
     \item \textbf{ManuallyInsertPath}
         \begin{enumerate}
-            \item \texttt{initManualSession(): void}
-            \item \texttt{insertStreetDetails(name: String, location: Location, status: Status): void}
-            \item \texttt{checkPathContinuity(): boolean}
-            \item \texttt{storeTempSegment(SegmentData): void}
-            \item \texttt{prepareFinalPathPreview(): PathPreview}
+            \item \texttt{initManualSession(): void} \\ Initializes a new manual path insertion session.
+            \item \texttt{forwardStreetDetails(name: String, city: String, status: Status, segment: Segment): void} \\ Receives street details entered by the user and forwards them for validation.
+            \item \texttt{checkPathContinuity(): boolean} \\ Verifies if the new segment is geographically continuous with the previous one.
+            \item \texttt{storeTempSegment(SegmentData): void} \\ Temporarily stores a valid street segment.
+            \item \texttt{requestPathPreview(): void} \\ Requests the generation of the final path preview.
+            \item \texttt{prepareFinalPathPreview(): PathPreview} \\ Aggregates all segments to create the final path preview.
         \end{enumerate}
     \item \textbf{StoreRecord}
         \begin{enumerate}
-            \item \texttt{storeDataInLocalFile(): void}
-            \item \texttt{deleteLocalFile(): void}
+            \item \texttt{storeDataInLocalFile(): void} \\ Persists the session or path data to a permanent local file.
+            \item \texttt{deleteLocalFile(): void} \\ Deletes the temporary or unwanted local file.
         \end{enumerate}
     \item \textbf{MeteoProviderAPI}
         \begin{enumerate}
-            \item \texttt{fetchWeather(GPS: Coordinates, Timestamp: DateTime): WeatherData}
+            \item \texttt{fetchWeather(GPS: Coordinates, Timestamp: DateTime): WeatherData} \\ Fetches weather data for a specific location and time from an external provider.
         \end{enumerate}
     \item \textbf{MapProviderAPI}
         \begin{enumerate}
-            \item \texttt{requestMapMatching(RawGPSPoints: List<Coordinates>): RefinedPathGeometry}
-            \item \texttt{validateStreetSegment(name: String, location: Location): ValidationResult}
-            \item \texttt{requestMapContext(coordinates: List<Coordinates>): MapTiles}
-            \item \texttt{getCoordinates(address: String): Coordinates}
+            \item \texttt{requestMapMatching(RawGPSPoints: List<Coordinates>): RefinedPathGeometry} \\ Requests map matching to refine raw GPS points into a path on the road network.
+            \item \texttt{validateStreetSegment(name: String, city: String, segment: Segment): ValidationResult} \\ Validates if a street segment exists and retrieves its coordinates.
+            \item \texttt{requestMapContext(coordinates: List<Coordinates>): MapTiles} \\ Retrieves map tiles or vector data for a set of coordinates.
+            \item \texttt{getCoordinates(name: String, city: String): Coordinates} \\ Geocodes an address (name and city) to coordinates.
         \end{enumerate}
 \end{itemize}
 
@@ -260,19 +263,21 @@ In this section we provide details about the interfaces of the main components o
 \begin{itemize}
     \item \textbf{ManageAccount}
         \begin{enumerate}
-            \item \texttt{registerUser(userDTO: UserDTO): void}
-            \item \texttt{authenticateUser(loginDTO: LoginDTO): AuthToken}
+            \item \texttt{registerUser(userDTO: UserDTO): void} \\ Registers a new user in the system.
+            \item \texttt{createRegisteredUserObject(): RegisteredUser} \\ Creates a domain object representing the registered user.
+            \item \texttt{authenticateUser(loginDTO: LoginDTO): AuthToken} \\ Authenticates a user based on credentials.
+            \item \texttt{createToken(user: RegisteredUser): AuthToken} \\ Generates an authentication token for a verified user.
         \end{enumerate}
     \item \textbf{SearchPath}
         \begin{enumerate}
-            \item \texttt{findBestPaths(criteria: SearchCriteriaDTO): List<BikePath>}
-            \item \texttt{rankAndConvertToSummary(paths: List<BikePath>): List<BikePath>}
-            \item \texttt{getAggregatedPathDetails(pathID: String): BikePath}
+            \item \texttt{findBestPaths(origin: Coordinates, dest: Coordinates): List<BikePath>} \\ Finds paths matching the origin and destination, ranked by score.
+            \item \texttt{rankAndConvertToSummary(paths: List<BikePath>): List<BikePath>} \\ Ranks the found paths and converts them to a summary format for the list view.
+            \item \texttt{getAggregatedPathDetails(pathID: String): BikePath} \\ Retrieves the full aggregated details of a specific path.
         \end{enumerate}
     \item \textbf{PublishPath}
         \begin{enumerate}
-            \item \texttt{publishPath(pathID: String): void}
-            \item \texttt{recalculateStreetStatus(newData: StreetData, oldAggregate: StreetAggregate): Status}
+            \item \texttt{publishPath(path: BikePath): void} \\ Publishes a new bike path to the system.
+            \item \texttt{recalculateStreetStatus(newData: StreetData, oldAggregate: StreetAggregate): Status} \\ Recalculates the aggregate status of a street based on new user input.
         \end{enumerate}
 \end{itemize}
 
@@ -281,57 +286,56 @@ In this section we provide details about the interfaces of the main components o
 \begin{itemize}
     \item \textbf{AccessUserDB}
         \begin{enumerate}
-            \item \texttt{checkUserExistence(email: String, nickname: String): boolean}
-            \item \texttt{createProfile(userEntity: User): void}
-            \item \texttt{findUserByCredentials(email: String, nickname: String): User}
-            \item \texttt{updateLastLogin(userID: String): void}
+            \item \texttt{checkUserExistence(email: String, nickname: String): boolean} \\ Checks if a user with the given email or nickname already exists.
+            \item \texttt{createProfile(userEntity: User): void} \\ Creates a new user profile in the database.
+            \item \texttt{findUserByCredentials(email: String, nickname: String): User} \\ Finds a user by their email/nickname and password hash.
+            \item \texttt{updateLastLogin(userID: String): void} \\ Updates the last login timestamp for a user.
         \end{enumerate}
     \item \textbf{AccessPathDB}
         \begin{enumerate}
-            \item \texttt{findPathsByProximityAndScore(origin: Coordinates, dest: Coordinates): List<BikePath>}
-            \item \texttt{fetchAggregatedPathData(pathID: String): AggregatedPathData}
-            \item \texttt{storeNewPath(pathID: String): void}
-            \item \texttt{fetchStreetAggregate(segmentID: String): StreetAggregateData}
-            \item \texttt{updateStreetStatus(segmentID: String, newStatus: Status): void}
+            \item \texttt{findPathsByProximityAndScore(origin: Coordinates, dest: Coordinates): List<BikePath>} \\ Queries the database for paths near the origin/destination, ordered by score.
+            \item \texttt{fetchAggregatedPathData(pathID: String): AggregatedPathData} \\ Fetches the aggregated data for a specific path ID.
+            \item \texttt{storeNewPath(path: BikePath): void} \\ Stores a newly published path in the database.
+            \item \texttt{fetchStreetAggregate(coordinates: Coordinates): StreetAggregateData} \\ Retrieves the existing aggregate data for a specific street location.
+            \item \texttt{updateStreetStatus(coordinates: Coordinates, newStatus: Status): void} \\ Updates the status of a street in the database.
         \end{enumerate}
 \end{itemize}
 
 
-\newpage
 \subsection{Selected architectural styles and patterns}
 
 \textbf{Client Server 4-tier Architecture}\newline
 
 \noindent The system adopts a 4-Tier Infrastructure. With this solution we can split the
-layer that manage the application and communicate with the Databases from the Gateway layer
-that hide all the application logic and acts as single entry point for all client requests.
-With this solution the system expose only a secure, monitored endpoint to the external network.
-The separation allows also the internal architecture to evolve or scale without impacting the client. \newline
+layer that manages the application and communicate with the Databases from the Gateway layer
+which hides all the application logic and acts as single entry point for all client requests.
+With this solution, the system exposes only a secure, monitored endpoint to the external network.
+The separation also allows the internal architecture to evolve or scale without impacting the client. \newline
 
 \noindent\textbf{Service-Based Architecture}\newline
 
-\noindent The application is decomposed into two independent Service: The Account Manager Service and the Path Manager Service.
-The first Service is responsible to all the operations that regard the creation, modification and deletion of accounts.
-The second Service is responsible to all that operation that regard the publication and the search of bike paths. This 
+\noindent The application is split into two independent Service: The Account Manager Service and the Path Manager Service.
+The first service is responsible for all the operations that regard the creation, modification and deletion of accounts.
+The second service is responsible for all the operation that regard the publication and the research of bike paths. This 
 Separation of Concerns (both logical and physical) offers significant advantages:
 \begin{itemize}
-    \item Independent scalability: The two services can be scaled separately from one another.
-    \item Fault Isolation: Fault that affect one service do not affect the other.
-    \item Separation of Responsibilities: Each Service manages its own dedicated database schema, assuring decoupling. 
+    \item \textbf{Independent scalability:} The two services can be scaled separately from one another.
+    \item \textbf{Fault Isolation:} Faults that affect one service do not affect the other.
+    \item \textbf{Separation of Responsibilities:} Each service manages its own dedicated database schema, assuring decoupling. 
 \end{itemize} 
 \noindent
 \textbf{Bulkhead Pattern} \newline
 
 \noindent The adoption of a Service-Based Architecture enables this pattern, responsible to ensure system resilience and graceful degradation.
-The pattern is implemented via the physical and logical separation of Account Manager Service and the Path Manager Service.
-These two services use separate servers and use different databases.\newpage
+The pattern is implemented via the physical and logical separation of the Account Manager Service and the Path Manager Service.
+These two services use separate servers and different databases.\newpage
 
 \noindent\textbf{Command Pattern - CQRS} \newline
 
 \noindent The system exploits the Command Pattern to decouple the actions requested to the system
 by a user and the implementation of that action in the server-side of the application.
-Since all the possible operations concerns either the publication of a path or the search for a path we can
-laverage CQRS (Command Query Responsibility Segregation) to split the "Command" part from the "Query" part.
+Since all the possible operations concern either the publication of a path or the search for a path we can
+leverage CQRS (Command Query Responsibility Segregation) to split the "Command" part from the "Query" part.
 The "write side" (command model) handles all the operations that regard the publication of paths prioritizing the consistency and rule validation for each published path while the 
 "read side"(Query model) handles all the search operations. This query model will retrieve the pre-calculated bike path, ensuring quick response time
 due to the bypass of all complex domain logic.\newline
@@ -343,20 +347,18 @@ GPS and accelerometer are the 'Subject' and the ClientManager is the 'Observer'.
 
 \subsection{Other design decisions}
 \textbf{Session Token}\newline\newline
-Each time a user logs into the system, this provides the user with a TokenID that 
-remains valid for a set about of time. When a user is not registered or logged into the system they have not this token.
-Without is not possible to interact with the remote part of the application that manages the path (Path Manager Service) to publish a 
-Path and cannot record personal Cycling Session, i.e. the user must be logged into the System to use these features. Without the token a user
+Each time a user logs into the system, they are provided with a TokenID that 
+remains valid for a set amount of time. When a user is not registered or logged into the system they do not have this token.
+Without it, it is not possible to interact with the remote part of the application, which makes it impossible for the user to interact with the Path Manager Service to publish paths and to record personal Cycling Session. This implies that the user must be logged into the system to use these features. Without a token, a user
 can only search for published bike path.\newline\newline
 \textbf{Consistency Model}\newline\newline
-This regard the implementation of the Databases. The system adopts Linearizability for the account's databases, with this consistency model 
-each operation related to accounts appears to take effect instantaneously at some point between its invocation and its competition. With this approach
-even if we have multiple copies of the Database the system behaves as if there were only a single copy of the data, so the system ensure that once a write is acknowledged by the system, all
-the future read operations (e.g. logins) will reflect that change, preventing race conditions that could lead to a bad user experience.\newline For the Bike paths' databases the system adopts an eventual consistent model prioritizing hight 
-availability and low-latency than consistency. So, when a new path is published, the write is propagate asynchronously to all the other replica. When a user
+This choice has to do with the implementation of the databases. The system adopts linearizability for the account's databases, with this consistency model
+each operation related to accounts appears to take effect instantaneously at some point between its invocation and its competition. With this approach,
+even if multiple copies of the database exist, the system behaves as if there were only a single copy of the data, so the system ensures that, once a write is acknowledged by the system, all the future read operations (e.g. logins) will reflect that change, preventing race conditions that could lead to a bad user experience.\newline For the Bike paths' databases the system adopts an eventual consistent model prioritizing high
+availability and low-latency over consistency. Therefore, when a new path is published, the write is propagated asynchronously to all the other replicas. When a user
 publishes a path this is written on the closest copy of the database, all the replicas eventually converge to the same state.\newline\newline
 \textbf{Data Portability and Storage Strategy}\newline\newline
-Unlike public paths, personal records (including traveled path) are not stored on the system's database but are kept exclusively on the user's device storage.
-This strategy reduces the overall cost of the infrastructure. To ensure that the user does not lose data if he uninstalls the application the system support data export and import using
-GPX (GPS Exchange Format). We selected format is the standard for sharing GPS data and ensure that user can export personal rides and visualize them also on
-third party software or migrate them to a new device.\newline\newline This approach also reduces the impact of an eventual data breach.\newline\newline 
+Unlike public paths, personal records are not stored on the system's database but are kept exclusively on the user's device storage.
+This strategy reduces the overall cost of the infrastructure. To ensure that the user does not lose data if they uninstall the application, the system supports data export and import using
+GPX (GPS Exchange Format). The selected format is the standard for sharing GPS data and it ensures that the user can export personal rides and visualize them also on
+third party software or migrate them to a new device. This approach also reduces the impact of an eventual data breach.\newline\newline 
