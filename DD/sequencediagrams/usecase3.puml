@@ -5,6 +5,7 @@ title [UC3] Track a training session in Automated Mode
 actor "Registered User" as RU
 participant "Mobile Application" as Client
 participant "Automated Path Data Collector" as APDC
+participant "Path Data Transformation" as PDTS
 
 participant "MeteoServiceProvider" as Meteo
 participant "MapServiceProvider" as Map
@@ -50,10 +51,16 @@ par Parallel External Requests
     activate Map
     Map --> APDC: RefinedPath
     deactivate Map
+
+    ' Path Status and Obstacles
+    APDC -> PDTS: computeStatusAndObstacles(GPS, Gyro, Accel)
+    activate PDTS
+    PDTS --> APDC: Status, Obstacles
+    deactivate PDTS
 end par
 
 ' Generazione Preview Locale
-APDC -> Client: generateTripPreview(RefinedPath, Weather)
+APDC -> Client: generateTripPreview(RefinedPath, Weather, Status, Obstacles)
 deactivate APDC
 Client --> RU: RefinedTripPreview
 

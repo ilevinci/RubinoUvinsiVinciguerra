@@ -6,8 +6,9 @@ actor "Registered User" as RU
 participant "Mobile Application" as Client
 participant "Inventory Handling" as IH
 
-participant "PathPublication" as PM
+participant "Path Publication" as PM
 participant "BikePath DBMS" as DB
+participant "Path Merging" as PMR
 
 note over RU, Client: Entry Condition: RU presses "Publish"
 
@@ -37,19 +38,19 @@ alt User presses "Confirm" (Success)
     DB --> PM: OK
     deactivate DB
 
-    note right of PM: **CRITICAL: Merging Logic**\nAggregates new data into public streets
+    note right of DB: **CRITICAL: Merging Logic**\nAggregates new data into public streets
     
     loop For each Street in BikePath
-        PM -> DB: fetchStreetAggregate(Street.coordinates)
+        PMR -> DB: fetchStreetAggregate(Street.coordinates)
         activate DB
-        DB --> PM: StreetAggregateData
+        DB --> PMR: StreetAggregateData
         deactivate DB
         
-        PM -> PM: recalculateStreetStatus(NewData, \nOldAggregate)
+        PMR -> PMR: recalculateStreetStatus(NewData, \nOldAggregate)
         
-        PM -> DB: updateStreetStatus(Street.coordinates, \nNewStatus)
+        PMR -> DB: updateStreetStatus(Street.coordinates, \nNewStatus)
         activate DB
-        DB --> PM: OK
+        DB --> PMR: OK
         deactivate DB
     end loop
 

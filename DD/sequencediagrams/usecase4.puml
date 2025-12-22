@@ -18,8 +18,8 @@ MPIM --> Client: ok
 Client-> RU: displayManualInputForm()
 
 loop For each street inserted by RU
-    RU -> Client: insertStreetDetails(name, city, status, segment)
-    Client -> MPIM: forwardStreetDetails(name, city, status, segment)
+    RU -> Client: insertStreetDetails(name, city, status, segment, obstacle, obstacleCoordinates)
+    Client -> MPIM: forwardStreetDetails(name, city, status, segment, obstacle, obstacleCoordinates)
 
     note right of MPIM: Validate existence via Map Service
     MPIM -> Map: validateStreetSegment(name, city, segment)

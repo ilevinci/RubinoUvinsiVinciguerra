@@ -56,7 +56,7 @@ Both databases are designed to be highly available and to provide eventual consi
 This section gives a more detailed description of the components of the architecture of the BPP system.
 
 \vspace{0.5cm}
-\noindent\makebox[\textwidth][c]{\includegraphics[width=1.5\textwidth]{images/ComponentDiagram2.png}}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=1.7\textwidth]{images/ComponentDiagram2.png}}
 
 \vspace{0.5cm}
 The main components of the system are:
@@ -69,6 +69,7 @@ The main components of the system are:
     \item \textbf{Path Publication Service}: This service handles the publication of bike paths to the platform. It ensures that the path data is properly formatted and stored in the database, making it accessible to other users.
     \item \textbf{Manual Path Insertion Service}: This service allows users to manually input bike path data into the platform. It provides an interface for users to enter path details and ensures that the data is correctly formatted and stored.
     \item \textbf{Inventory Handling Service}: This service manages the local storage of the user's path inventory on the mobile device. It allows users to access and manage their records and drafts offline.
+    \item \textbf{Path Merging Service}: This service is responsible for merging newly published paths with existing ones in the database. It ensures that the aggregated data reflects the combined inputs from multiple users, updating street conditions and obstacle information accordingly. In particular, it recalculates the status of each street segment based on the new data provided by users so that, in the end, the same street segment will have a single community-agreed status and list of obstacles that exists within the database.
 \end{itemize}
 
 \newpage
@@ -202,7 +203,7 @@ This diagram depicts the process of transforming a private local record into a s
 
 Initially, the Mobile Application retrieves the specific session data from the local Inventory Handling component to display a final preview to the user. Upon user confirmation, the data is transmitted to the backend PathPublication component.
 
-The system first persists the new path in the BikePath DBMS. Subsequently, it executes the critical merging logic: the component iterates through every street segment contained in the path, fetches the existing aggregate data for that specific location, recalculates the street's status 
+The system first persists the new path in the BikePath DBMS. Subsequently, through the path merging service, it executes the critical merging logic: the component iterates through every street segment contained in the path, fetches the existing aggregate data for that specific location, recalculates the street's status 
 based on the new input, and updates the global database. This ensures that the public map reflects the combined inputs of the community.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -234,7 +235,7 @@ In this section we provide details about the interfaces of the main components o
     \item \textbf{ManuallyInsertPath}
         \begin{enumerate}
             \item \texttt{initManualSession(): void} \\ Initializes a new manual path insertion session.
-            \item \texttt{forwardStreetDetails(name: String, city: String, status: Status, segment: Segment): void} \\ Receives street details entered by the user and forwards them for validation.
+            \item \texttt{forwardStreetDetails(name: String, city: String, status: Status, segment: Segment, obstacle: ObstacleType, obstacleCoordinates: Coordinates): void} \\ Receives street details entered by the user and forwards them for validation.
             \item \texttt{checkPathContinuity(): boolean} \\ Verifies if the new segment is geographically continuous with the previous one.
             \item \texttt{storeTempSegment(SegmentData): void} \\ Temporarily stores a valid street segment.
             \item \texttt{requestPathPreview(): void} \\ Requests the generation of the final path preview.
@@ -255,6 +256,10 @@ In this section we provide details about the interfaces of the main components o
             \item \texttt{validateStreetSegment(name: String, city: String, segment: Segment): ValidationResult} \\ Validates if a street segment exists and retrieves its coordinates.
             \item \texttt{requestMapContext(coordinates: List<Coordinates>): MapTiles} \\ Retrieves map tiles or vector data for a set of coordinates.
             \item \texttt{getCoordinates(name: String, city: String): Coordinates} \\ Geocodes an address (name and city) to coordinates.
+        \end{enumerate}
+    \item \textbf{PathDataTransformation}
+        \begin{enumerate}
+            \item \texttt{computeStatusAndObstacles(GPS: GPSData, Gyro: GyroData, Accel: AccelData): (Status, List<Obstacle>)} \\ Processes raw sensor data to determine the road status and identify obstacles.
         \end{enumerate}
 \end{itemize}
 
@@ -277,6 +282,9 @@ In this section we provide details about the interfaces of the main components o
     \item \textbf{PublishPath}
         \begin{enumerate}
             \item \texttt{publishPath(path: BikePath): void} \\ Publishes a new bike path to the system.
+        \end{enumerate}
+    \item \textbf{MergePath}
+        \begin{enumerate}
             \item \texttt{recalculateStreetStatus(newData: StreetData, oldAggregate: StreetAggregate): Status} \\ Recalculates the aggregate status of a street based on new user input.
         \end{enumerate}
 \end{itemize}
