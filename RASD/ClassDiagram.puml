@@ -94,11 +94,11 @@ BikePath "1" --o "0...*" Record
 
 Street "1...*" --o "1...*" BikePath
 
-RegisteredUser --  BikePath 
+RegisteredUser "creates"--  BikePath 
 /'RegisteredUser crea 0...* Bikepath e un BikePath è creato
 da 1 RegisteredUser'/
 
-User -- BikePath 
+User "visualizes"-- BikePath 
 /'User visualizza 0...n BikePath e ogni BikePath è visualizzato
 da 1(autore)...* User'/
 @enduml
