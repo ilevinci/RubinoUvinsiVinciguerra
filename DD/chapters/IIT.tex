@@ -31,12 +31,9 @@ be implemented during the final integration phase.
 \subsection{Component Integration and Testing}
 In this section, we will present the testing plan, which will follow the following approach. 
 The Offline functionalities will be tested as first thing by using stubs when needed.\newline\newline
+\noindent Online Functionalities will be tested via Drivers that represent a user to avoid the complexity introduced by the network, at least for initial phases of testing.\newline\newline Once both section are individually tested, a full integration tested (also considering the network) will be performed.
 
-\noindent In Order to avoid writing of drivers, as much as possible, once the Offline Functionalities are tested will be used to simulate an End-User to test
-Online functionalities
 
-\noindent In other words tests will be performed sequentially on the two subsystem. \newline
-The online part of the system will be tested by a bottom-up approach.
 %Since external components are not part of the developed system, they will not be represented.
 \subsubsection{Testing Offline Functionalities}
 The following functionalities all require an active user session, i.e. a valid token.
@@ -86,31 +83,52 @@ The test verifies that:
 
 \subsubsection{Testing Online Functionalities}
 Online functionalities also require an active user session except for the one related
-to the search of public bike path.
+to the search of public bike path.\newline\newline
 
-\noindent\textbf{Data Layer Test - Path Data}\newline\newline
+\noindent\textbf{Data Layer Test}\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing4.png}}\newline
 This test aims to observe the interaction between the application logic
-and the database to verify the correctness of the Object-Relational Mapping configuration.
+and the database to verify the correctness of the Object-Relational Mapping configuration bot for Paths and Accounts
+
+\noindent\textbf{Path Merging}\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing5e.png}}\newline
+\noindent This test verifies that merge mechanism work as intended in order to
+correctly update data related to streets and their status. The test aims to verify that:
+\begin{itemize}
+    \item Given a path P the Server is able to retrieve all the information about the roads that compose it from the database (if any).
+    \item For each road R in P update the information on the database or create a new tuple (if the street has never been inserted).
+    \item Correctly update the score of the overall path.
+\end{itemize}
 
 \noindent\textbf{Path Publication}\newline\newline
-This test aims to verify that when a user publishes a path the data are correctly saved and
-become visible to all the other users.\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing6.png}}\newline
+This test aims to verify the correctness of the chosen consistency model. When a path is published 
+it should be replicated across all the DB replicas under 30 seconds.
 
-\noindent This test verifies also that merge mechanism work as intended in order to
-correctly update data related to streets and their status.
-\newline\newline
+
+
 \noindent\textbf{Path search}\newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing7.png}}\newline
 The test aims to verify the correctness of the search logic, ensuring that 
 the service correctly interprets the user queries and returns the paths correctly
 sorted accordingly to their score. \newline The test must also verify the system behavior when the result
 set is large. Since for paths the system follows an eventual consistency pattern,
 the test should be executed on a stable dataset in order to get deterministic results. \newline\newline
 
-\noindent\textbf{Data Layer Test - User Data} \newline\newline
-placeolder
+\newpage
+\noindent\textbf{Account Management - SignUp} \newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing10.png}}\newline
+This test aims to verify that a new user entry is correctly added to the DB System when a new user perform a SignUP.
+The test have to verify the following things\newline\newline
+\noindent\textbf{Account Management - Login} \newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing8.png}}\newline
+This test aims to verify that a valid Token is correctly delivered to a User when login is performed (if the user is registered).\newline\newline
+\noindent\textbf{Account Management - Data Modification} \newline\newline
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing9.png}}\newline
+This test aims to verify that a logged user is able to modify own information and that these are replicated accordingly to the chosen consistency model.
 \newline\newline
-\noindent\textbf{Account Management} \newline\newline
-placeholder
-\newline\newline
-\subsection{System Testing}
+%\subsection{System Testing}
 \subsection{Additional Specifications on Testing}
+For every test suit that requires a Data Base, will be used a lightweight, disposable Docker container that runs the exact database engine that will be used in production. After each test the container is destroyed in order to ensure a clean state for future testing.
+\newline\newline
+This approach is extended with container orchestration to simulate a scenario with multiple replica in order to verify the Consistency models adopted.
