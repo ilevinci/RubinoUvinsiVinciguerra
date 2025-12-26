@@ -1,27 +1,24 @@
 \section{IMPLEMENTATION, INTEGRATION AND TESTING}
 
 \subsection{Overview}
-This chapter explains how the BBP system will be implemented and tested.
+This chapter explains in details how the BBP system will be implemented and tested.
 \subsection{Implementation Plan}
-Since the described system is logically and physically separated into two distinct parts: Online Functionalities
-and Offline ones, the two sub-system will be implemented independently of each other.
+Since the BPP system is logically and physically separated into two distinct parts (online and offline functionalities) the two sub-system will be implemented independently of each other.
 \newline\newline
-In order to facilitate rapid prototyping of core services the token system (to get access to
-all the function reserved to registered and logged user) will be initially stubbed. Actual logic will
-be implemented during the final integration phase.
+In order to facilitate rapid prototyping of core services, the token system that is used to give registered and logged users access to the reserved functionalities, will be initially stubbed. The logic will instead be implemented during the final integration phase.
 \begin{itemize}
     \item \textbf{Offline Functionalities}\\
-    In order to implement offline functionalities the system this
-    part of the system (located on the Client) will be implemented by
+    In order to implement offline functionalities, this
+    part of the system, which is located in the Client tier, will be implemented by
     following a Thread-Based Strategy. Since the view of the local inventory 
     and the export/import of local data depend on the existence of data, the implementation order
-    of the various functionalities will be dictated by the data lifecycle:\newline\newline Insertion $\to$ Visualization $\to$ Management\newline\newline
-    So first will be implemented the functionalities related to path creation and deletion, then will be implemented the functionalities related
-    to path visualization and finally will be implemented the functionalities to perform the export and import of records. 
+    of the various functionalities will be dictated by the following data lifecycle:\newline\newline Insertion $\to$ Visualization $\to$ Management\newline\newline
+    At the implementation level, this implies that the order of development will be the following: first the functionalities related to path creation and deletion will be implemented, then those related
+    to path visualization and finally the ones to perform the export and import of records.
     \item \textbf{Online Functionalities}
-    The Server-side of the application will be implemented also by also following a Thread-Based strategy.\newline
+    The Server-side of the application will also be implemented by following a Thread-Based strategy.\newline
     Since the online functionalities consist of two services (Account Manager Service and Path Manager Service) they can be
-    implemented independently of each other. Two separate teams can work in parallel, one for the Account Management side and the 
+    implemented independently of each other. Two separate teams can work in parallel, one for the Account Management side and the
     other team for the Path Management side.
 \end{itemize}
 %\subsection{Features identification}
@@ -29,45 +26,54 @@ be implemented during the final integration phase.
 %\subsubsection{Online Functionalities}
 \newpage
 \subsection{Component Integration and Testing}
-In this section, we will present the testing plan, which will follow the following approach. 
-The Offline functionalities will be tested as first thing by using stubs when needed.\newline\newline
-\noindent Online Functionalities will be tested via Drivers that represent a user to avoid the complexity introduced by the network, at least for initial phases of testing.\newline\newline Once both section are individually tested, a full integration tested (also considering the network) will be performed.
+In this section, we will present the testing plan, which will follow the subsequent approach:
+the offline functionalities will be the first to be tested by using stubs when needed.\newline\newline
+\noindent Online functionalities will be tested via drivers that represent a user to avoid the complexity introduced by the network, at least for the initial phases of testing.\newline\newline Once both sections are individually tested, a full integration test (also considering the network) will be performed.
 
 
 %Since external components are not part of the developed system, they will not be represented.
 \subsubsection{Testing Offline Functionalities}
 The following functionalities all require an active user session, i.e. a valid token.
-But in order to be coherent on what said in the implementation plan, testing phase will bypass the Actual
-token verification, at least for the initial phases of testing.\newline\newline
+Nevertheless, in order to be coherent with what is said in the implementation plan, the testing phase will bypass the existent token verification mechanism, at least for the initial phases of testing.\newline\newline
 \textbf{Manual Path Insertion}
-\newline\newline
+
+\vspace{0.5cm}
 \noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing1.png}}
-The tested feature include all the operation that let a user to manually build a path by inserting the 
-single streets by hand. The test aim to verify the coherence of the inserted path. It verifies things as:
+
+\vspace{0.5cm}
+\noindent The tested feature include all the operation that let a user manually build a path by inserting the
+individual streets by hand. The test aims to verify the coherence of the inserted path. It verifies aspects such as:
 \begin{itemize}
-    \item The system rejects street types tagged as unsuitable for bicycles (e.g., highways, pedestrian-only zones).
-    \item The system enforces graph connectivity, preventing the insertion of a segment that is not physically connected to the previous one.
-    \item The upper bound for number of possible streets in one path and that the system correctly manages this scenario.
+    \item Rejecting street types tagged as unsuitable for bicycles (e.g., highways, pedestrian-only zones).
+    \item Enforcing graph connectivity, preventing the insertion of a segment that is not physically connected to the previous one.
+    \item The upper bound for number of possible streets in one path, and also that the system correctly manages this scenario.
 \end{itemize} 
 
 \newpage
 \noindent\textbf{Automatic Path Insertion}
-\newline\newline
+
+\vspace{0.5cm}
 \noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing2.png}}
-The tested functionalities include all that regards the automatic tracking of a path. 
-The system is stimulated with the injection of Coordinates and values regarding other metrics
-via stubs that simulates the necessary systems to automatically track a path. 
-The test verifies things as: 
+
+\vspace{0.5cm}
+\noindent The tested functionalities include all those regarding the automatic tracking of a path. 
+The system is stimulated with the injection of coordinates and other sensor data
+via stubs that simulates the real hardware systems that are used to automatically track a path.
+The test verifies aspects such as:
 \begin{itemize}
-    \item The quantity errors registered during the tracking do not significantly affect the registered path (less than 3 errors per kilometer). It is considered an error: the detection of an obstacle that do not exist, the detection of a wrong street, incorrect values regarding speed exceeding 5 km/h.
-    \item The system reaction to the injection of completely wrong values such as: discontinuous coordinates, impossible values for elevation gain and average Speed and others.
+    \item The quantity of errors registered during the tracking does not significantly affect the registered path (less than 3 errors per kilometer). What we define as error is: the detection of an obstacle that do not exist, the detection of a wrong street, incorrect values regarding speed exceeding 5 km/h.
+    \item The system reaction to the injection of completely wrong values such as: discontinuous coordinates, impossible values for elevation gain, average speed and other metrics.
 \end{itemize}
 
+\vspace{0.5cm}
 \noindent\textbf{Path Visualization}
-\newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing3.png}}\newline
-The testes functionalities regard the ability to search and visualize local records. The test verifies the correct interaction
-between The System end the File System of the device.
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing3.png}}
+
+\vspace{0.5cm}
+\noindent The tested functionalities regard the ability to search and visualize local records and the specific tests aim to verify the correctness and soundness of the interaction
+between the system end the internal file system of the user's device.
 
 \noindent\textbf{Path exportation and Importation}
 \newline\newline
@@ -75,60 +81,85 @@ This test validates the system's ability to serialize internal records into the
 standard GPX format and, vice versa, to parse external GPX files into valid local records.
 The test verifies that:
 \begin{itemize}
-    \item The file is syntactically and can be also opened by third-party tools.
-    \item All the internal attribute of a record (distances, speed, time) are correctly mapped and reported into the file.
-    \item The behavior of the system when the system is stimulated with invalid files.
-    \item The behavior of the system with the import of very large files.
+    \item The file is syntactically correct and it can be also opened by third-party tools.
+    \item All the internal attributes of a record (distance, speed, time) are correctly mapped and reported into the file.
+    \item The system is resilient when stimulated with invalid or very large files.
 \end{itemize}
 
 \subsubsection{Testing Online Functionalities}
-Online functionalities also require an active user session except for the one related
-to the search of public bike path.\newline\newline
+Online functionalities also require an active user session except for the ones related
+to the search of public bike paths.\newline\newline
 
 \noindent\textbf{Data Layer Test}\newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing4.png}}\newline
-This test aims to observe the interaction between the application logic
-and the database to verify the correctness of the Object-Relational Mapping configuration bot for Paths and Accounts
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/Testing4.png}}
+
+\vspace{0.5cm}
+\noindent This test aims to observe the interaction between the application logic
+and the database to verify the correctness of the Object-Relational Mapping configuration both for paths and accounts.\newline\newline
 
 \noindent\textbf{Path Merging}\newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing5e.png}}\newline
-\noindent This test verifies that merge mechanism work as intended in order to
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/Testing5e.png}}
+
+\vspace{0.5cm}
+\noindent This test verifies that the merge mechanism works as intended in order to
 correctly update data related to streets and their status. The test aims to verify that:
 \begin{itemize}
-    \item Given a path P the Server is able to retrieve all the information about the roads that compose it from the database (if any).
-    \item For each road R in P update the information on the database or create a new tuple (if the street has never been inserted).
-    \item Correctly update the score of the overall path.
+    \item Given a path P the Server is able to retrieve all the information about the roads that compose it from the database.
+    \item For each road R in P, either the existent information is updated on the database or a new tuple is created (if the street has never been inserted).
+    \item The overall score of the path is correctly computed according to the result of the merging.
 \end{itemize}
 
 \noindent\textbf{Path Publication}\newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing6.png}}\newline
-This test aims to verify the correctness of the chosen consistency model. When a path is published 
-it should be replicated across all the DB replicas under 30 seconds.
 
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.8\textwidth]{images/Testing6.png}}
 
+\vspace{0.5cm}
+\noindent This test aims to verify the correctness of the chosen consistency model. When a path is published, it should be replicated across all the DB replicas under 30 seconds.\newline\newline
 
 \noindent\textbf{Path search}\newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing7.png}}\newline
-The test aims to verify the correctness of the search logic, ensuring that 
-the service correctly interprets the user queries and returns the paths correctly
-sorted accordingly to their score. \newline The test must also verify the system behavior when the result
-set is large. Since for paths the system follows an eventual consistency pattern,
-the test should be executed on a stable dataset in order to get deterministic results. \newline\newline
 
-\newpage
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/Testing7.png}}
+
+\vspace{0.5cm}
+\noindent The test aims to verify the correctness of the search logic, ensuring that
+the service correctly interprets the user queries and returns the paths correctly
+sorted accordingly to their score. \newline The test must also verify the system's behavior when the result
+set is large. Since for paths the system follows an eventual consistency pattern,
+the test should be executed on a stable dataset in order to get deterministic results.\newline\newline
+
 \noindent\textbf{Account Management - SignUp} \newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing10.png}}\newline
-This test aims to verify that a new user entry is correctly added to the DB System when a new user perform a SignUP.
-The test have to verify the following things\newline\newline
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/Testing10.png}}
+
+\vspace{0.5cm}
+\noindent This test aims to verify that a new user entry is correctly added to the DB System when a new user signs up.
+In the followig sections, all tests related to account management are reported.\newline\newline
+
 \noindent\textbf{Account Management - Login} \newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing8.png}}\newline
-This test aims to verify that a valid Token is correctly delivered to a User when login is performed (if the user is registered).\newline\newline
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.7\textwidth]{images/Testing8.png}}
+
+\vspace{0.5cm}
+\noindent This test aims to verify that a valid token is correctly delivered to a user when login is performed (if the user is registered).\newline\newline
+
 \noindent\textbf{Account Management - Data Modification} \newline\newline
-\noindent\makebox[\textwidth][c]{\includegraphics[width=0.5\textwidth]{images/Testing9.png}}\newline
-This test aims to verify that a logged user is able to modify own information and that these are replicated accordingly to the chosen consistency model.
-\newline\newline
+
+\vspace{0.5cm}
+\noindent\makebox[\textwidth][c]{\includegraphics[width=0.8\textwidth]{images/Testing9.png}}
+
+\vspace{0.5cm}
+\noindent This test aims to verify that a logged user is able to modify their own information and that these edits are replicated accordingly to the chosen consistency model.
+
 %\subsection{System Testing}
 \subsection{Additional Specifications on Testing}
-For every test suit that requires a Data Base, will be used a lightweight, disposable Docker container that runs the exact database engine that will be used in production. After each test the container is destroyed in order to ensure a clean state for future testing.
+For every test suit that requires a database, a lightweight, disposable docker container which also runs the exact database engine that will be used in production will be used. After each test, the container is destroyed in order to ensure a clean state for future testing.
 \newline\newline
-This approach is extended with container orchestration to simulate a scenario with multiple replica in order to verify the Consistency models adopted.
+This approach is extended with container orchestration to simulate a scenario with multiple replica in order to verify the adopted consistency models.
