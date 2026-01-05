@@ -2,7 +2,7 @@
 
 \subsection{Overview: High level components and their interaction}
 
-The following diagram provides a high-level overview of the main components of the BPP system and their interactions.
+The following diagram provides a high-level overview of the main components of the BBP system and their interactions.
 
 \vspace{0.5cm}
 \noindent\makebox[\textwidth][c]{\includegraphics[width=1.1\textwidth]{images/InformalDiagram.png}}
@@ -12,7 +12,7 @@ The architectural approach we adopted for the BBP platform is a 4-tier architect
 \begin{itemize}
     \item \textbf{Presentation Layer}: this layer is responsible for the user interface and user experience. It includes a mobile application that allow users to interact with the platform while interacting with the internal storage of the mobile device to store the user's path inventory.
     \item \textbf{Gateway Layer}: this layer acts as an intermediary between the presentation layer and the application layer. It handles requests from the user interface and forwards them to the appropriate services in the application layer.
-    \item \textbf{Application Layer}: this layer contains the core business logic of the platform.
+    \item \textbf{Application Layer}: this layer contains the core logic of the platform.
     \item \textbf{Data Layer}: this layer is responsible for data storage and management. It includes databases that store user information, path data, and other relevant information.
 \end{itemize}
 As specified above, the application layer is divided into two sub-layers to separate the main application services that implement main functionalities of the application from the user management service that handles user authentication, authorization, and profile management.
@@ -22,7 +22,7 @@ In an ideal implementation, our architecture would be geographically distributed
 The geographical distribution would also contribute to reduce latency when communicating with external services, as instances could be deployed closer to the external services' servers.
 
 \subsubsection{Detailed View}
-\textbf{Client Tier}: The client tier contains the mobile application that provides the UI for the BPP platform to users to allow them to interact with the platform. Through the UI, the users can
+\textbf{Client Tier}: The client tier contains the mobile application that provides the UI for the BBP platform to users to allow them to interact with the platform. Through the UI, the users can
 perform various actions that can be grouped into three main categories: account management, path insertion, and path research. The last category is the only one that is also available to non-registered users.
 \begin{itemize}
     \item \textbf{Account Management}: this functionality allows users to create and manage their accounts on the platform. Users can register, log in, update their profile information, and change their searching area.
@@ -30,22 +30,25 @@ perform various actions that can be grouped into three main categories: account 
     \item \textbf{Path Research}: this functionality allows users to search for bike paths that connect their desidered origin and destination points. When they exist, users can customize the visualization of the existing paths
     and they can select a path to view more detailed information about it.
 \end{itemize}
-While account management, path processing, publication and research require an internet connection, the path insertion functionality is partially available offline. This is due to the fact that we clearly distinguish between the concepts of "bike path" and "record": a record is a set of performance metrics and meteorological data
-that is only available to the user that recorded it, while a bike path is a shared entity that is available to all users to the platform and it only contains the "publishable" data of the cycling sessions: the geographical reconstruction of the path, the status of its streets and the presence of obstacles.
-Therefore, since a record is private, it is only stored locally on the user's device and it can be accessed offline. Its creation though does need an internet connection in order to interact with the external providers to retrieve meteorological data and to process raw sensor data into a human-readable and visualizable format.
+While account management, path processing, publication and research require an internet connection, the path insertion functionality is partially available offline. This is due to the fact that there is a subtle yet fundamental difference between the concepts of "bike path" and "record": a record contains a bike path and adds a set of performance metrics and meteorological data
+that are only available to the user that recorded it, while a bike path is an entity that can be made available to all users on the platform and it contains the "publishable" data of the cycling sessions: the geographical reconstruction of the path, the status of its streets and the presence of obstacles.
+Therefore, since a record is private, it is only stored locally on the user's device and it can be accessed offline. Since the record entity contains a bike path, its creation still does need an internet connection in order to interact with the external providers to retrieve meteorological data and to process raw sensor data into a human-readable and visualizable format.\\
+
 The same concept applies to manually inserted paths that have not been published yet: we handle these drafts locally on the user's device until (and if ever) the user decides to publish them. \\
-The presentation layer is therefore responsible both for providing the user interface and for managing the local storage of the user's path inventory.
+The presentation layer is therefore responsible both for providing the user interface and for managing the local storage of the user's path inventory.\\
+
+With this structure for these fundamental entities, we manage to obtain a smooth and easy way to handle private and public data: records already have the publishable information within the bike path that they contain creating a clear separation between private and public data. When a user decides to publish a path, the application simply extracts the bike path from the record and sends it to the server for publication.\\ 
 
 \vspace{0.5cm}
 \noindent \textbf{Gateway Tier}: The gateway tier acts as an intermediary between the presentation layer and the application layer. It receives requests from the mobile application and forwards them to the appropriate services in the application tier.
 In particular, the gateway tier separates account management and permission related requests to a specific server, whereas all path related requests are forwarded to the application server.
 
 \vspace{0.5cm}
-\noindent \textbf{Application Tier}: The application tier contains the core logic of the BPP platform and it is responsible for processing both path publication and research requests. It also contains the authentication service that manages user accounts and permissions.
+\noindent \textbf{Application Tier}: The application tier contains the core logic of the BBP platform and it is responsible for processing both path publication and research requests. It also contains the authentication service that manages user accounts and permissions.
 The application server in this tier is structured to be scalable and it could therefore be replicated and distributed geographically.
 
 \vspace{0.5cm}
-\noindent \textbf{Data Tier}: The data tier is responsible for storing and managing all the data used by the BPP platform. It contains two main databases: one for user account information and another for published bike paths.
+\noindent \textbf{Data Tier}: The data tier is responsible for storing and managing all the data used by the BBP platform. It contains two main databases: one for user account information and another for published bike paths.
 Both databases are designed to be highly available and to provide eventual consistency across all replicas, ensuring that all users have access to the most up-to-date information.
 
 \vspace{0.5cm}
@@ -53,7 +56,7 @@ Both databases are designed to be highly available and to provide eventual consi
 
 
 \subsection{Component view}
-This section gives a more detailed description of the components of the architecture of the BPP system.
+This section gives a more detailed description of the components of the architecture of the BBP system.
 
 \vspace{0.5cm}
 \noindent\makebox[\textwidth][c]{\includegraphics[width=1.7\textwidth]{images/ComponentDiagram2.png}}
@@ -63,7 +66,7 @@ The main components of the system are:
 \begin{itemize}
     \item \textbf{User Management Service}: This service is responsible for managing user accounts, including registration, authentication, and profile management. It ensures that only authorized users can access certain features of the application.
     \item \textbf{Automated Path Data Collection Service}: This service collects raw data from the mobile device's sensors during a cycling session. It gathers information such as GPS coordinates, speed, elevation, and other relevant metrics and stores them in the local storage of the device.
-    \item \textbf{Path Data Transformation Service}: This service processes the raw sensor data collected during a cycling session and transforms it into a human-readable and visualizable format. AApart from reconstructing paths, it gives an evaluation of each street's conditions, and identifies obstacles along the route. It is also responsible for computing and storing performance metrics.
+    \item \textbf{Path Data Transformation Service}: This service processes the raw sensor data collected during a cycling session and transforms it into a human-readable and visualizable format. Apart from reconstructing paths, it gives an evaluation of each street's conditions and identifies obstacles along the route based on sensor data. It is also responsible for computing and storing performance metrics.
     \item \textbf{Meteorological Data Retrieval Service}: This service interacts with external meteorological data providers to retrieve weather information for the area where the cycling session took place. It ensures that the weather data is accurately associated with the corresponding record data.
     \item \textbf{Path Research Service}: This service allows users to search for bike paths that connect their desired origin and destination points. It retrieves relevant paths from the database and provides customization options for visualization.
     \item \textbf{Path Publication Service}: This service handles the publication of bike paths to the platform. It ensures that the path data is properly formatted and stored in the database, making it accessible to other users.
@@ -74,7 +77,7 @@ The main components of the system are:
 
 \newpage
 \subsection{Deployment view}
-This chapter describes the deployment view of the BPP system. it outlines the execution
+This chapter describes the deployment view of the BBP system. it outlines the execution
 environment of the system and details the gegraphical distribution of the hardware components that host the
 software making up the application.
 
@@ -85,7 +88,7 @@ software making up the application.
 \begin{itemize}
     \item \textbf{The first tier} is a Thick Client able to provide parts of the functionalities (gathering of information and offline storage) also when it is not connected to the Server.
     \item \textbf{The second tier} consists of the Gateway and the Load balancer. The Gateway exposes the public endpoint and route the requests toward the correct type of service (Account Server or Application Server). This layer works also as shield against external treats. The communication between first and second tier takes place via HTTPS protocol.
-    \item \textbf{The third tier} consist of two types of servers: The ones to manage all the things regarding the personal account of a user and the ones that regard the "shared" part of the application, i.e. the publication of bike paths. This separation between the two aspect allow to easily achieve independent scalability of the two type of service, and allow the system to avoid the congestion of both service if only one is managing a big quantity of requests. In other words this kind of separation introduces a high level of decoupling.
+    \item \textbf{The third tier} consists of two types of servers: The ones to manage everything that is related to the personal account of a user and the ones that regard the "shared" part of the application, i.e. the publication of bike paths. This separation between the two aspects allows to easily achieve independent scalability of the two types of service, and allow the system to avoid the congestion of both services if one is managing a big quantity of requests. In other words, this kind of separation introduces a high level of decoupling.
     \item \textbf{The fourth and last tier} is dedicated to the Data, the databases do not communicate directly with internet but only with the Servers responsible to manage the information. The communication between these tiers takes place via TCP/IP protocol.
 \end{itemize}
 
@@ -102,19 +105,19 @@ We proceed to provide further details about the elements in the graph.
     This Server is responsible to process all the requests regarding the publication and the search of bike path from the final user.
     This component manipulates data, and then it has direct access to the related Database.
     \item \textbf{Account Server}\\
-    This Server is responsible to manage all the request that regard the accounts of the end user and the related information.
-    This component manipulates personal data of the users, and then it has access to the related Database.
+    This Server is responsible of managing all the requests that regard the accounts of the end user and the related information.
+    This component manipulates personal data of the users and it has access to the related Database.
     \item \textbf{Load Balancer} \\
-    It distributes incoming requests across multiple Gateway to optimize system performances and avoid to overloading one server.
+    It distributes incoming requests across multiple Gateway to optimize system performances and avoid overloading one server.
     \item \textbf{Firewall}\\ %Ops... non ci sono nel deployment diagram <-- Sistema
-    Monitors incoming network traffic, blocking potentially harmful packets before they reach the system. Positioned before the load balancers it creates
-    a safe perimeter around the network.
+    Monitors incoming network traffic, blocking potentially harmful packets before they reach the system. It creates
+    a safe perimeter around the network by being positioned before the load balancers.
     \item \textbf{Mobile Device} \\
-    This represents the device used by the end user. It requires the app installed in order to access the BPP application. 
+    This represents the device used by the end user. It requires the app to be installed in order to access the BBP application. 
 \end{itemize}
 \subsection{Runtime view}
 In this section, we describe the dynamic behavior of the BBP system by detailing the flow of messages between the architectural components. 
-We utilize Sequence Diagrams to model the interactions required to fulfill the primary Use Cases.
+We utilize Sequence Diagrams to model the interactions required to fulfill the primary Use Cases as described in the RASD.
 To ensure the diagrams remain readable and focused on the core logical flows, we applied the following abstractions:
 
 \begin{itemize}
@@ -154,8 +157,8 @@ the user's session locally to complete the process.
 
 \noindent The system verifies the user's identity by hashing the provided password and querying the UserDBMS for a match.\\
 
-\noindent If the data is incorrect: The database returns no result, causing the system to raise an exception and display an "Invalid credentials" error to the user.
-If the data is correct: The UserManagement component updates the user's login history in the database and generates a secure session token (AuthToken). This token is returned to the Mobile Application, 
+\noindent If the data is incorrect, the database returns no result, causing the system to raise an exception and display an "Invalid credentials" error to the user.
+If the data is correct, the UserManagement component updates the user's login history in the database and generates a secure session token (AuthToken). This token is returned to the Mobile Application, 
 which stores it locally to maintain the authenticated session.
 
 \vspace{1cm}
@@ -235,7 +238,7 @@ based on the new input, and updates the global database. This ensures that the p
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Component interfaces}
-In this section we provide details about the interfaces of the main components of the BPP system by specifying their methods, parameters, and return types.
+In this section we provide details about the interfaces of the main components of the BBP system by specifying their methods, parameters, and return types.
 
 \subsubsection{Client subsystem}
 \begin{itemize}
